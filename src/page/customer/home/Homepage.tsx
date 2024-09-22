@@ -1,3 +1,4 @@
+import Footer from "@/components/layout/Footer/Footer";
 import Header from "@/components/layout/Header/Header";
 
 const Home = () => {
@@ -40,7 +41,7 @@ const Home = () => {
           </div>
         </section>
         <div className="py-12"></div>
-        <section className="relative py-12 dark:bg-gray-900 z-10">
+        <section className="relative py-12 dark:bg-gray-900">
           <div className="mx-auto max-w-7xl px-6 md:px-12">
             <h2 className="text-center text-4xl font-extrabold text-white dark:text-white">
               Our Services
@@ -76,9 +77,11 @@ const Home = () => {
             </div>
           </div>
         </section>
+        {/* Add margin-top to create space between the content and footer */}
+        <div className="mt-12"></div>
       </div>
+      <Footer />
     </>
-
   );
 };
 
