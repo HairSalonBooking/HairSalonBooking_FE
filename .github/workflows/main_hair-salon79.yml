@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./build # Adjust the path to the correct output directory
+          path: ./build # Ensure this path is correct and matches the output directory
 
   deploy:
     runs-on: ubuntu-latest
