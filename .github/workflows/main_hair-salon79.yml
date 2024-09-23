@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: react-app
-          path: /dist
+          path: ./dist
 
   deploy:
     runs-on: ubuntu-latest
