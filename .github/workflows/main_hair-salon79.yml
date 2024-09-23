@@ -34,35 +34,14 @@ jobs:
 
       - name: Check if build directory exists
         run: |
-          if [ ! -d "build" ]; then
-            echo "Build directory does not exist!";
-            exit 1;
-          fi
+          if (!(Test-Path -Path "build" -PathType Container)) {
+            Write-Host "Build directory does not exist!"
+            exit 1
+          }
+        shell: pwsh # This specifies PowerShell (the default shell on Windows)
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
           path: build/
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: "production"
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifact
-
-      - name: "Deploy to Azure Web App"
-        uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
-        with:
-          app-name: "hair-salon79"
-          slot-name: "production"
-          package: .
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_6cf2c7b69f0843efbd0078128d3d2090 }}
