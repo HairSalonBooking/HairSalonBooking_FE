@@ -50,4 +50,4 @@ jobs:
           app-name: "hair-salon79"
           slot-name: "production"
           package: ./dist
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_d9101b6d5d1249d0bd94480f82e0311a }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_b563dce301a64c3085a4b79de2ebef01 }}
