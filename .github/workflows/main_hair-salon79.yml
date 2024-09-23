@@ -28,13 +28,26 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./**  # Specify all files in the current directory and subdirectories
+          path: ./**  # Upload all files in the current directory and subdirectories
           retention-days: 1
-          max-concurrency: 2  # Reduce concurrency to avoid EMFILE error
           if-no-files-found: warn
           compression-level: 6
           overwrite: false
           include-hidden-files: false
+
+      # Add a custom upload script for batching if needed
+      # Uncomment the block below to use a custom upload script
+      # - name: Upload artifacts in smaller batches
+      #   run: |
+      #     mkdir batches
+      #     find . -type f | split -l 1000 - batches/batch_
+      #     for batch in batches/batch_*; do
+      #       echo "Uploading batch: $batch"
+      #       actions/upload-artifact@v4
+      #       with:
+      #         name: node-app-batch-${{ github.run_id }}-${{ github.run.number }}-${{ matrix.index }}
+      #         path: $(cat $batch)
+      #     done
 
   deploy:
     runs-on: ubuntu-latest
