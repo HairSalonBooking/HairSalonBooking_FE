@@ -32,19 +32,18 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
+      - name: Check if build directory exists
+        run: |
+          if [ ! -d "build" ]; then
+            echo "Build directory does not exist!";
+            exit 1;
+          fi
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
           path: build/
-
-      - name: Upload config artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: config-artifact
-          path: |
-            package.json
-            package-lock.json
 
   deploy:
     runs-on: ubuntu-latest
@@ -58,11 +57,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifact
-
-      - name: Download config artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: config-artifact
 
       - name: "Deploy to Azure Web App"
         uses: azure/webapps-deploy@v3
