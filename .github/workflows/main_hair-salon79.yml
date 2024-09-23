@@ -24,6 +24,10 @@ jobs:
           node --max-old-space-size=4096 ./node_modules/.bin/npm run build --if-present
           npm run test --if-present
 
+      - name: Ensure build directory exists
+        run: |
+          mkdir -p ./build
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
