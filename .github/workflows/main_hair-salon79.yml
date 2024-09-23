@@ -28,9 +28,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: ./**  # Specify all files in the current directory and subdirectories
           retention-days: 1
-          max-concurrency: 5
+          max-concurrency: 2  # Reduce concurrency to avoid EMFILE error
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,5 +55,5 @@ jobs:
         with:
           app-name: "hair-salon79"
           slot-name: "production"
-          package: .
+          package: .  # Ensure the package path is correct after download
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_8420ae1cac8f4cc6a679cfff8fd2f3d4 }}
