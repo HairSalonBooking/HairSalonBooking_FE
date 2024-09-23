@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: react-app
-          path: build/
+          path: /dist
 
   deploy:
     runs-on: ubuntu-latest
@@ -49,5 +49,5 @@ jobs:
         with:
           app-name: "hair-salon79"
           slot-name: "production"
-          package: ./build
+          package: ./dist
           publish-profile: ${{ secrets.AzureAppService_PublishProfile_d9101b6d5d1249d0bd94480f82e0311a }}
