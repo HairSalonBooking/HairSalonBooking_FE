@@ -1,6 +1,6 @@
-import ForgotPassWordPage from "@/page/Auth/ForgotPassWord/ForgotPassWordPage"
-import LoginPage from "@/page/Auth/Login/LoginPage"
-import RegisterPage from "@/page/Auth/Register/RegisterPage"
+import ForgotPassWordPage from "@/page/auth/ForgotPassWord/ForgotPassWordPage"
+import LoginPage from "@/page/auth/Login/LoginPage"
+import RegisterPage from "@/page/auth/Register/RegisterPage"
 import Home from "@/page/customer/home/Homepage"
 import { Navigate, Route, Routes } from "react-router-dom"
 
