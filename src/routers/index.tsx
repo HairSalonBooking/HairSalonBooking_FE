@@ -1,8 +1,10 @@
 import Home from '@/page/customer/home/Homepage'
 import LoginPage from '@/page/auth/Login/LoginPage'
+import ForgotPassWordPage from '@/page/auth/ForgotPassWord/ForgotPassWordPage'
 import RegisterPage from '@/page/auth/Register/RegisterPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import ForgotPassWordPage from '@/page/auth/ForgotPassWord/ForgotPassWordPage'
+
+
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalon")
     return (
@@ -24,3 +26,4 @@ const AppRouter = () => {
     )
 }
 export default AppRouter
+
