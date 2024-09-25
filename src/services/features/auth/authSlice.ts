@@ -5,17 +5,17 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 type AuthState = {
-    auth : IAccount | null;
+    auth: IAccount | null;
     loading: boolean;
     error: string | unknown;
     success: boolean;
-}
+};
 
 const initialState: AuthState = {
     auth: null,
     loading: false,
     error: null,
-    success: false, 
+    success: false,
 };
 
 export const loginAccount = createAsyncThunk<IAccount, string | Object>(
@@ -41,12 +41,25 @@ export const loginAccount = createAsyncThunk<IAccount, string | Object>(
         }
     }
 );
+
+// Thêm action để logout
 export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
         setError: (state, action: PayloadAction<string[] | unknown>) => {
             state.error = action.payload;
+        },
+        logoutUser: (state) => {
+            // Xóa thông tin đăng nhập khỏi sessionStorage
+            sessionStorage.removeItem('hairSalonToken');
+            sessionStorage.removeItem('hairSalonRefreshToken');
+            sessionStorage.removeItem('user'); // nếu bạn lưu thông tin user ở đây
+
+            // Reset lại trạng thái auth
+            state.auth = null;
+            state.success = false;
+            toast.success("Logout successful");
         },
     },
     extraReducers: (builder) => {
@@ -62,8 +75,9 @@ export const authSlice = createSlice({
             state.loading = false;
             state.error = action.payload;
         });
-},
+    },
 });
 
-export const { setError } = authSlice.actions;
+// Export hành động logout để sử dụng
+export const { setError, logoutUser } = authSlice.actions;
 export default authSlice.reducer;
