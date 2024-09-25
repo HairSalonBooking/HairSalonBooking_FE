@@ -1,8 +1,9 @@
-import Home from '@/page/customer/Home/Homepage'
+
 import LoginPage from '@/page/auth/Login/LoginPage'
 import RegisterPage from '@/page/auth/Register/RegisterPage'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import ForgotPassWordPage from '@/page/auth/ForgotPassWord/ForgotPassWordPage'
+import Home from '@/page/customer/Home/Homepage'
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalon")
     return (
