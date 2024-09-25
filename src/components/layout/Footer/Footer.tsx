@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
                     <h3 className="text-white text-lg font-bold">LINKS</h3>
                     <ul className="mt-4 space-y-2">
                         <li>
-                            <a href="#" className="hover:text-white">
+                            <a href="/home" className="hover:text-white">
                                 Home
                             </a>
                         </li>
@@ -91,24 +91,27 @@ const Footer: React.FC = () => {
                         <li className="flex items-center space-x-2">
                             <span>📍</span>
                             <p>
-                                203 Fake St. Mountain View, San Francisco, California, USA
+                                Lô E2a-7, Đường D1, Đ. D1, Long Thạnh Mỹ, Thành Phố Thủ Đức, Hồ Chí Minh
                             </p>
                         </li>
                         <li className="flex items-center space-x-2">
                             <span>📞</span>
-                            <p>+2 392 3929 210</p>
+                            <p>+84367988177</p>
                         </li>
                         <li className="flex items-center space-x-2">
                             <span>✉️</span>
-                            <p>info@yourdomain.com</p>
+                            <p>khacbao0712@gmail.com</p>
+                        </li>
+                        <li className="flex items-center space-x-2">
+                            <span>✉️</span>
+                            <p>hunglorfptu@gmail.com</p>
                         </li>
                     </ul>
                 </div>
             </div>
 
             <div className="text-center text-sm text-gray-600 mt-8">
-                Copyright © 2024 All rights reserved | This template is made with ❤️ by
-                Colorlib
+                Copyright © 2024 All rights reserved
             </div>
         </footer>
     );

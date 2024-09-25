@@ -1,8 +1,9 @@
-import ForgotPassWordPage from "@/page/auth/ForgotPassWord/ForgotPassWordPage"
-import LoginPage from "@/page/auth/Login/LoginPage"
-import RegisterPage from "@/page/auth/Register/RegisterPage"
-import Home from "@/page/customer/home/Homepage"
-import { Navigate, Route, Routes } from "react-router-dom"
+import Home from '@/page/customer/home/Homepage'
+import LoginPage from '@/page/auth/Login/LoginPage'
+import ForgotPassWordPage from '@/page/auth/ForgotPassWord/ForgotPassWordPage'
+import RegisterPage from '@/page/auth/Register/RegisterPage'
+import { Navigate, Route, Routes } from 'react-router-dom'
+
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalon")
@@ -25,3 +26,4 @@ const AppRouter = () => {
     )
 }
 export default AppRouter
+

@@ -1,94 +1,64 @@
-import { Link } from "react-router-dom";
+import { logoutUser } from "@/services/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "@/services/store/store";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [dropdownOpen, setDropdownOpen] = useState(false); // Quản lý trạng thái dropdown
+  const { auth } = useAppSelector((state) => state.auth); // Giả sử auth chứa thông tin người dùng
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate("/login");
+  };
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen); // Đổi trạng thái dropdown
+  };
+
   return (
     <header>
-      <nav className="absolute z-10 w-full px-64 ">
-        <div className="relative flex flex-wrap items-center justify-between gap-6 py-2 md:gap-0 md:py-4">
-          <input
-            aria-hidden="true"
-            type="checkbox"
-            name="toggle_nav"
-            id="toggle_nav"
-            className="peer hidden"
-          />
-          <div className="relative z-20 flex w-full justify-between md:px-0 lg:w-max">
-            <a
-              href="#home"
-              aria-label="logo"
-              className="flex items-center space-x-2"
-            >
-              <span className="text-2xl font-bold text-white dark:text-white">
-                HairCare
-              </span>
-            </a>
+      <nav className="absolute z-10 w-full px-64">
+        <div className="relative flex items-center justify-between gap-6 py-2 md:gap-0 md:py-4">
+          {/* Logo */}
+          <a
+            href="/home"
+            aria-label="logo"
+            className="flex items-center space-x-2"
+          >
+            <span className="text-2xl font-bold text-white dark:text-white">
+              Harisalon
+            </span>
+          </a>
 
-            <div className="relative flex max-h-10 items-center lg:hidden">
-              <label
-                role="button"
-                htmlFor="toggle_nav"
-                aria-label="hamburger"
-                id="hamburger"
-                className="relative -mr-6 p-6"
-              >
-                <div
-                  aria-hidden="true"
-                  id="line"
-                  className="m-auto h-0.5 w-5 rounded bg-sky-900 transition duration-300 dark:bg-gray-300"
-                ></div>
-                <div
-                  aria-hidden="true"
-                  id="line2"
-                  className="m-auto mt-2 h-0.5 w-5 rounded bg-sky-900 transition duration-300 dark:bg-gray-300"
-                ></div>
-              </label>
-            </div>
-          </div>
+          {/* Phần bên phải */}
+          <div className="flex items-center space-x-8 ml-auto">
+            <ul className="flex space-x-6 font-medium text-white">
+              <li>
+                <a href="#features" className="hover:text-primary">
+                  Service
+                </a>
+              </li>
+              <li>
+                <a href="#solution" className="hover:text-primary">
+                  About
+                </a>
+              </li>
+              <li>
+                <a href="#testimonials" className="hover:text-primary">
+                  Blog
+                </a>
+              </li>
+              <li>
+                <a href="#contact" className="hover:text-primary">
+                  Contact
+                </a>
+              </li>
+            </ul>
 
-          <div
-            aria-hidden="true"
-            className="fixed inset-0 z-10 h-screen w-screen origin-bottom scale-y-0 bg-white/70 backdrop-blur-2xl transition duration-500 peer-checked:origin-top peer-checked:scale-y-100 dark:bg-gray-900/70 lg:hidden"
-          ></div>
-
-          <div className="invisible absolute left-0 top-full z-20 w-full origin-top translate-y-1 scale-95 flex-col flex-wrap justify-end gap-6 rounded-3xl border border-gray-100 bg-white p-8 opacity-0 shadow-2xl shadow-gray-600/10 transition-all duration-300 peer-checked:visible peer-checked:scale-100 peer-checked:opacity-100 dark:border-gray-700 dark:bg-gray-800 dark:shadow-none lg:visible lg:relative lg:flex lg:w-7/12 lg:translate-y-0 lg:scale-100 lg:flex-row lg:items-center lg:gap-0 lg:border-none lg:bg-transparent lg:p-0 lg:opacity-100 lg:shadow-none lg:peer-checked:translate-y-0">
-            <div className="w-full text-white dark:text-gray-300 lg:w-auto lg:pr-4 lg:pt-0">
-              <ul className="flex flex-col gap-6 font-medium tracking-wide lg:flex-row lg:gap-0 lg:text-sm">
-                <li>
-                  <a
-                    href="#features"
-                    className="block transition hover:text-primary md:px-4"
-                  >
-                    <span>Service</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#solution"
-                    className="block transition hover:text-primary md:px-4"
-                  >
-                    <span>About</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#testimonials"
-                    className="block transition hover:text-primary md:px-4"
-                  >
-                    <span>Blog</span>
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#blog"
-                    className="block transition hover:text-primary md:px-4"
-                  >
-                    <span>Contact</span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div className="mt-12 lg:mt-0">
+            {/* Kiểm tra auth để hiển thị tên người dùng */}
+            {!auth ? (
               <Link
                 to="/login"
                 className="relative flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-yellow-600 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
@@ -97,7 +67,56 @@ const Header = () => {
                   Login
                 </span>
               </Link>
-            </div>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={toggleDropdown}
+                  className="relative flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-yellow-600 before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+                >
+                  <span className="relative text-ellipsis font-semibold text-white">
+                    Hello, {auth?.lastName}
+                  </span>
+                  <svg
+                    className={`w-4 h-4 ml-2 transition-transform transform ${dropdownOpen ? "rotate-180" : "rotate-0"
+                      }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 9l-7 7-7-7"
+                    ></path>
+                  </svg>
+                </button>
+
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    >
+                      View Profile
+                    </Link>
+                    <Link
+                      to="/order-history"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    >
+                      View Booking
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </nav>
