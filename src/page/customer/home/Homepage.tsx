@@ -1,5 +1,7 @@
 import Footer from "@/components/layout/Footer/Footer";
 import Header from "@/components/layout/Header/Header";
+import MakeupArtistSection from "@/components/layout/Section/MakeupArtistSection";
+import ServiceSection from "@/components/layout/Section/ServiceSection";
 
 const Home = () => {
   return (
@@ -80,6 +82,14 @@ const Home = () => {
         {/* Add margin-top to create space between the content and footer */}
         <div className="mt-12"></div>
       </div>
+      {/* New Section */}
+      <ServiceSection />
+      {/* New Section */}
+
+      <MakeupArtistSection />
+
+
+
       <Footer />
     </>
   );
