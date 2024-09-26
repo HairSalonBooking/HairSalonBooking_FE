@@ -11,7 +11,7 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
-    navigate("/login");
+    navigate("/home");
   };
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen); // Đổi trạng thái dropdown
