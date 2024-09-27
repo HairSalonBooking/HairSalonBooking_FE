@@ -1,4 +1,4 @@
-import { IAccount } from "@/interfaces/Account";
+import { IAccount, IRegister } from "@/interfaces/Account";
 import { LOGIN_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -18,17 +18,9 @@ const initialState: AuthState = {
     success: false,
 };
 
-interface FormValue {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-}
-
-export const registerAcount = createAsyncThunk<IAccount | Object, FormValue>(
+export const registerAcount = createAsyncThunk<IAccount, IRegister>(
     "auth/register",
-    async (data: FormValue, thunkAPI) => {
+    async (data, thunkAPI) => {
         try {
             const response = await axios.post(REGISTER_ENDPOINT, data);
             if (response.data.errCode === 0) {
@@ -95,8 +87,9 @@ export const authSlice = createSlice({
         .addCase(registerAcount.pending, (state) => {
             state.loading = true;
         })
-        .addCase(registerAcount.fulfilled, (state) => {
+        .addCase(registerAcount.fulfilled, (state, action) => {
             state.loading = false;
+            state.auth = action.payload;
             state.success = true;
         })
         .addCase(registerAcount.rejected, (state, action) => {

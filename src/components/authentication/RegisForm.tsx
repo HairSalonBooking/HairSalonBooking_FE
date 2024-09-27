@@ -1,5 +1,5 @@
 import { registerAcount, setError } from '@/services/features/auth/authSlice';
-import { useAppDispatch } from '@/services/store/store';
+import { useAppDispatch} from '@/services/store/store';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -46,9 +46,13 @@ const RegisterForm: React.FC = () => {
     const onSubmit = (data: FormValue) => {
         dispatch(registerAcount(data))
             .unwrap()
-            .then(() => {
-                navigate('/register');
-            })
+            .then((response) => {
+            if(response.success === true) 
+            {
+                navigate("/login")
+            }else{
+                navigate("/register")
+            }})
             .catch((error) => {
                 console.error('Registration failed:', error);
             });

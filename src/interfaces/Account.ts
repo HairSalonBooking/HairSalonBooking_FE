@@ -5,4 +5,13 @@ export interface IAccount {
     lastName: string,
     roleId: string,
     accessToken: string,
+    success : boolean,
+}
+
+export interface IRegister {
+    email : string,
+    firstName : string,
+    lastName : string,
+    password : string, 
+    confirmPassword: string 
 }
