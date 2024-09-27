@@ -1,5 +1,5 @@
 import { IAccount } from "@/interfaces/Account";
-import { LOGIN_ENDPOINT } from "@/services/constant/apiConfig";
+import { LOGIN_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -17,6 +17,33 @@ const initialState: AuthState = {
     error: null,
     success: false,
 };
+
+interface FormValue {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+}
+
+export const registerAcount = createAsyncThunk<IAccount | Object, FormValue>(
+    "auth/register",
+    async (data: FormValue, thunkAPI) => {
+        try {
+            const response = await axios.post(REGISTER_ENDPOINT, data);
+            if (response.data.errCode === 0) {
+                toast.success("Register success");
+            } else {
+                toast.error("Register failed");
+            }
+            return response.data;
+        } catch (error: any) {
+            toast.error("Server Error");
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+);
+
 
 export const loginAccount = createAsyncThunk<IAccount, string | Object>(
     'auth/login',
@@ -63,7 +90,20 @@ export const authSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(loginAccount.pending, (state) => {
+        builder
+        // Register
+        .addCase(registerAcount.pending, (state) => {
+            state.loading = true;
+        })
+        .addCase(registerAcount.fulfilled, (state) => {
+            state.loading = false;
+            state.success = true;
+        })
+        .addCase(registerAcount.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+        .addCase(loginAccount.pending, (state) => {
             state.loading = true;
         })
         .addCase(loginAccount.fulfilled, (state, action) => {
