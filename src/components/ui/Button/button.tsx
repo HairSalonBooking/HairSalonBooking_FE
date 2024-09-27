@@ -72,6 +72,7 @@ const NextArrow = ({ onClick }: { onClick?: () => void }) => (
   >
     <FaArrowRight /> {/* Sử dụng icon FontAwesome cho nút Next */}
   </button>
+
 );
 
 export { Button, buttonVariants, PrevArrow, NextArrow };
