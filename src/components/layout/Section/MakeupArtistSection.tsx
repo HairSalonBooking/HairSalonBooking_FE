@@ -36,7 +36,7 @@ const MakeupArtistSection = () => {
                         <p className="text-lg text-gray-600">Hair Stylist</p>
                     </div>
                     <div className="shadow-lg p-6 rounded-lg bg-white hover:bg-[#e7cbaa] transition-transform duration-300">
-                        <img src="https://scontent.fsgn5-3.fna.fbcdn.net/v/t39.30808-1/456176310_1647612279422737_4364782612418564619_n.jpg?stp=cp6_dst-jpg_s200x200&_nc_cat=104&ccb=1-7&_nc_sid=0ecb9b&_nc_eui2=AeE5EpWh8yIfoHcFCcgBvL3JXjyroMrlSsNePKugyuVKw072K13kCPkB9FQNlkKoUex6DjVGcziELmhS0hkr-4Va&_nc_ohc=x4O_hFsDwKMQ7kNvgHrg3WV&_nc_ht=scontent.fsgn5-3.fna&_nc_gid=ASaHVlfMhDsksYeA4MPAaU8&oh=00_AYACTeoVuZZEfnEqXWVZxyKsY43BDfMrHrOWdKsR5KYxmw&oe=66FA6BA2" alt="Nicole Simon" className="w-full h-80 object-cover rounded-lg mb-4" />
+                        <img src="https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/385096114_1456146528569314_2887973884762324767_n.jpg?stp=cp6_dst-jpg&_nc_cat=102&ccb=1-7&_nc_sid=669761&_nc_eui2=AeGmOJwqRUPr_kfAPWqRA1AUlJc-XtpKoeCUlz5e2kqh4DO4jq4-FLiC-I53L2ogxrEPjh-IApHaGP0Tq6HvULSJ&_nc_ohc=h25UiXIkx8EQ7kNvgG470HH&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=AncX01aLKk6Go0NQu_Gm8p1&oh=00_AYDQC7_6u-kKra8fSB5n_D0gzcpn5ytGGt3C7Qz9kP4O9A&oe=66FBE668" alt="Nicole Simon" className="w-full h-80 object-cover rounded-lg mb-4" />
                         <h3 className="text-2xl font-bold text-black">Nguyễn Thành Tài</h3>
                         <p className="text-lg text-gray-600">Nail Master</p>
                     </div>
