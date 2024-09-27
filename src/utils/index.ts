@@ -13,4 +13,5 @@ export const formatNumberWithDots = (number: number | null | undefined): string 
         return null;
     }
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
 };

@@ -28,7 +28,7 @@ const Header = () => {
             className="flex items-center space-x-2"
           >
             <span className="text-2xl font-bold text-white dark:text-white">
-              Harisalon
+              HairSalon
             </span>
           </a>
 
