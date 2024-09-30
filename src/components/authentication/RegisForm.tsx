@@ -1,5 +1,5 @@
 import { registerAcount, setError } from '@/services/features/auth/authSlice';
-import { useAppDispatch } from '@/services/store/store';
+import { useAppDispatch} from '@/services/store/store';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
