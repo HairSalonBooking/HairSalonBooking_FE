@@ -1,5 +1,4 @@
 import { IAccount, IRegister } from "@/interfaces/Account";
-
 import { LOGIN_ENDPOINT, REFRESH_TOKEN_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
@@ -26,12 +25,14 @@ export const registerAcount = createAsyncThunk<IAccount, IRegister>(
     async (data, thunkAPI) => {
         try {
             const response = await axiosInstance.post(REGISTER_ENDPOINT, data);
-            if (response.data.success === false) {
+            if (response.data.errCode === 0) {
+                toast.success("Register success");
+            }
+            //doi backend tra success = boolean
+            if (response.data.errCode !== 0) {
                 toast.error(response.data.errMessage);
             }
-            if (response.data.success === true) {
-                toast.success("Register successful");
-            }
+
             return response.data;
         } catch (error: any) {
             toast.error("Server Error");
@@ -116,7 +117,6 @@ export const authSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-
             // Register
             .addCase(registerAcount.pending, (state) => {
                 state.loading = true;
