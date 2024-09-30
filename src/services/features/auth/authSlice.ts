@@ -29,7 +29,7 @@ export const registerAcount = createAsyncThunk<IAccount, IRegister>(
                 toast.error(response.data.errMessage);
             }
             if (response.data.success === true) {
-                toast.success(response.data.errMessage);
+                toast.success("Register successful");
             }
             return response.data;
         } catch (error: any) {
