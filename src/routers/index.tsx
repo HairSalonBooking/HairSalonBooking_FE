@@ -5,8 +5,8 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import ForgotPassWordPage from '@/page/auth/ForgotPassWord/ForgotPassWordPage'
 import { useAppSelector } from '@/services/store/store'
 import Home from '@/page/customer/home/HomePage'
-import Profile from '@/page/customer/User/UserProfilePage'
-import BookingPage from '@/page/customer/Booking/BookingPage'
+import Profile from '@/page/customer/user/UserProfilePage'
+import BookingPage from '@/page/customer/booking/BookingPage'
 import AboutPage from '@/page/customer/AboutPage'
 
 const AppRouter = () => {
