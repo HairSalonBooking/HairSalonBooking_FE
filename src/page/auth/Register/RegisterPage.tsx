@@ -3,8 +3,8 @@ import RegisterForm from '@/components/authentication/RegisForm'
 const RegisterPage = () => {
     return (
         <>
-            <div className="flex flex-col justify-center items-center bg-gray-900 h-[100vh]">
-                <div className="mx-auto flex w-full flex-col justify-center px-5 pt-0 md:h-[unset] md:max-w-[50%] lg:h-[100vh] min-h-[100vh] lg:max-w-[50%] lg:px-6">
+            <div className="flex flex-col justify-center items-center bg-gray-900 h-screen py-4">
+                <div className="mx-auto flex w-full flex-col justify-center px-5 pt-0 md:max-w-[50%] lg:max-w-[50%] lg:px-6">
                     <a className="mt-10 w-fit text-white" href="/">
                         <div className="flex w-fit items-center lg:pl-0 lg:pt-0 xl:pt-0">
                             <svg
@@ -23,7 +23,7 @@ const RegisterPage = () => {
                         </div>
                     </a>
 
-                    <div className="my-auto mb-auto mt-8 flex flex-col md:mt-[70px] w-[350px] max-w-[450px] mx-auto md:max-w-[450px] lg:mt-[130px] lg:max-w-[450px]">
+                    <div className="my-auto mb-auto  flex flex-col  w-[350px] max-w-[450px] mx-auto md:max-w-[450px] lg:max-w-[450px]">
                         <p className="text-[32px] font-bold text-white text-center">Sign Up</p>
                         <div className="relative my-4 text-center">
                             <div className="relative flex items-center py-1">

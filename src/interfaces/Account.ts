@@ -5,6 +5,8 @@ export interface IAccount {
     lastName: string,
     roleId: string,
     accessToken: string,
+
+    errCode: number,
     success : boolean,
 }
 
@@ -14,4 +16,5 @@ export interface IRegister {
     lastName : string,
     password : string, 
     confirmPassword: string 
+    success : boolean,
 }
