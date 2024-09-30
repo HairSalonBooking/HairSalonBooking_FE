@@ -25,12 +25,14 @@ export const registerAcount = createAsyncThunk<IAccount, IRegister>(
     async (data, thunkAPI) => {
         try {
             const response = await axiosInstance.post(REGISTER_ENDPOINT, data);
-            if (response.data.success === false) {
+            if (response.data.errCode === 0) {
+                toast.success("Register success");
+            }
+            //doi backend tra success = boolean
+            if (response.data.errCode !== 0) {
                 toast.error(response.data.errMessage);
             }
-            if (response.data.success === true) {
-                toast.success("Register successful");
-            }
+
             return response.data;
         } catch (error: any) {
             toast.error("Server Error");

@@ -17,5 +17,5 @@ export interface IRegister {
     lastName : string,
     password : string, 
     confirmPassword: string 
-    success : boolean,
+    errCode: number,
 }
