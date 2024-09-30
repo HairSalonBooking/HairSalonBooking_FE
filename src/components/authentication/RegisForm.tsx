@@ -11,6 +11,7 @@ type FormValue = {
     email: string;
     password: string;
     confirmPassword: string;
+    success: boolean;
 }
 
 const RegisterForm: React.FC = () => {
@@ -46,8 +47,12 @@ const RegisterForm: React.FC = () => {
     const onSubmit = (data: FormValue) => {
         dispatch(registerAcount(data))
             .unwrap()
-            .then(() => {
-                navigate('/register');
+            .then((response) => {
+                if (response.success === true) {
+                    navigate("/login")
+                } else {
+                    navigate("/register")
+                }
             })
             .catch((error) => {
                 console.error('Registration failed:', error);
