@@ -44,16 +44,16 @@ export const loginAccount = createAsyncThunk<IAccount, string | Object>(
     async (data, thunkAPI) => {
         try {
             const response = await axiosInstance.post(LOGIN_ENDPOINT, data);
-            const token = response.data.accessToken;
-            const refreshToken = response.data.refreshToken;
-            sessionStorage.setItem('hairSalonToken', token);
+            const { success, accessToken, refreshToken, errMessage } = response.data;
+
+            if (!success) {
+                toast.error(errMessage || "Login failed");
+                return thunkAPI.rejectWithValue(errMessage || "Login failed");
+            }
+
+            sessionStorage.setItem('hairSalonToken', accessToken);
             sessionStorage.setItem('hairSalonRefreshToken', refreshToken);
-            if (response.data.success === false) {
-                toast.error(response.data.errMessage);
-            }
-            if (response.data.success === true) {
-                toast.success(response.data.errMessage);
-            }
+            toast.success("Login successful");
 
             return response.data;
         } catch (error: any) {
@@ -62,7 +62,6 @@ export const loginAccount = createAsyncThunk<IAccount, string | Object>(
         }
     }
 );
-
 export const forgotPassword = createAsyncThunk<IAccount, string>(
     'auth/forgotPassword',
     async (email, thunkAPI) => {
