@@ -36,7 +36,7 @@ const Header = () => {
           <div className="flex items-center space-x-8 ml-auto">
             <ul className="flex space-x-6 font-medium text-white">
               <li>
-                <a href="#features" className="hover:text-yellow-700">
+                <a href="/services" className="hover:text-yellow-700">
                   Service
                 </a>
               </li>
@@ -46,12 +46,12 @@ const Header = () => {
                 </a>
               </li>
               <li>
-                <a href="#testimonials" className="hover:text-yellow-700">
+                <a href="/blog" className="hover:text-yellow-700">
                   Blog
                 </a>
               </li>
               <li>
-                <a href="#contact" className="hover:text-yellow-700">
+                <a href="/contact" className="hover:text-yellow-700">
                   Contact
                 </a>
               </li>
