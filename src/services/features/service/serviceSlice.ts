@@ -6,20 +6,20 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type ServiceState = {
     loading: boolean;
-    services: IService[];
+    services: IService[] | null;
     service: IService | null;
     error: string[] | unknown;
 };
 
 const initialState: ServiceState = {
     loading: false,
-    services: [],
+    services: null,
     service: null,
     error: null,
 };
 
 
-export const getAllSertvice = createAsyncThunk<IService[], void>(
+export const getAllService = createAsyncThunk<IService[], void>(
     "services/getAllService",
     async (_, thunkAPI) => {
         try {
@@ -65,14 +65,14 @@ export const serviceSlice = createSlice({
     },
     extraReducers(builder) {
         builder
-            .addCase(getAllSertvice.pending, (state) => {
+            .addCase(getAllService.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(getAllSertvice.fulfilled, (state, action) => {
+            .addCase(getAllService.fulfilled, (state, action) => {
                 state.loading = false;
                 state.services = action.payload;
             })
-            .addCase(getAllSertvice.rejected, (state, action) => {
+            .addCase(getAllService.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })

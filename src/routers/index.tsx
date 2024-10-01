@@ -10,6 +10,7 @@ import BookingPage from '@/page/customer/booking/BookingPage'
 import AboutPage from '@/page/customer/AboutPage'
 import ServicePage from '@/page/customer/service/ServicePage'
 import ContactPage from '@/page/customer/ContactPage'
+import ResetPasswordPage from '@/page/auth/ResetPassWord/ResetPasswordPage'
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalonToken");
@@ -21,14 +22,14 @@ const AppRouter = () => {
                 <>
                     <Route path='/login' element={<LoginPage />} />
                     <Route path='/register' element={<RegisterPage />} />
-                    <Route path='/forgot_password' element={<ForgotPassWordPage />} />
-                    <Route path='/profile' element={<Profile />} />
+                    <Route path='/forgot-password' element={<ForgotPassWordPage />} />
+                    <Route path='/reset-password/:token' element={<ResetPasswordPage />} />
                     <Route path='/booking' element={<BookingPage />} />
                     <Route path='/about' element={<AboutPage />} />
                     <Route path='/services' element={<ServicePage />} />
                     <Route path='/contact' element={<ContactPage />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                    <Route path='/' element={<Home />} />
+                    <Route path="*" element={<Navigate to="/home" replace />} />
+                    <Route path='/home' element={<Home />} />
 
                 </>
             ) : (
@@ -36,9 +37,15 @@ const AppRouter = () => {
                     <Route path='/profile' element={<Profile />} />
                     <Route path='/booking' element={<BookingPage />} />
                     <Route path='/about' element={<AboutPage />} />
+                    <Route path='/services' element={<ServicePage />} />
+                    <Route path='/contact' element={<ContactPage />} />
+                    <Route path='/about' element={<AboutPage />} />
+
+
                     {isCustomer && (
 
                         <>
+                            <Route path='/profile' element={<Profile />} />
                             <Route path='/home' element={<Home />} />
 
                         </>

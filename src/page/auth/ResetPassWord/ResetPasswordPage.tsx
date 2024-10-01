@@ -1,12 +1,10 @@
-import LoginForm from "@/components/authentication/LoginForm"
-import { Link } from "react-router-dom"
+import ResetPasswordForm from "@/components/authentication/ResetPasswordForm";
 
-
-const LoginPage = () => {
+const ResetPasswordPage = () => {
     return (
         <div className="relative bg-gray-900 h-screen py-4">
             {/* Back to the website link */}
-            <Link className="absolute top-4 left-4 text-white" to="/">
+            <a className="absolute top-4 left-4 text-white" href="/">
                 <div className="flex items-center">
                     <svg
                         stroke="currentColor"
@@ -22,25 +20,16 @@ const LoginPage = () => {
                     </svg>
                     <p className="ml-0 text-sm text-white">Back to the website</p>
                 </div>
-            </Link>
+            </a>
 
-            {/* Login Form */}
+            {/* Reset Password form */}
             <div className="flex flex-col justify-center items-center h-full">
                 <div className="mx-auto w-full flex flex-col justify-center px-5 pt-0 md:max-w-[50%] lg:max-w-[50%] lg:px-6">
-                    <div className="my-auto mb-auto flex flex-col w-[350px] max-w-[450px] mx-auto md:max-w-[450px] lg:max-w-[450px]">
-                        <p className="text-[32px] font-bold text-white text-center">Sign In</p>
-                        <div className="relative my-4 text-center">
-                            <div className="relative flex items-center py-1">
-                                <div className="grow border-t border-zinc-700"></div>
-                                <div className="grow border-t border-zinc-700"></div>
-                            </div>
-                        </div>
-                        <LoginForm />
-                    </div>
+                    <ResetPasswordForm />
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default LoginPage
+export default ResetPasswordPage;

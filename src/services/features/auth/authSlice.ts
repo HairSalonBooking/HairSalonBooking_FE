@@ -1,5 +1,5 @@
 import { IAccount, IRegister } from "@/interfaces/Account";
-import { LOGIN_ENDPOINT, REFRESH_TOKEN_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
+import { FORGOT_PASSWORD_ENDPOINT, LOGIN_ENDPOINT, REFRESH_TOKEN_ENDPOINT, REGISTER_ENDPOINT, RESET_PASSWORD_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -66,6 +66,60 @@ export const loginAccount = createAsyncThunk<IAccount, string | Object>(
     }
 );
 
+export const forgotPassword = createAsyncThunk<IAccount, string>(
+    'auth/forgotPassword',
+    async (email, thunkAPI) => {
+        try {
+            const response = await axiosInstance.post(FORGOT_PASSWORD_ENDPOINT, { email });
+
+            // Kiểm tra giá trị của errCode
+            if (response.data.errCode === 0) {
+                toast.success(response.data.message);
+            } else {
+                toast.error(response.data.errMessage);
+                return thunkAPI.rejectWithValue(response.data.errMessage); // Trả về lỗi cho Redux state
+            }
+
+            return response.data;
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.errMessage || "Unknown error";
+            toast.error(errorMessage);
+            return thunkAPI.rejectWithValue(errorMessage); // Trả về lỗi cho Redux state
+        }
+    }
+);
+export const resetPassword = createAsyncThunk<void, { token: string; newPassword: string }>(
+    "auth/resetPassword",
+    async ({ token, newPassword }, thunkAPI) => {
+        try {
+            // Tạo body với newPassword
+            const formData = new URLSearchParams();
+            formData.append("newPassword", newPassword);
+
+            const response = await axiosInstance.put(
+                RESET_PASSWORD_ENDPOINT.replace(":token", token), // Thay token vào URL
+                formData,
+                { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+            );
+
+            // Xử lý phản hồi từ API
+            if (response.data.errCode === 0) {
+                toast.success(response.data.message || "Password has been reset successfully.");
+            } else {
+                toast.error(response.data.errMessage || "Invalid or expired reset password token.");
+                return thunkAPI.rejectWithValue(response.data.errMessage);
+            }
+
+        } catch (error: any) {
+            // Trường hợp lỗi không mong muốn từ server
+            const errorMessage = error.response?.data?.errMessage || "Unknown error occurred.";
+            toast.error(errorMessage);
+            return thunkAPI.rejectWithValue(errorMessage);
+        }
+    }
+);
+
+
 export const refreshAccessToken = createAsyncThunk<string, void>(
     'auth/refreshAccessToken',
     async (_, thunkAPI) => {
@@ -130,6 +184,7 @@ export const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             })
+            // Login
             .addCase(loginAccount.pending, (state) => {
                 state.loading = true;
             })
@@ -146,6 +201,30 @@ export const authSlice = createSlice({
             if (state.auth) {
                 state.auth.accessToken = action.payload;
             }
+        });
+        // Forgot password
+        builder.addCase(forgotPassword.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(forgotPassword.fulfilled, (state) => {
+            state.loading = false;
+            state.success = true;
+        });
+        builder.addCase(forgotPassword.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+        // Reset password
+        builder.addCase(resetPassword.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(resetPassword.fulfilled, (state) => {
+            state.loading = false;
+            state.success = true;
+        });
+        builder.addCase(resetPassword.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
         });
     },
 });

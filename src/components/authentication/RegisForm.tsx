@@ -1,9 +1,10 @@
 import { registerAcount, setError } from '@/services/features/auth/authSlice';
-import { useAppDispatch} from '@/services/store/store';
+import { useAppDispatch } from '@/services/store/store';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 type FormValue = {
     firstName: string;
@@ -48,12 +49,12 @@ const RegisterForm: React.FC = () => {
         dispatch(registerAcount(data))
             .unwrap()
             .then((response) => {
-            if(response.errCode === 0) 
-            {
-                navigate("/login")
-            }else{
-                navigate("/register")
-            }})
+                if (response.errCode === 0) {
+                    navigate("/login")
+                } else {
+                    navigate("/register")
+                }
+            })
             .catch((error) => {
                 console.error('Registration failed:', error);
             });
@@ -164,9 +165,9 @@ const RegisterForm: React.FC = () => {
             </form>
             <p className="mt-4 text-center text-white">
                 Already have an account?{" "}
-                <a href="/login" className="font-medium text-yellow-500 hover:text-yellow-400">
+                <Link to="/login" className="font-medium text-yellow-500 hover:text-yellow-400">
                     Sign In
-                </a>
+                </Link>
             </p>
         </>
     );
