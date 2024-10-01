@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
+import { useAppDispatch } from '@/services/store/store';
+import { useState } from 'react';
+import { toast } from "react-toastify";
+import { forgotPassword } from '@/services/features/auth/authSlice';
 
 const ForgotPasswordForm: React.FC = () => {
+    const dispatch = useAppDispatch();
     const [email, setEmail] = useState<string>('');
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log('Email:', email);
-        // Logic to send a password reset request (e.g., API call)
+        setIsLoading(true);
+
+        dispatch(forgotPassword(email))
+            .unwrap()
+            .then(() => {
+            })
+            .catch((error) => {
+                console.error(error);
+                toast.error(error.response?.data);
+            })
+            .finally(() => setIsLoading(false));
     };
 
     return (
@@ -44,8 +58,9 @@ const ForgotPasswordForm: React.FC = () => {
                         <button
                             className="whitespace-nowrap ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-yellow-600 text-white hover:bg-yellow-500 mt-2 flex h-[unset] w-full items-center justify-center rounded-lg px-4 py-4 text-sm font-medium"
                             type="submit"
+                            disabled={isLoading}
                         >
-                            Send Reset Link
+                            {isLoading ? "Sending..." : "Send Reset Link"}
                         </button>
                     </div>
                 </form>
@@ -56,8 +71,6 @@ const ForgotPasswordForm: React.FC = () => {
                     </a>
                 </p>
             </div>
-
-
         </>
     );
 };

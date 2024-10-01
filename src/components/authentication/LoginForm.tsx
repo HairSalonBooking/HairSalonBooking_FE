@@ -90,7 +90,7 @@ const LoginForm = () => {
                         />
                     </div>
                     <p className="text-right">
-                        <Link to="/forgot_password" className="font-medium text-white text-sm">
+                        <Link to="/forgot-password" className="font-medium text-white text-sm">
                             Forgot your password?
                         </Link>
                     </p>

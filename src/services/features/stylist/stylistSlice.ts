@@ -7,14 +7,14 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type StylistState = {
     loading: boolean;
-    stylists: IStylist[];
+    stylists: IStylist[] | null;
     stylist: IStylist | null;
     error: string[] | unknown;
 }
 
 const initialState: StylistState = {
     loading: false,
-    stylists: [],
+    stylists: null,
     stylist: null,
     error: null,
 }
@@ -29,7 +29,7 @@ export const getAllStylist = createAsyncThunk<IStylist[], void>(
                     Authorization: `Bearer ${token}`,
                 },
             });
-            return response.data;
+            return response.data.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
         }

@@ -1,8 +1,10 @@
-export const BASE_URL = 'https://backend-hairsalonbooking.onrender.com/api';
+export const BASE_URL = 'https://oyster-app-pc2gd.ondigitalocean.app/api';
 
 //autth
 export const LOGIN_ENDPOINT = `${BASE_URL}/login`;
 export const REGISTER_ENDPOINT = `${BASE_URL}/register`;
+export const FORGOT_PASSWORD_ENDPOINT = `${BASE_URL}/forgot-password`;
+export const RESET_PASSWORD_ENDPOINT = `${BASE_URL}/reset-password/:token`;
 export const REFRESH_TOKEN_ENDPOINT = `${BASE_URL}/login`;
 
 //user

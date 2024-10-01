@@ -1,6 +1,23 @@
-import React, { useState } from "react";
-
+import { getAllService } from "@/services/features/service/serviceSlice";
+import { getAllStylist } from "@/services/features/stylist/stylistSlice";
+import { useAppDispatch, useAppSelector } from "@/services/store/store";
+import React, { useEffect, useState } from "react";
 const BookingForm = () => {
+    const dispatch = useAppDispatch();
+    const [showService, setShowService] = useState(false);
+    const [showStylist, setShowStylist] = useState(false);
+
+    const { stylists } = useAppSelector((state) => state.stylists);
+    const { services } = useAppSelector((state) => state.services);
+
+    useEffect(() => {
+        dispatch(getAllService())
+        dispatch(getAllStylist())
+        setShowService(true)
+        setShowStylist(true)
+    }, [dispatch]);
+
+
     const [formData, setFormData] = useState({
         phone: "",
         name: "",
@@ -54,32 +71,38 @@ const BookingForm = () => {
 
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Yêu cầu kĩ thuật viên *</label>
-                <select
-                    name="stylist"
-                    value={formData.stylist}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
-                >
-                    <option value="">Chọn kĩ thuật viên</option>
-                    <option value="stylist1">Stylist 1</option>
-                    <option value="stylist2">Stylist 2</option>
-                </select>
+                {showStylist && (
+                    <select
+                        name="stylist"
+                        value={formData.stylist}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
+                    >
+                        <option value="" disabled selected>Chọn kĩ thuật viên</option>
+                        {stylists && stylists.map((stylist) => (
+                            <option key={stylist.id} value={stylist.id}>{stylist.firstName} {stylist.lastName}</option>
+                        ))}
+                    </select>
+                )}
             </div>
 
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Dịch vụ *</label>
-                <select
-                    name="service"
-                    value={formData.service}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
-                >
-                    <option value="">Chọn dịch vụ</option>
-                    <option value="haircut">Haircut</option>
-                    <option value="coloring">Coloring</option>
-                </select>
+                {showService && (
+                    <select
+                        name="service"
+                        value={formData.service}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
+                    >
+                        <option value="" disabled selected>Chọn dịch vụ</option>
+                        {services && services.map((service) => (
+                            <option key={service.id} value={service.id}>{service.name}</option>
+                        ))}
+                    </select>
+                )}
             </div>
 
             <div className="mb-4">
