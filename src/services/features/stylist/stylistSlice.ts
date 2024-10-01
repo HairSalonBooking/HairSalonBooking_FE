@@ -29,7 +29,7 @@ export const getAllStylist = createAsyncThunk<IStylist[], void>(
                     Authorization: `Bearer ${token}`,
                 },
             });
-            return response.data.stylists;
+            return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
         }
