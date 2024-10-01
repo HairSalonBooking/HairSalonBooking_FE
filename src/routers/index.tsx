@@ -8,6 +8,8 @@ import Home from '@/page/customer/home/HomePage'
 import Profile from '@/page/customer/user/UserProfilePage'
 import BookingPage from '@/page/customer/booking/BookingPage'
 import AboutPage from '@/page/customer/AboutPage'
+import ServicePage from '@/page/customer/service/ServicePage'
+import ContactPage from '@/page/customer/ContactPage'
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalonToken");
@@ -23,6 +25,8 @@ const AppRouter = () => {
                     <Route path='/profile' element={<Profile />} />
                     <Route path='/booking' element={<BookingPage />} />
                     <Route path='/about' element={<AboutPage />} />
+                    <Route path='/services' element={<ServicePage />} />
+                    <Route path='/contact' element={<ContactPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                     <Route path='/' element={<Home />} />
 
@@ -30,6 +34,8 @@ const AppRouter = () => {
             ) : (
                 <>
                     <Route path='/profile' element={<Profile />} />
+                    <Route path='/booking' element={<BookingPage />} />
+                    <Route path='/about' element={<AboutPage />} />
                     {isCustomer && (
 
                         <>

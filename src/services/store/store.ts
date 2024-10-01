@@ -5,11 +5,12 @@ import storage from 'redux-persist/lib/storage';
 import authSlice from '../features/auth/authSlice';
 import userSlice from '../features/user/userSlice';
 import stylistSlice from '../features/stylist/stylistSlice';
+import serviceSlice from '../features/service/serviceSlice';
 
 const presistConfig = {
     key: 'root',
     storage,
-    whitelist: ['auth', 'users', 'stylists'],
+    whitelist: ['auth', 'users', 'stylists', 'services'],
 }
 
 // Create a hook for using TypedUseSelectorHook
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
     auth : authSlice,
     users: userSlice,
     stylists: stylistSlice,
+    services: serviceSlice,
 });
 
 const persistedReducer = persistReducer(presistConfig, rootReducer);
