@@ -8,7 +8,6 @@ export interface IAccount {
     errCode: number,
     success : boolean,
     
-    
 }
 
 export interface IRegister {
@@ -17,5 +16,5 @@ export interface IRegister {
     lastName : string,
     password : string, 
     confirmPassword: string 
-    errCode: number,
+    success : boolean,
 }

@@ -12,7 +12,7 @@ type FormValue = {
     email: string;
     password: string;
     confirmPassword: string;
-    errCode: number;
+    success: boolean;
 }
 
 const RegisterForm: React.FC = () => {
@@ -49,7 +49,7 @@ const RegisterForm: React.FC = () => {
         dispatch(registerAcount(data))
             .unwrap()
             .then((response) => {
-                if (response.errCode === 0) {
+                if (response.success === true) {
                     navigate("/login")
                 } else {
                     navigate("/register")
