@@ -11,7 +11,7 @@ const ForgotPasswordForm: React.FC = () => {
 
     return (
         <>
-            <div className="my-auto mb-auto mt-8 flex flex-col md:mt-[70px] w-[350px] max-w-[450px] mx-auto md:max-w-[450px] lg:mt-[130px] lg:max-w-[450px]">
+            <div className="my-auto mb-auto  flex flex-col  w-[350px] max-w-[450px] mx-auto md:max-w-[450px] lg:max-w-[450px]">
                 <p className="text-[32px] font-bold text-white text-center">Forgot Your Password?</p>
                 <div className="relative my-4 text-center">
                     <div className="relative flex items-center py-1">
