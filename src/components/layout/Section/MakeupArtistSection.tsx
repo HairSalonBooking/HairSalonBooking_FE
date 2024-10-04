@@ -2,8 +2,9 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { NextArrow, PrevArrow } from "@/components/ui/Button/button";
+import { useAppSelector } from "@/services/store/store";
 const MakeupArtistSection = () => {
-
+const {stylists} = useAppSelector ((state) => state.stylists);
 
     const settings = {
         dots: true,
@@ -30,26 +31,14 @@ const MakeupArtistSection = () => {
 
                 <Slider {...settings} className="mt-12">
                     {/* Các slide chứa thông tin về Makeup Artist */}
-                    <div className="shadow-lg p-6 rounded-lg bg-white hover:bg-[#e7cbaa] transition-transform duration-300">
+                 {stylists && stylists.map((stylist, index) => (                    
+                    <div 
+                    key={index}
+                     className="shadow-lg p-6 rounded-lg bg-white hover:bg-[#e7cbaa] transition-transform duration-300">
                         <img src="https://scontent.fsgn5-3.fna.fbcdn.net/v/t39.30808-6/460869808_3762001557399439_4877959658229225624_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeG7ePPB6KZv4DwKgU2W3E-0XfZoyybNOQNd9mjLJs05A-LIsxdHXe-Aq0soB8TtVxPdzXyXVTwFUk_iGL7ZoN2R&_nc_ohc=mgjl8NOfvC8Q7kNvgHjC6Km&_nc_ht=scontent.fsgn5-3.fna&_nc_gid=ASbBL-QNOE_MYmQdLsPCmnQ&oh=00_AYBbsx2POGoaMzuWFT8oGuNlL6j_sGoRjkIWMK4PhXpz8w&oe=66FA854F" alt="Danica Lewis" className="w-full h-80 object-cover rounded-lg mb-4" />
-                        <h3 className="text-2xl font-bold text-black">Phan Văn Hùng</h3>
-                        <p className="text-lg text-gray-600">Hair Stylist</p>
-                    </div>
-                    <div className="shadow-lg p-6 rounded-lg bg-white hover:bg-[#e7cbaa] transition-transform duration-300">
-                        <img src="https://scontent.fsgn5-9.fna.fbcdn.net/v/t39.30808-6/385096114_1456146528569314_2887973884762324767_n.jpg?stp=cp6_dst-jpg&_nc_cat=102&ccb=1-7&_nc_sid=669761&_nc_eui2=AeGmOJwqRUPr_kfAPWqRA1AUlJc-XtpKoeCUlz5e2kqh4DO4jq4-FLiC-I53L2ogxrEPjh-IApHaGP0Tq6HvULSJ&_nc_ohc=h25UiXIkx8EQ7kNvgG470HH&_nc_ht=scontent.fsgn5-9.fna&_nc_gid=AncX01aLKk6Go0NQu_Gm8p1&oh=00_AYDQC7_6u-kKra8fSB5n_D0gzcpn5ytGGt3C7Qz9kP4O9A&oe=66FBE668" alt="Nicole Simon" className="w-full h-80 object-cover rounded-lg mb-4" />
-                        <h3 className="text-2xl font-bold text-black">Nguyễn Thành Tài</h3>
-                        <p className="text-lg text-gray-600">Nail Master</p>
-                    </div>
-                    <div className="shadow-lg p-6 rounded-lg bg-white hover:bg-[#e7cbaa] transition-transform duration-300">
-                        <img src="https://scontent.fsgn5-5.fna.fbcdn.net/v/t1.6435-9/186238741_955115198652876_1730874987415304007_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=7b2446&_nc_eui2=AeHJE17Sa1V-puh38aSaZKktDeX-iIa0t9sN5f6IhrS32_kwNg-cIKVS5wrxhr88CXpcLr9DPpp6_IN9JQJtC59J&_nc_ohc=oUDr5qXNutwQ7kNvgEIiRrQ&_nc_ht=scontent.fsgn5-5.fna&_nc_gid=AvBYN0JP0lBQjmb4shLD7SC&oh=00_AYBPYrGmammeQBmvoKPFW4uADLoiIN0oaHghWkrvVgjiCg&oe=671C0F6E" alt="Cloe Meyer" className="w-full h-80 object-cover rounded-lg mb-4" />
-                        <h3 className="text-2xl font-bold text-black">Cao Khắc Bảo</h3>
-                        <p className="text-lg text-gray-600">Director</p>
-                    </div>
-                    <div className="shadow-lg p-6 rounded-lg bg-white hover:bg-[#e7cbaa] transition-transform duration-300">
-                        <img src="https://scontent.fsgn5-14.fna.fbcdn.net/v/t1.6435-9/82788211_2487531828179758_6297835117356253184_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=dd6889&_nc_eui2=AeGIft2jRIg13AyY2jH3Pv4oQoCuQGTZkhNCgK5AZNmSE2aQibVTuJS45U4YPb52Eyeismk8Wy25Kz7wAiEYNwwP&_nc_ohc=1tgtTHGNXYIQ7kNvgG4rueG&_nc_ht=scontent.fsgn5-14.fna&_nc_gid=Ag1AlvvbuEaVlOTmAzUlDyx&oh=00_AYDSQJ0EHp8x0OKf6fB77g8syCKgU6rTdfAZVJkM8zyQOg&oe=671C0BF0" alt="Rachel Clinton" className="w-full h-80 object-cover rounded-lg mb-4" />
-                        <h3 className="text-2xl font-bold text-black">Vũ Thành Đức</h3>
-                        <p className="text-lg text-gray-600">Hair Stylist</p>
-                    </div>
+                        <h3 className="text-2xl font-bold text-black">{stylist.firstName} {stylist.lastName}</h3>
+                        <p className="text-lg text-gray-600">{stylist.positionId} </p>
+                    </div>))}
                 </Slider>
             </div>
         </section>
