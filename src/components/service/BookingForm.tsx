@@ -2,6 +2,19 @@ import { getAllService } from "@/services/features/service/serviceSlice";
 import { getAllStylist } from "@/services/features/stylist/stylistSlice";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form"; // Import react-hook-form
+
+// Định nghĩa kiểu dữ liệu cho form
+interface FormData {
+    phone: string;
+    name: string;
+    stylist: string;
+    service: string;
+    date: string;
+    time: string;
+    note?: string; // Note có thể không bắt buộc
+}
+
 const BookingForm = () => {
     const dispatch = useAppDispatch();
     const [showService, setShowService] = useState(false);
@@ -10,61 +23,44 @@ const BookingForm = () => {
     const { stylists } = useAppSelector((state) => state.stylists);
     const { services } = useAppSelector((state) => state.services);
 
+    // Sử dụng useForm với kiểu dữ liệu FormData
+    const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>();
+
     useEffect(() => {
-        dispatch(getAllService())
-        dispatch(getAllStylist())
-        setShowService(true)
-        setShowStylist(true)
+        dispatch(getAllService());
+        dispatch(getAllStylist());
+        setShowService(true);
+        setShowStylist(true);
     }, [dispatch]);
 
-
-    const [formData, setFormData] = useState({
-        phone: "",
-        name: "",
-        stylist: "",
-        service: "",
-        date: "",
-        time: "",
-        note: ""
-    });
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("Form Submitted:", formData);
-        // Handle form submission logic here
+    // Xử lý submit với kiểu dữ liệu FormData
+    const onSubmit = (data: FormData) => {
+        console.log(data); // Console log dữ liệu form khi submit
+        // dispatch data ở đây
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-[#201717] p-8 rounded-md shadow-md text-white"> {/* Nền form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-[#201717] p-8 rounded-md shadow-md text-white">
             <p className="text-red-500 font-semibold text-sm mb-4">* Vui lòng nhập thông tin bắt buộc</p>
 
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Số điện thoại *</label>
                 <input
                     type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    required
+                    {...register("phone", { required: true })} // Sử dụng register từ react-hook-form
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
+                {errors.phone && <span className="text-red-500">Số điện thoại là bắt buộc</span>}
             </div>
 
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Họ và tên *</label>
                 <input
                     type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
+                    {...register("name", { required: true })}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
+                {errors.name && <span className="text-red-500">Họ và tên là bắt buộc</span>}
             </div>
 
             <div className="border-t border-zinc-700 my-4"></div>
@@ -73,10 +69,7 @@ const BookingForm = () => {
                 <label className="block text-sm font-bold mb-2">Yêu cầu kĩ thuật viên *</label>
                 {showStylist && (
                     <select
-                        name="stylist"
-                        value={formData.stylist}
-                        onChange={handleInputChange}
-                        required
+                        {...register("stylist", { required: true })}
                         className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                     >
                         <option value="" disabled selected>Chọn kĩ thuật viên</option>
@@ -85,16 +78,14 @@ const BookingForm = () => {
                         ))}
                     </select>
                 )}
+                {errors.stylist && <span className="text-red-500">Kĩ thuật viên là bắt buộc</span>}
             </div>
 
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Dịch vụ *</label>
                 {showService && (
                     <select
-                        name="service"
-                        value={formData.service}
-                        onChange={handleInputChange}
-                        required
+                        {...register("service", { required: true })}
                         className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                     >
                         <option value="" disabled selected>Chọn dịch vụ</option>
@@ -103,18 +94,17 @@ const BookingForm = () => {
                         ))}
                     </select>
                 )}
+                {errors.service && <span className="text-red-500">Dịch vụ là bắt buộc</span>}
             </div>
 
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Ngày đặt lịch *</label>
                 <input
                     type="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleInputChange}
-                    required
+                    {...register("date", { required: true })}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
+                {errors.date && <span className="text-red-500">Ngày đặt lịch là bắt buộc</span>}
             </div>
 
             <div className="mb-4">
@@ -124,22 +114,21 @@ const BookingForm = () => {
                         <button
                             key={time}
                             type="button"
-                            className={`p-3 rounded border ${formData.time === time ? "bg-yellow-500 text-black" : "bg-white text-black"
+                            className={`p-3 rounded border ${watch("time") === time ? "bg-yellow-500 text-black" : "bg-white text-black"
                                 } focus:outline-none hover:bg-yellow-400`}
-                            onClick={() => setFormData({ ...formData, time })}
+                            onClick={() => setValue("time", time)} // Sử dụng setValue để set thời gian
                         >
                             {time}
                         </button>
                     ))}
                 </div>
+                {errors.time && <span className="text-red-500">Khung giờ là bắt buộc</span>}
             </div>
 
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Ghi chú</label>
                 <textarea
-                    name="note"
-                    value={formData.note}
-                    onChange={handleInputChange}
+                    {...register("note")}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
             </div>
