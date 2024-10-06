@@ -23,3 +23,8 @@ export const GET_STYLIST_BY_ID_ENDPOINT = `${BASE_URL}/get-detail-stylist-by-id`
 
 export const GET_SERVICE_ENDPOINT = `${BASE_URL}/get-all-services`;
 export const GET_SERVICE_BY_ID_ENDPOINT = `${BASE_URL}/get-detail-service-by-id`;
+
+
+//allCode
+
+export const GET_ALL_CODE_ENDPOINT = `${BASE_URL}/get-allcode`;
