@@ -6,7 +6,7 @@ export interface IStylist {
     address: string;
     phoneNumber: string | null;
     gender: string;
-    image: string | null;
+    image: string;
     roleId: string;
     positionId: string | null;
     createdAt: string;
