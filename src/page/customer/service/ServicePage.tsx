@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useAppSelector } from "@/services/store/store";
 
 const ServicePage = () => {
-    const {services} = useAppSelector((state) => state.services);
+    const { services } = useAppSelector((state) => state.services);
     // const services = [
     //     {
     //         name: "Nhuộm",
@@ -56,7 +56,7 @@ const ServicePage = () => {
                             <Link to={`/services/${service.name.toLowerCase()}`} key={index}>
                                 <a className="relative group cursor-pointer no-underline">
                                     <img
-                                        src= {"https://lavo.com.vn/wp-content/uploads/2021/07/hap-phuc-hoi-toc-2-1-min.jpg"}
+                                        src={service.image}
                                         alt={service.name}
                                         className="w-full h-64 object-cover rounded-lg shadow-lg transition-transform transform group-hover:scale-105"
                                     />

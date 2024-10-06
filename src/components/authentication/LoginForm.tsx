@@ -31,8 +31,8 @@ const LoginForm = () => {
             .then((response) => {
 
                 const role = response.roleId;
-                if (role === "Admin") {
-                    navigate("/admin-dashboard");
+                if (role === "R2") {
+                    navigate("/service-management");
                 } else if (role === "Staff") {
                     navigate("/product-management");
                 } else if (role === "R4") {

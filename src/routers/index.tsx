@@ -11,11 +11,13 @@ import AboutPage from '@/page/customer/AboutPage'
 import ServicePage from '@/page/customer/service/ServicePage'
 import ContactPage from '@/page/customer/ContactPage'
 import ResetPasswordPage from '@/page/auth/ResetPassWord/ResetPasswordPage'
+import ServiceManagement from '@/page/admin/ServiceManagement/ServiceManagement'
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalonToken");
     const { auth } = useAppSelector((state) => state.auth);
     const isCustomer = auth?.roleId === "R4"
+    const isAdmin = auth?.roleId === "R2"
     return (
         <Routes>
             {token === null ? (
@@ -30,6 +32,8 @@ const AppRouter = () => {
                     <Route path='/contact' element={<ContactPage />} />
                     <Route path="*" element={<Navigate to="/home" replace />} />
                     <Route path='/home' element={<Home />} />
+                    <Route path='/service-management' element={<ServiceManagement />} />
+
 
                 </>
             ) : (
@@ -47,6 +51,14 @@ const AppRouter = () => {
                         <>
                             <Route path='/profile' element={<Profile />} />
                             <Route path='/home' element={<Home />} />
+
+                        </>
+                    )}
+                    {isAdmin && (
+
+                        <>
+                            <Route path='/profile' element={<Profile />} />
+                            <Route path='/service-management' element={<ServiceManagement />} />
 
                         </>
                     )}
