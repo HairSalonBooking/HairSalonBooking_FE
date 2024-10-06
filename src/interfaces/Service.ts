@@ -1,11 +1,9 @@
 export interface IService {
     id: number;
     name: string;
-    descriptionMarkdown: string;
-    descriptionHTML: string;
+    description: string;
     image: string;
-    priceId: string;
+    price: string;
     createdAt: string;
     updatedAt: string;
 }
-
