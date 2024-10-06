@@ -63,7 +63,8 @@ const ServicePage = () => {
                                     {/* Service Name on Image */}
                                     <div className="absolute bottom-2 left-2 text-white font-extrabold tracking-wide">
                                         <h3 className="shadow-md text-2xl">{service.name}</h3>
-                                        <h3 className="shadow-md">{service.descriptionMarkdown}</h3>
+                                        <h3 className="shadow-md text-2xl">{service.price}</h3>
+                                        <h3 className="shadow-md">{service.description}</h3>
                                     </div>
                                 </a>
                             </Link>
