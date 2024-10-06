@@ -35,7 +35,7 @@ const MakeupArtistSection = () => {
                         <div
                             key={index}
                             className="shadow-lg p-6 gap-8 rounded-lg bg-white hover:bg-[#e7cbaa] transition-transform duration-300">
-                            <img src="https://scontent.fsgn5-3.fna.fbcdn.net/v/t39.30808-6/460869808_3762001557399439_4877959658229225624_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeG7ePPB6KZv4DwKgU2W3E-0XfZoyybNOQNd9mjLJs05A-LIsxdHXe-Aq0soB8TtVxPdzXyXVTwFUk_iGL7ZoN2R&_nc_ohc=mgjl8NOfvC8Q7kNvgHjC6Km&_nc_ht=scontent.fsgn5-3.fna&_nc_gid=ASbBL-QNOE_MYmQdLsPCmnQ&oh=00_AYBbsx2POGoaMzuWFT8oGuNlL6j_sGoRjkIWMK4PhXpz8w&oe=66FA854F" alt="Danica Lewis" className="w-full h-80 object-cover rounded-lg mb-4" />
+                            <img src={stylist.image ?? ""} alt="Danica Lewis" className="w-full h-80 object-cover rounded-lg mb-4" />
                             <h3 className="text-2xl font-bold text-black">{stylist.firstName} {stylist.lastName}</h3>
                             <p className="text-lg text-gray-600">{stylist.positionId} </p>
                         </div>))}
