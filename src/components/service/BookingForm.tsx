@@ -11,9 +11,11 @@ interface FormData {
     fullname: string;
     email: string;
     stylistId: string;
+    stylistName: string;
     services: string[];
     date: string;
     timeType: string;
+    timeString: string;
     note?: string;
 }
 
@@ -82,16 +84,28 @@ const BookingForm = () => {
             return;
         }
 
-        const date = new Date(data.date);
-        const timestamp = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+        // Convert date to timestamp (keeping date as timestamp)
+        const date = new Date(data.date).getTime();
+
+        // Convert date and time to formatted string (for timeString)
+        const selectedTime = times?.find(time => time.keyMap === data.timeType);
+        const formattedDate = new Date(data.date).toLocaleDateString('en-GB'); // Format as "DD/MM/YYYY"
+        const timeString = `${formattedDate} - ${selectedTime?.valueEn || ''}`;
+
+        // Get stylist's full name
+        const stylist = stylists?.find(s => s.id === Number(data.stylistId));
+        const stylistName = stylist ? `${stylist.firstName} ${stylist.lastName}` : '';
 
         // Convert serviceIds from string[] to number[]
-        const serviceIds = selectedServices.map(s => Number(s.id)); // Convert to numbers here
+        const serviceIds = selectedServices.map(s => Number(s.id));
 
         const payload = {
             ...data,
-            date: timestamp,
-            serviceIds, // Now this will be an array of numbers
+            date,  // Date as timestamp
+            timeType: selectedTime?.keyMap,  // Time type (keyMap value)
+            timeString,  // Formatted date and time string (e.g., "10/07/2024 - 9PM")
+            stylistName,  // FirstName + LastName
+            serviceIds,
             amount: totalAmount
         };
 
