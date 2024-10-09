@@ -31,7 +31,6 @@ const ServicePage = () => {
     //         image: "https://i.pinimg.com/originals/33/33/43/3333433e712f28c122bd8e9cde8e1eac.png",
     //     },
     // ];
-
     return (
         <>
             <Header />

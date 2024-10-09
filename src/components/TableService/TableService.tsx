@@ -45,29 +45,47 @@ const TableService = () => {
                         <TableHead>Description</TableHead>
                         <TableHead className="text-right">Create At</TableHead>
                         <TableHead className="text-right">Update At</TableHead>
-                        <TableHead>Action</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {services && services.map(service => (
-                        <TableRow key={service.id}>
-                            <TableCell className="font-medium w-[40vh]">{service.name}</TableCell>
-                            <TableCell className="w-[30vh]">{service.price ?? 0}</TableCell>
-                            <TableCell>
-                                {service.description
-                                    ? (service.description.length > 30
-                                        ? `${service.description.slice(0, 30)}...`
-                                        : service.description)
-                                    : "Empty"}
-                            </TableCell>
-                            <TableCell className="text-right">{formatAnyDate(service.createdAt)}</TableCell>
-                            <TableCell className="text-right">{formatAnyDate(service.updatedAt)}</TableCell>
-                            <TableCell className="text-right">
-                                <button className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold">Edit</button>
-                                <button className="border border-slate-600 p-2 rounded-lg text-white bg-red-600 font-bold ml-2">Delete</button>
+                    {services && services.length > 0 ? (
+                        services.map(service => (
+                            service && ( // Ensure service is not null/undefined
+                                <TableRow key={service.id}>
+                                    <TableCell className="font-medium w-[40vh]">
+                                        {service.name || "No Name"}
+                                    </TableCell>
+                                    <TableCell className="w-[30vh]">
+                                        {service.price ?? 0}
+                                    </TableCell>
+                                    <TableCell>
+                                        {service.description
+                                            ? (service.description.length > 30
+                                                ? `${service.description.slice(0, 30)}...`
+                                                : service.description)
+                                            : "Empty"}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {formatAnyDate(service.createdAt)}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        {formatAnyDate(service.updatedAt)}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <button className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold">Edit</button>
+                                        <button className="border border-slate-600 p-2 rounded-lg text-white bg-red-600 font-bold ml-2">Delete</button>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={6} className="text-center">
+                                No services available
                             </TableCell>
                         </TableRow>
-                    ))}
+                    )}
                 </TableBody>
             </Table>
 
