@@ -1,7 +1,8 @@
 import { IService } from "@/interfaces/Service";
-import { GET_SERVICE_BY_ID_ENDPOINT, GET_SERVICE_ENDPOINT } from "@/services/constant/apiConfig";
+import { CREATE_SERVICE_ENDPOINT, GET_SERVICE_BY_ID_ENDPOINT, GET_SERVICE_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 
 type ServiceState = {
@@ -24,10 +25,10 @@ export const getAllService = createAsyncThunk<IService[], void>(
     async (_, thunkAPI) => {
         try {
             const token = sessionStorage.getItem('hairSalonToken');
-            const response = await axiosInstance.get(GET_SERVICE_ENDPOINT,{
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            const response = await axiosInstance.get(GET_SERVICE_ENDPOINT, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             });
             return response.data;
         } catch (error: any) {
@@ -43,17 +44,45 @@ export const getServiceById = createAsyncThunk<IService, { id: number }>(
         try {
             const token = sessionStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(`${GET_SERVICE_BY_ID_ENDPOINT}/${id}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
         }
     }
 );
+
+export const createService = createAsyncThunk<IService, FormData>(
+    'services/createService',
+    async (data, thunkAPI) => {
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.post(CREATE_SERVICE_ENDPOINT, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    // Remove 'Content-Type': 'multipart/form-data' header here
+                },
+            });
+
+            // Check errCode for success instead of response.data.success
+            if (response.data.errCode === 0) {
+                toast.success(`${response.data.errMessage}`);
+            } else {
+                toast.error(`${response.data.errMessage}`);
+            }
+
+            return response.data;
+        } catch (error: any) {
+            toast.error(`${error.response.data.errors}`);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    },
+);
+
 
 export const serviceSlice = createSlice({
     name: "services",
@@ -88,6 +117,21 @@ export const serviceSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
+
+        //createService
+        builder
+            .addCase(createService.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(createService.fulfilled, (state, action) => {
+                state.loading = false;
+                state.services = [...(state.services || []), action.payload];
+            })
+            .addCase(createService.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
+
     },
 });
 

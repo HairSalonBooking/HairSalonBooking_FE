@@ -1,5 +1,5 @@
 import SideBar from "@/components/layout/Sidebar/Sidebar";
-import TableService from "@/components/TableService/TableService";
+import TableStylist from "@/components/TableStylist/TableStylist";
 import { useState } from "react";
 
 const ServiceManagement = () => {
@@ -17,7 +17,7 @@ const ServiceManagement = () => {
             <div
                 className={`transition-all duration-300 ${isSidebarOpen ? 'ml-64' : 'ml-0'} flex-1 mt-8 px-4`}
             >
-                <TableService />
+                <TableStylist />
             </div>
         </div>
     );
