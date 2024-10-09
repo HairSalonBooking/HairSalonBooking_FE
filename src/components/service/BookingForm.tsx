@@ -1,6 +1,9 @@
+import { IBookingRequest } from "@/interfaces/Booking";
+import { ITimeBooking } from "@/interfaces/Time";
+import { customerCreateBooking } from "@/services/features/booking/bookingSlice";
 import { getAllService } from "@/services/features/service/serviceSlice";
 import { getAllStylist } from "@/services/features/stylist/stylistSlice";
-import { getAllTime } from "@/services/features/timeBooking/timeBookingSlice";
+import { getAllTimeByStylist } from "@/services/features/timeBooking/timeBookingSlice";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,7 +11,7 @@ import { toast } from "react-toastify";
 
 interface FormData {
     phone: string;
-    fullname: string;
+    fullName: string;
     email: string;
     stylistId: string;
     stylistName: string;
@@ -17,6 +20,8 @@ interface FormData {
     timeType: string;
     timeString: string;
     note?: string;
+    address: string;
+    selectedGender: string;
 }
 
 const BookingForm = () => {
@@ -25,6 +30,7 @@ const BookingForm = () => {
     const [showStylist, setShowStylist] = useState(false);
     const [selectedServices, setSelectedServices] = useState<{ id: string, price: number }[]>([{ id: "", price: 0 }]);
     const [totalAmount, setTotalAmount] = useState<number>(0);
+    const [availableTimes, setAvailableTimes] = useState<ITimeBooking[]>([]);
 
     const { stylists } = useAppSelector((state) => state.stylists);
     const { services } = useAppSelector((state) => state.services);
@@ -35,10 +41,29 @@ const BookingForm = () => {
     useEffect(() => {
         dispatch(getAllService());
         dispatch(getAllStylist());
-        dispatch(getAllTime());
         setShowService(true);
         setShowStylist(true);
     }, [dispatch]);
+
+    const stylistId = watch("stylistId");
+    const date = watch("date");
+
+
+    useEffect(() => {
+        if (stylistId && date) {
+            const timestamp = new Date(date).getTime();
+
+            dispatch(getAllTimeByStylist({ stylistId: Number(stylistId), date: timestamp }))
+                .unwrap()
+                .then((times) => {
+                    setAvailableTimes(times);
+                })
+                .catch((error) => {
+                    console.error("Lỗi khi lấy thời gian:", error);
+                    setAvailableTimes([]);
+                });
+        }
+    }, [stylistId, date, dispatch]);
 
     // Tính tổng số tiền dựa trên các dịch vụ đã chọn
     const calculateTotalAmount = (selectedServices: { id: string, price: number }[]) => {
@@ -79,11 +104,6 @@ const BookingForm = () => {
             return;
         }
 
-        if (!data.timeType) {
-            toast.error('Vui lòng chọn khung giờ dịch vụ');
-            return;
-        }
-
         // Convert date to timestamp (keeping date as timestamp)
         const date = new Date(data.date).getTime();
 
@@ -106,10 +126,23 @@ const BookingForm = () => {
             timeString,  // Formatted date and time string (e.g., "10/07/2024 - 9PM")
             stylistName,  // FirstName + LastName
             serviceIds,
-            amount: totalAmount
-        };
+            amount: totalAmount,
+            selectedGender: "Nam",
+            address: "Hà Nội",
+        } as IBookingRequest;
 
-        console.log(payload);
+        dispatch(customerCreateBooking(payload))
+            .unwrap()
+            .then((response) => {
+                if (response.errCode === 0) {
+                    toast.success("Booking successfully, please check your email.");
+                } else {
+                    toast.error(response.errMsg); // Hiển thị thông báo lỗi từ backend
+                }
+            })
+            .catch((error) => {
+                toast.error(error.errMsg || 'Đã có lỗi xảy ra trong quá trình đặt lịch.');
+            });
     };
 
     return (
@@ -130,10 +163,10 @@ const BookingForm = () => {
                 <label className="block text-sm font-bold mb-2">Họ và tên *</label>
                 <input
                     type="text"
-                    {...register("fullname", { required: true })}
+                    {...register("fullName", { required: true })}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
-                {errors.fullname && <span className="text-red-500">Họ và tên là bắt buộc</span>}
+                {errors.fullName && <span className="text-red-500">Họ và tên là bắt buộc</span>}
             </div>
 
             <div className="mb-4">
@@ -216,20 +249,24 @@ const BookingForm = () => {
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Chọn khung giờ dịch vụ *</label>
                 <div className="grid grid-cols-4 gap-2">
-                    {times && times.map((timeType, index) => (
-                        <button
-                            key={index}
-                            type="button"
-                            className={`p-3 rounded border ${watch("timeType") === timeType.keyMap.toString() ? "bg-yellow-500 text-black" : "bg-white text-black"
-                                } focus:outline-none hover:bg-yellow-400`}
-                            onClick={() => {
-                                setValue("timeType", timeType.keyMap.toString());
-                                trigger("timeType"); // Kích hoạt validation sau khi chọn khung giờ
-                            }}
-                        >
-                            {timeType.valueEn}
-                        </button>
-                    ))}
+                    {availableTimes.length > 0 ? (
+                        availableTimes.map((timeType, index) => (
+                            <button
+                                key={index}
+                                type="button"
+                                className={`p-3 rounded border ${watch("timeType") === timeType.timeType.toString() ? "bg-yellow-500 text-black" : "bg-white text-black"
+                                    } focus:outline-none hover:bg-yellow-400`}
+                                onClick={() => {
+                                    setValue("timeType", timeType.timeType.toString());
+                                    trigger("timeType"); // Kích hoạt validation sau khi chọn khung giờ
+                                }}
+                            >
+                                {timeType.timeTypeData.valueEn}
+                            </button>
+                        ))
+                    ) : (
+                        <p className="font-semibold text-red-600">Không có khung giờ khả dụng</p>
+                    )}
                 </div>
                 {errors.timeType && <span className="text-red-500">Khung giờ là bắt buộc</span>}
             </div>

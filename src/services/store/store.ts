@@ -7,11 +7,12 @@ import userSlice from '../features/user/userSlice';
 import stylistSlice from '../features/stylist/stylistSlice';
 import serviceSlice from '../features/service/serviceSlice';
 import timeBookingSlice from '../features/timeBooking/timeBookingSlice';
+import bookingSlice from '../features/booking/bookingSlice';
 
 const presistConfig = {
     key: 'root',
     storage,
-    whitelist: ['auth', 'users', 'stylists', 'services', 'times'],
+    whitelist: ['auth', 'users', 'stylists', 'services', 'times', 'bookings'],
 }
 
 // Create a hook for using TypedUseSelectorHook
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
     stylists: stylistSlice,
     services: serviceSlice,
     times: timeBookingSlice,
+    bookings: bookingSlice,
 });
 
 const persistedReducer = persistReducer(presistConfig, rootReducer);
