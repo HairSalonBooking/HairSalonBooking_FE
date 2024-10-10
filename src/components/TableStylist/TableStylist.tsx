@@ -58,7 +58,7 @@ const TableStylist = () => {
                             <TableCell>{stylist.lastName ?? "N/A"}</TableCell>
                             <TableCell>{stylist.email}</TableCell>
                             <TableCell>{stylist.phoneNumber ?? "N/A"}</TableCell>
-                            <TableCell>{stylist.gender}</TableCell>
+                            <TableCell>{stylist.gender ?? "N/A"}</TableCell>
                             <TableCell className="text-right">{formatAnyDate(stylist.createdAt)}</TableCell>
                             <TableCell className="text-right">{formatAnyDate(stylist.updatedAt)}</TableCell>
                             <TableCell className="text-right">
