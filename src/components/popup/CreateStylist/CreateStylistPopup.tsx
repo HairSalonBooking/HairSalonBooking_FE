@@ -1,17 +1,16 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useAppDispatch } from "@/services/store/store"; // Ensure the path is correct
-import { createStylist, getAllStylist } from "@/services/features/stylist/stylistSlice"; // Ensure the correct slice is imported
+import { useAppDispatch } from "@/services/store/store";
+import { createStylist, getAllStylist } from "@/services/features/stylist/stylistSlice";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 type FormStylistData = {
     email: string;
     password: string;
     lastName: string;
     firstName: string;
-    roleId: string;
     phoneNumber: string;
-    image: FileList; // Allowing for an image file
 };
 
 type CreateStylistPopupProps = {
@@ -23,36 +22,24 @@ const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) =>
     const dispatch = useAppDispatch();
     const { register, handleSubmit, formState: { errors } } = useForm<FormStylistData>();
 
+    const [showPassword, setShowPassword] = useState(false);
+
+    // Handler for toggling password visibility
+    const handleShowPass = () => setShowPassword(!showPassword);
+
     const onSubmit = async (data: FormStylistData) => {
-        // Log form data for debugging purposes
-        console.log("Form data:", data);
-
-        // Validate that email is defined
-        if (!data.email) {
-            console.error("Email is undefined");
-            toast.error("Email is required");
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('firstName', data.firstName);
-        formData.append('lastName', data.lastName);
-        formData.append('email', data.email);  // Email should be appended here
-        formData.append('password', data.password);
-        formData.append('phoneNumber', data.phoneNumber);
-        formData.append('roleId', data.roleId);
-
-        // Append image file if provided
-        if (data.image && data.image.length > 0) {
-            formData.append('imageFile', data.image[0]);
-        }
+        const formData = {
+            ...data,
+            roleId: "R3", // Set roleId to "R3" for creating a stylist
+            confirmPassword: data.password, // Assuming confirmPassword is the same as password
+            success: true // Assuming success is a boolean value
+        };
 
         try {
             const result = await dispatch(createStylist(formData));
 
             if (createStylist.fulfilled.match(result)) {
-                await dispatch(getAllStylist()); // Refresh the list after successful creation
-                toast.success("Stylist created successfully");
+                await dispatch(getAllStylist());
                 onClose();
             } else {
                 toast.error("Failed to create stylist");
@@ -112,11 +99,19 @@ const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) =>
                         <label className="block text-gray-700 dark:text-gray-400">
                             Password
                         </label>
-                        <input
-                            type="password"
-                            {...register("password", { required: "Password is required" })}
-                            className="w-full px-3 py-2 mt-1 border rounded-lg dark:bg-gray-700 dark:text-gray-300"
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                {...register("password", { required: "Password is required", minLength: { value: 6, message: "Password must be at least 6 characters" } })}
+                                className="w-full px-3 py-2 mt-1 border rounded-lg dark:bg-gray-700 dark:text-gray-300"
+                            />
+                            <div
+                                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white cursor-pointer text-lg"
+                                onClick={handleShowPass}
+                            >
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </div>
+                        </div>
                         {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
                     </div>
 
@@ -131,20 +126,6 @@ const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) =>
                         />
                         {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>}
                     </div>
-
-                    {/* Image file input for the stylist's profile picture */}
-                    <div className="mb-4">
-                        <label className="block text-gray-700 dark:text-gray-400">Profile Image</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            {...register("image")}
-                            className="w-full px-3 py-2 mt-1 border rounded-lg dark:bg-gray-700 dark:text-gray-300"
-                        />
-                        {errors.image && <p className="text-red-500 text-sm">{errors.image.message}</p>}
-                    </div>
-
-                    <input type="hidden" value="R3" {...register("roleId")} /> {/* Role is fixed as "R3" */}
 
                     <div className="flex justify-between items-center space-y-4 sm:flex sm:space-y-0">
                         <button
