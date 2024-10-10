@@ -1,3 +1,4 @@
+import { IAccount, IRegister } from "@/interfaces/Account";
 import { IStylist } from "@/interfaces/Stylist";
 import { GET_STYLIST_BY_ID_ENDPOINT, GET_STYLIST_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
@@ -55,7 +56,7 @@ export const getStylistById = createAsyncThunk<IStylist, {id:number}>(
     }
 );
 
-export const createStylist = createAsyncThunk<IStylist, FormData>(
+export const createStylist = createAsyncThunk<IAccount, IRegister>(
     "stylists/createStylist",
     async (data, thunkAPI) => {
         try {
@@ -111,9 +112,8 @@ export const stylistSlice = createSlice({
         builder.addCase(createStylist.pending, (state) => {
             state.loading = true;
         });
-        builder.addCase(createStylist.fulfilled, (state, action) => {
+        builder.addCase(createStylist.fulfilled, (state) => {
             state.loading = false;
-            state.stylists = [...(state.stylists || []), action.payload];
         });
         builder.addCase(createStylist.rejected, (state, action) => {
             state.loading = false;
