@@ -94,7 +94,7 @@ export const deleteService = createAsyncThunk<IService, { id: number }>(
                     Authorization: `Bearer ${token}`,
                 },
             });
-            if (response.data.success) {
+            if (response.data.errCode === 0) {
                 toast.success(`${response.data.errMessage}`);
             } else {
                 toast.error(`${response.data.errMessage}`);
