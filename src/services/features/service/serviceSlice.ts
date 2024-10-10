@@ -1,5 +1,5 @@
 import { IService } from "@/interfaces/Service";
-import { CREATE_SERVICE_ENDPOINT, GET_SERVICE_BY_ID_ENDPOINT, GET_SERVICE_ENDPOINT } from "@/services/constant/apiConfig";
+import { CREATE_SERVICE_ENDPOINT, DELETE_SERVICE_ENDPOINT, GET_SERVICE_BY_ID_ENDPOINT, GET_SERVICE_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -83,6 +83,30 @@ export const createService = createAsyncThunk<IService, FormData>(
     },
 );
 
+export const deleteService = createAsyncThunk<IService, { id: number }>(
+    'services/deleteService',
+    async (data, thunkAPI) => {
+        const { id } = data;
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.delete(`${DELETE_SERVICE_ENDPOINT}?id=${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.data.success) {
+                toast.success(`${response.data.errMessage}`);
+            } else {
+                toast.error(`${response.data.errMessage}`);
+            }
+
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    },
+);
+
 
 export const serviceSlice = createSlice({
     name: "services",
@@ -128,6 +152,20 @@ export const serviceSlice = createSlice({
                 state.services = [...(state.services || []), action.payload];
             })
             .addCase(createService.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
+
+        // deleteService
+        builder
+            .addCase(deleteService.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(deleteService.fulfilled, (state, action) => {
+                state.loading = false;
+                state.services = (state.services || []).filter((service) => service.id !== action.payload.id);
+            })
+            .addCase(deleteService.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
