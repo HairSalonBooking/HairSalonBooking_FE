@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Table,
     TableBody,
@@ -8,13 +8,16 @@ import {
     TableHeader,
     TableRow
 } from "@/components/ui/table";
-import { useAppSelector } from "@/services/store/store";
+import { useAppSelector, useAppDispatch } from "@/services/store/store";
 import { formatAnyDate } from "@/utils";
-import CreateServicePopup from "../popup/CreateService/CreateServicePopup";
+import ConfirmDelete from "../popup/ConfirmDelete/ConfirmDelete";
+import { deleteService, getAllService } from "@/services/features/service/serviceSlice";
 
 const TableService = () => {
+    const dispatch = useAppDispatch(); // Khởi tạo dispatch
     const { services } = useAppSelector(state => state.services);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [serviceIdToDelete, setServiceIdToDelete] = useState<number | null>(null); // Thêm kiểu cho ID
 
     const openPopup = () => {
         setIsPopupOpen(true);
@@ -22,6 +25,20 @@ const TableService = () => {
 
     const closePopup = () => {
         setIsPopupOpen(false);
+        setServiceIdToDelete(null); // Reset ID khi đóng popup
+    };
+
+    const handleDeleteClick = (id: number) => {
+        setServiceIdToDelete(id); // Lưu ID dịch vụ cần xóa
+        setIsPopupOpen(true); // Mở popup xác nhận
+    };
+
+    const handleConfirmDelete = async () => {
+        if (serviceIdToDelete !== null) {
+            await dispatch(deleteService({ id: serviceIdToDelete })); // Gọi action xóa dịch vụ
+            dispatch(getAllService()); // Lấy lại danh sách dịch vụ
+            closePopup(); // Đóng popup sau khi thực hiện xóa
+        }
     };
 
     return (
@@ -51,7 +68,7 @@ const TableService = () => {
                 <TableBody>
                     {services && services.length > 0 ? (
                         services.map(service => (
-                            service && ( // Ensure service is not null/undefined
+                            service && (
                                 <TableRow key={service.id}>
                                     <TableCell className="font-medium w-[40vh]">
                                         {service.name || "No Name"}
@@ -74,7 +91,12 @@ const TableService = () => {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <button className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold">Edit</button>
-                                        <button className="border border-slate-600 p-2 rounded-lg text-white bg-red-600 font-bold ml-2">Delete</button>
+                                        <button
+                                            className="border border-slate-600 p-2 rounded-lg text-white bg-red-600 font-bold ml-2"
+                                            onClick={() => handleDeleteClick(service.id)} // Gọi hàm xóa với ID dịch vụ
+                                        >
+                                            Delete
+                                        </button>
                                     </TableCell>
                                 </TableRow>
                             )
@@ -89,8 +111,12 @@ const TableService = () => {
                 </TableBody>
             </Table>
 
-            {/* Popup component */}
-            <CreateServicePopup isOpen={isPopupOpen} onClose={closePopup} />
+            {/* Popup xác nhận xóa */}
+            <ConfirmDelete
+                isOpen={isPopupOpen}
+                onClose={closePopup}
+                onConfirm={handleConfirmDelete}
+            />
         </>
     );
 };
