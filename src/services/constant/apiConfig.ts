@@ -24,6 +24,8 @@ export const GET_STYLIST_BY_ID_ENDPOINT = `${BASE_URL}/get-detail-stylist-by-id`
 export const GET_SERVICE_ENDPOINT = `${BASE_URL}/get-all-services`;
 export const GET_SERVICE_BY_ID_ENDPOINT = `${BASE_URL}/get-detail-service-by-id`;
 export const CREATE_SERVICE_ENDPOINT = `${BASE_URL}/create-service`;
+// export const EDIT_SERVICE_ENDPOINT = `${BASE_URL}/edit-service`;
+export const DELETE_SERVICE_ENDPOINT = `${BASE_URL}/delete-service`;
 
 //allCode
 
