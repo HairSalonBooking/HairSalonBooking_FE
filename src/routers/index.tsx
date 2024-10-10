@@ -24,7 +24,7 @@ const AppRouter = () => {
             {token === null ? (
                 <>
                 
-                Route path='/login' element={<LoginPage />} />
+                <Route path='/login' element={<LoginPage />} />
                     <Route path='/register' element={<RegisterPage />} />
                     <Route path='/forgot-password' element={<ForgotPassWordPage />} />
                     <Route path='/reset-password/:token' element={<ResetPasswordPage />} />
