@@ -48,7 +48,7 @@ const TableStylist = () => {
                         <TableHead>Gender</TableHead>
                         <TableHead className="text-right">Created At</TableHead>
                         <TableHead className="text-right">Updated At</TableHead>
-                        <TableHead>Action</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>

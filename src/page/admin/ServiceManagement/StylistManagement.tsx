@@ -1,3 +1,4 @@
+
 import SideBar from "@/components/layout/Sidebar/Sidebar";
 import TableStylist from "@/components/TableStylist/TableStylist";
 import { useState } from "react";
