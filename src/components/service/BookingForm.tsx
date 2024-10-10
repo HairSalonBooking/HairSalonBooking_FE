@@ -20,8 +20,7 @@ interface FormData {
     timeType: string;
     timeString: string;
     note?: string;
-    address: string;
-    selectedGender: string;
+
 }
 
 const BookingForm = () => {
@@ -48,7 +47,6 @@ const BookingForm = () => {
     const stylistId = watch("stylistId");
     const date = watch("date");
 
-
     useEffect(() => {
         if (stylistId && date) {
             const timestamp = new Date(date).getTime();
@@ -59,19 +57,19 @@ const BookingForm = () => {
                     setAvailableTimes(times);
                 })
                 .catch((error) => {
-                    console.error("Lỗi khi lấy thời gian:", error);
+                    console.error("Error fetching available times:", error);
                     setAvailableTimes([]);
                 });
         }
     }, [stylistId, date, dispatch]);
 
-    // Tính tổng số tiền dựa trên các dịch vụ đã chọn
+    // Calculate total amount based on selected services
     const calculateTotalAmount = (selectedServices: { id: string, price: number }[]) => {
         const amount = selectedServices.reduce((acc, service) => acc + service.price, 0);
         setTotalAmount(amount);
     };
 
-    // Xử lý khi chọn dịch vụ
+    // Handle service selection change
     const handleServiceChange = (index: number, event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedServiceId = Number(event.target.value);
         const service = services?.find((s) => s.id === selectedServiceId);
@@ -83,12 +81,12 @@ const BookingForm = () => {
         }
     };
 
-    // Xử lý thêm ô chọn dịch vụ mới
+    // Add new service field
     const addServiceField = () => {
         setSelectedServices([...selectedServices, { id: "", price: 0 }]);
     };
 
-    // Xóa dịch vụ khỏi danh sách (không thể xóa dịch vụ đầu tiên)
+    // Remove service from the list (cannot remove the first service)
     const removeService = (index: number) => {
         if (index !== 0) {
             const updatedServices = selectedServices.filter((_, i) => i !== index);
@@ -97,19 +95,24 @@ const BookingForm = () => {
         }
     };
 
-    // Xử lý submit với kiểu dữ liệu FormData
+    // Handle form submission
     const onSubmit = (data: FormData) => {
         if (selectedServices.length === 0 || selectedServices[0].id === "") {
-            toast.error('Vui lòng chọn ít nhất một dịch vụ');
+            toast.error('Please select at least one service');
             return;
         }
 
-        // Convert date to timestamp (keeping date as timestamp)
+        if (!data.timeType) {
+            toast.error('Please select a time');
+            return;
+        }
+
+        // Convert date to timestamp
         const date = new Date(data.date).getTime();
 
-        // Convert date and time to formatted string (for timeString)
+        // Format date and time
         const selectedTime = times?.find(time => time.keyMap === data.timeType);
-        const formattedDate = new Date(data.date).toLocaleDateString('en-GB'); // Format as "DD/MM/YYYY"
+        const formattedDate = new Date(data.date).toLocaleDateString('en-GB');
         const timeString = `${formattedDate} - ${selectedTime?.valueEn || ''}`;
 
         // Get stylist's full name
@@ -121,52 +124,51 @@ const BookingForm = () => {
 
         const payload = {
             ...data,
-            date,  // Date as timestamp
-            timeType: selectedTime?.keyMap,  // Time type (keyMap value)
-            timeString,  // Formatted date and time string (e.g., "10/07/2024 - 9PM")
-            stylistName,  // FirstName + LastName
+            date,
+            timeType: selectedTime?.keyMap,
+            timeString,
+            stylistName,
             serviceIds,
             amount: totalAmount,
-            selectedGender: "Nam",
-            address: "Hà Nội",
+
         } as IBookingRequest;
 
         dispatch(customerCreateBooking(payload))
             .unwrap()
             .then((response) => {
                 if (response.errCode === 0) {
-                    toast.success("Booking successfully, please check your email.");
+                    toast.success("Booking successful, please check your email.");
                 } else {
-                    toast.error(response.errMsg); // Hiển thị thông báo lỗi từ backend
+                    toast.error(response.errMsg);
                 }
             })
             .catch((error) => {
-                toast.error(error.errMsg || 'Đã có lỗi xảy ra trong quá trình đặt lịch.');
+                toast.error(error.errMsg || 'An error occurred while booking.');
             });
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="bg-[#201717] p-8 rounded-md shadow-md text-white">
-            <p className="text-red-500 font-semibold text-sm mb-4">* Vui lòng nhập thông tin bắt buộc</p>
+            <p className="text-red-500 font-semibold text-sm mb-4">* Required fields</p>
 
             <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Số điện thoại *</label>
+                <label className="block text-sm font-bold mb-2">Phone Number *</label>
                 <input
                     type="text"
                     {...register("phone", { required: true })}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
-                {errors.phone && <span className="text-red-500">Số điện thoại là bắt buộc</span>}
+                {errors.phone && <span className="text-red-500">Phone number is required</span>}
             </div>
 
             <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Họ và tên *</label>
+                <label className="block text-sm font-bold mb-2">Full Name *</label>
                 <input
                     type="text"
                     {...register("fullName", { required: true })}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
-                {errors.fullName && <span className="text-red-500">Họ và tên là bắt buộc</span>}
+                {errors.fullName && <span className="text-red-500">Full name is required</span>}
             </div>
 
             <div className="mb-4">
@@ -176,29 +178,29 @@ const BookingForm = () => {
                     {...register("email", { required: true })}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
-                {errors.email && <span className="text-red-500">Email là bắt buộc</span>}
+                {errors.email && <span className="text-red-500">Email is required</span>}
             </div>
 
             <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Chọn kĩ thuật viên *</label>
+                <label className="block text-sm font-bold mb-2">Select Stylist *</label>
                 {showStylist && (
                     <select
                         {...register("stylistId", { required: true })}
                         className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                     >
-                        <option value="" disabled selected>Chọn kĩ thuật viên</option>
+                        <option value="" disabled selected>Select a stylist</option>
                         {stylists && stylists.map((stylist) => (
                             <option key={stylist.id} value={stylist.id}>{stylist.firstName} {stylist.lastName}</option>
                         ))}
                     </select>
                 )}
-                {errors.stylistId && <span className="text-red-500">Kĩ thuật viên là bắt buộc</span>}
+                {errors.stylistId && <span className="text-red-500">Stylist is required</span>}
             </div>
 
             <div className="border-t border-zinc-700 my-4"></div>
 
             <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Dịch vụ *</label>
+                <label className="block text-sm font-bold mb-2">Services *</label>
                 {showService ? (
                     selectedServices.map((service, index) => (
                         <div key={index} className="flex items-center mb-2 space-x-2 w-full">
@@ -207,9 +209,9 @@ const BookingForm = () => {
                                 onChange={(event) => handleServiceChange(index, event)}
                                 className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                             >
-                                <option value="" disabled>Chọn dịch vụ</option>
+                                <option value="" disabled>Select a service</option>
                                 {services?.map((service) => (
-                                    <option key={service.id} value={service.id.toString()}>{service.name} - {Number(service.price).toLocaleString()} VND</option>
+                                    <option key={service.id} value={service.id.toString()}>{service.name} - {Number(service.price).toLocaleString()}$</option>
                                 ))}
                             </select>
                             {index !== 0 && (
@@ -224,30 +226,30 @@ const BookingForm = () => {
                         </div>
                     ))
                 ) : (
-                    <p>Đang tải dịch vụ...</p>
+                    <p>Loading services...</p>
                 )}
                 <button
                     type="button"
                     onClick={addServiceField}
                     className="bg-white text-black py-2 px-4 rounded mt-2 hover:bg-gray-200"
                 >
-                    Thêm dịch vụ
+                    Add Service
                 </button>
             </div>
 
             <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Ngày đặt lịch *</label>
+                <label className="block text-sm font-bold mb-2">Booking Date *</label>
                 <input
                     type="date"
                     {...register("date", { required: true })}
                     min={new Date().toISOString().split("T")[0]}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
-                {errors.date && <span className="text-red-500">Ngày đặt lịch là bắt buộc</span>}
+                {errors.date && <span className="text-red-500">Booking date is required</span>}
             </div>
 
             <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Chọn khung giờ dịch vụ *</label>
+                <label className="block text-sm font-bold mb-2">Select Time *</label>
                 <div className="grid grid-cols-4 gap-2">
                     {availableTimes.length > 0 ? (
                         availableTimes.map((timeType, index) => (
@@ -258,21 +260,21 @@ const BookingForm = () => {
                                     } focus:outline-none hover:bg-yellow-400`}
                                 onClick={() => {
                                     setValue("timeType", timeType.timeType.toString());
-                                    trigger("timeType"); // Kích hoạt validation sau khi chọn khung giờ
+                                    trigger("timeType");
                                 }}
                             >
                                 {timeType.timeTypeData.valueEn}
                             </button>
                         ))
                     ) : (
-                        <p className="font-semibold text-red-600">Không có khung giờ khả dụng</p>
+                        <p className="font-semibold text-red-600">No available time slots</p>
                     )}
                 </div>
-                {errors.timeType && <span className="text-red-500">Khung giờ là bắt buộc</span>}
+                {errors.timeType && <span className="text-red-500">Time slot is required</span>}
             </div>
 
             <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Ghi chú</label>
+                <label className="block text-sm font-bold mb-2">Note</label>
                 <textarea
                     {...register("note")}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
@@ -280,11 +282,11 @@ const BookingForm = () => {
             </div>
 
             <div className="mb-4">
-                <p className="text-lg font-bold">Tổng tiền: {totalAmount.toLocaleString()} VND</p>
+                <p className="text-lg font-bold">Total: {totalAmount.toLocaleString()} $</p>
             </div>
 
             <button type="submit" className="bg-yellow-600 text-black py-3 px-4 rounded hover:bg-yellow-500">
-                Đặt lịch
+                Book Appointment
             </button>
         </form>
     );
