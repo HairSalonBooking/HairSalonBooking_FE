@@ -10,35 +10,50 @@ import {
 } from "@/components/ui/table";
 import { useAppSelector, useAppDispatch } from "@/services/store/store";
 import { formatAnyDate } from "@/utils";
-import ConfirmDelete from "../popup/ConfirmDelete/ConfirmDelete";
+import ConfirmDelete from "../popup/ConfirmDelete/ConfirmDelete"; // Import ConfirmDelete component
 import { deleteService, getAllService } from "@/services/features/service/serviceSlice";
+import CreateServicePopup from "../popup/CreateService/CreateServicePopup";
 
 const TableService = () => {
     const dispatch = useAppDispatch(); // Khởi tạo dispatch
     const { services } = useAppSelector(state => state.services);
+
+    // State for delete confirmation popup
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [serviceIdToDelete, setServiceIdToDelete] = useState<number | null>(null); // Thêm kiểu cho ID
+    const [serviceIdToDelete, setServiceIdToDelete] = useState<number | null>(null);
 
-    const openPopup = () => {
-        setIsPopupOpen(true);
-    };
+    // State for create service popup
+    const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
 
-    const closePopup = () => {
+    // Close delete confirmation popup
+    const closeDeletePopup = () => {
         setIsPopupOpen(false);
-        setServiceIdToDelete(null); // Reset ID khi đóng popup
+        setServiceIdToDelete(null); // Reset ID when popup is closed
     };
 
+    // Handle delete button click
     const handleDeleteClick = (id: number) => {
-        setServiceIdToDelete(id); // Lưu ID dịch vụ cần xóa
-        setIsPopupOpen(true); // Mở popup xác nhận
+        setServiceIdToDelete(id); // Store the service ID to delete
+        setIsPopupOpen(true); // Open the delete confirmation popup
     };
 
+    // Confirm and execute service deletion
     const handleConfirmDelete = async () => {
         if (serviceIdToDelete !== null) {
-            await dispatch(deleteService({ id: serviceIdToDelete })); // Gọi action xóa dịch vụ
-            dispatch(getAllService()); // Lấy lại danh sách dịch vụ
-            closePopup(); // Đóng popup sau khi thực hiện xóa
+            await dispatch(deleteService({ id: serviceIdToDelete }));
+            dispatch(getAllService()); // Refresh the list of services after deletion
+            closeDeletePopup(); // Close the popup
         }
+    };
+
+    // Open create service popup
+    const openCreatePopup = () => {
+        setIsCreatePopupOpen(true);
+    };
+
+    // Close create service popup
+    const closeCreatePopup = () => {
+        setIsCreatePopupOpen(false);
     };
 
     return (
@@ -47,14 +62,14 @@ const TableService = () => {
                 <h2 className="font-bold text-xl">List Service Management</h2>
                 <button
                     className="border border-slate-600 p-2 rounded-lg text-white bg-green-600 font-bold"
-                    onClick={openPopup}
+                    onClick={openCreatePopup} // Open create service form
                 >
                     Create Service
                 </button>
             </div>
 
             <Table>
-                <TableCaption>A list of your recent invoices.</TableCaption>
+                <TableCaption>A list of your recent services.</TableCaption>
                 <TableHeader>
                     <TableRow>
                         <TableHead className="w-[150px]">Name</TableHead>
@@ -93,7 +108,7 @@ const TableService = () => {
                                         <button className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold">Edit</button>
                                         <button
                                             className="border border-slate-600 p-2 rounded-lg text-white bg-red-600 font-bold ml-2"
-                                            onClick={() => handleDeleteClick(service.id)} // Gọi hàm xóa với ID dịch vụ
+                                            onClick={() => handleDeleteClick(service.id)} // Trigger delete
                                         >
                                             Delete
                                         </button>
@@ -111,11 +126,17 @@ const TableService = () => {
                 </TableBody>
             </Table>
 
-            {/* Popup xác nhận xóa */}
+            {/* Confirm Delete Popup */}
             <ConfirmDelete
                 isOpen={isPopupOpen}
-                onClose={closePopup}
+                onClose={closeDeletePopup}
                 onConfirm={handleConfirmDelete}
+            />
+
+            {/* Create Service Popup */}
+            <CreateServicePopup
+                isOpen={isCreatePopupOpen}
+                onClose={closeCreatePopup}
             />
         </>
     );
