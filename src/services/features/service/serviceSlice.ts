@@ -1,5 +1,5 @@
 import { IService } from "@/interfaces/Service";
-import { CREATE_SERVICE_ENDPOINT, DELETE_SERVICE_ENDPOINT, GET_SERVICE_BY_ID_ENDPOINT, GET_SERVICE_ENDPOINT } from "@/services/constant/apiConfig";
+import { CREATE_SERVICE_ENDPOINT, DELETE_SERVICE_ENDPOINT, EDIT_SERVICE_ENDPOINT, GET_SERVICE_BY_ID_ENDPOINT, GET_SERVICE_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -107,6 +107,31 @@ export const deleteService = createAsyncThunk<IService, { id: number }>(
     },
 );
 
+export const updateService = createAsyncThunk<IService, { data: FormData }>(
+    'services/updateService',
+    async (data, thunkAPI) => {
+        const { data: formData } = data;
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.put(`${EDIT_SERVICE_ENDPOINT}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            if (response.data.success) {
+                toast.success(`${response.data.errMessage}`);
+            } else {
+                toast.error(`${response.data.errMessage}`);
+            }
+            return response.data;
+        } catch (error: any) {
+            toast.error(`${error.response.data.errors}`);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    },
+);
+
 
 export const serviceSlice = createSlice({
     name: "services",
@@ -166,6 +191,25 @@ export const serviceSlice = createSlice({
                 state.services = (state.services || []).filter((service) => service.id !== action.payload.id);
             })
             .addCase(deleteService.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
+
+        // updateService
+        builder
+            .addCase(updateService.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(updateService.fulfilled, (state, action) => {
+                state.loading = false;
+                state.services = (state.services || []).map((service) => {
+                    if (service.id === action.payload.id) {
+                        return action.payload;
+                    }
+                    return service;
+                });
+            })
+            .addCase(updateService.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
