@@ -12,57 +12,58 @@ import { useAppSelector, useAppDispatch } from "@/services/store/store";
 import { formatAnyDate } from "@/utils";
 import ConfirmDelete from "../popup/ConfirmDelete/ConfirmDelete"; // Import ConfirmDelete component
 import { deleteService, getAllService } from "@/services/features/service/serviceSlice";
+import UpdateServicePopup from "../popup/UpdateService/UpdateService";
+import { IService } from "@/interfaces/Service";
 import CreateServicePopup from "../popup/CreateService/CreateServicePopup";
 
 const TableService = () => {
-    const dispatch = useAppDispatch(); // Khởi tạo dispatch
+    const dispatch = useAppDispatch();
     const { services } = useAppSelector(state => state.services);
 
     // State for delete confirmation popup
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State to control edit popup
     const [serviceIdToDelete, setServiceIdToDelete] = useState<number | null>(null);
-
-    // State for create service popup
+    const [serviceToEdit, setServiceToEdit] = useState<any>(null); // State to store the service to edit
     const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
 
     // Close delete confirmation popup
     const closeDeletePopup = () => {
         setIsPopupOpen(false);
-        setServiceIdToDelete(null); // Reset ID when popup is closed
+        setServiceIdToDelete(null);
+    };
+
+    const openEditPopup = (service: IService) => {
+        setServiceToEdit(service); // Set the service to be edited
+        setIsEditPopupOpen(true); // Open the edit popup
+    };
+
+    const closeEditPopup = () => {
+        setIsEditPopupOpen(false);
+        setServiceToEdit(null);
     };
 
     // Handle delete button click
     const handleDeleteClick = (id: number) => {
-        setServiceIdToDelete(id); // Store the service ID to delete
-        setIsPopupOpen(true); // Open the delete confirmation popup
+        setServiceIdToDelete(id);
+        setIsPopupOpen(true);
     };
 
     // Confirm and execute service deletion
     const handleConfirmDelete = async () => {
         if (serviceIdToDelete !== null) {
             await dispatch(deleteService({ id: serviceIdToDelete }));
-            dispatch(getAllService()); // Refresh the list of services after deletion
-            closeDeletePopup(); // Close the popup
+            dispatch(getAllService());
+            closeDeletePopup();
         }
     };
-
-    // Open create service popup
-    const openCreatePopup = () => {
-        setIsCreatePopupOpen(true);
-    };
-
-    // Close create service popup
-    const closeCreatePopup = () => {
-        setIsCreatePopupOpen(false);
-    };
-
     return (
         <>
             <div className="my-6 flex flex-row justify-between items-center">
                 <h2 className="font-bold text-xl">List Service Management</h2>
                 <button
                     className="border border-slate-600 p-2 rounded-lg text-white bg-green-600 font-bold"
-                    onClick={openCreatePopup} // Open create service form
+                    onClick={() => setIsCreatePopupOpen(true)} // Sử dụng trạng thái riêng
                 >
                     Create Service
                 </button>
@@ -105,10 +106,15 @@ const TableService = () => {
                                         {formatAnyDate(service.updatedAt)}
                                     </TableCell>
                                     <TableCell className="text-right">
-                                        <button className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold">Edit</button>
+                                        <button
+                                            className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold"
+                                            onClick={() => openEditPopup(service)} // Open edit modal with service details
+                                        >
+                                            Edit
+                                        </button>
                                         <button
                                             className="border border-slate-600 p-2 rounded-lg text-white bg-red-600 font-bold ml-2"
-                                            onClick={() => handleDeleteClick(service.id)} // Trigger delete
+                                            onClick={() => handleDeleteClick(service.id)}
                                         >
                                             Delete
                                         </button>
@@ -126,18 +132,26 @@ const TableService = () => {
                 </TableBody>
             </Table>
 
-            {/* Confirm Delete Popup */}
+            <CreateServicePopup
+                isOpen={isCreatePopupOpen}
+                onClose={() => setIsCreatePopupOpen(false)}
+            />
+
+            {/* Popup xác nhận xóa */}
             <ConfirmDelete
                 isOpen={isPopupOpen}
                 onClose={closeDeletePopup}
                 onConfirm={handleConfirmDelete}
             />
 
-            {/* Create Service Popup */}
-            <CreateServicePopup
-                isOpen={isCreatePopupOpen}
-                onClose={closeCreatePopup}
-            />
+            {/* Update service modal */}
+            {serviceToEdit && (
+                <UpdateServicePopup
+                    isOpen={isEditPopupOpen}
+                    onClose={closeEditPopup}
+                    service={serviceToEdit} // Pass the specific service to edit
+                />
+            )}
         </>
     );
 };

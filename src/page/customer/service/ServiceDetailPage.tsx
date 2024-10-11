@@ -32,21 +32,8 @@ const ServiceDetailPage = () => {
     return (
         <>
             <Header />
-            <div className="bg-gray-900 text-white py-20 flex items-center justify-center" style={{ minHeight: '75vh' }}>
+            <div className="bg-gray-900 text-white py-20">
                 <div className="container mx-auto px-4 lg:px-20">
-                    {/* Breadcrumb */}
-                    <nav className="text-sm mb-5 flex justify-center">
-                        <a href="/home" className="text-white hover:text-yellow-500">
-                            Trang chủ
-                        </a>
-                        <span className="mx-2 text-gray-400">/</span>
-                        <a href="/services" className="text-gray-400">
-                            Dịch Vụ
-                        </a>
-                        <span className="mx-2 text-gray-400">/</span>
-                        <span className="text-yellow-500">{service.name}</span>
-                    </nav>
-                    {/* Content */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                         <div className="flex justify-center">
                             <img
