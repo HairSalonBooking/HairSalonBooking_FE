@@ -13,6 +13,7 @@ import ContactPage from '@/page/customer/ContactPage'
 import ResetPasswordPage from '@/page/auth/ResetPassWord/ResetPasswordPage'
 import ServiceManagement from '@/page/admin/ServiceManagement/ServiceManagement'
 import StylistManagement from '@/page/admin/ServiceManagement/StylistManagement'
+import ServiceDetailPage from '@/page/customer/service/ServiceDetailPage'
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalonToken");
@@ -23,14 +24,15 @@ const AppRouter = () => {
         <Routes>
             {token === null ? (
                 <>
-                
-                <Route path='/login' element={<LoginPage />} />
+
+                    <Route path='/login' element={<LoginPage />} />
                     <Route path='/register' element={<RegisterPage />} />
                     <Route path='/forgot-password' element={<ForgotPassWordPage />} />
                     <Route path='/reset-password/:token' element={<ResetPasswordPage />} />
                     <Route path='/booking' element={<BookingPage />} />
                     <Route path='/about' element={<AboutPage />} />
                     <Route path='/services' element={<ServicePage />} />
+                    <Route path='/services/:id' element={<ServiceDetailPage />} />
                     <Route path='/contact' element={<ContactPage />} />
                     <Route path="*" element={<Navigate to="/home" replace />} />
                     <Route path='/home' element={<Home />} />
