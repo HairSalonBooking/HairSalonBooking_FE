@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Table,
     TableBody,
@@ -8,12 +8,15 @@ import {
     TableHeader,
     TableRow
 } from "@/components/ui/table";
-import { useAppSelector } from "@/services/store/store";
+import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import { formatAnyDate } from "@/utils";
 import { IStylist } from "@/interfaces/Stylist";
 import CreateStylistPopup from "../popup/CreateStylist/CreateStylistPopup";
+import { getAllStylist } from "@/services/features/stylist/stylistSlice";
 
 const TableStylist = () => {
+    const dispatch = useAppDispatch();
+
     const { stylists } = useAppSelector(state => state.stylists); // Lấy dữ liệu stylist từ store
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -24,6 +27,9 @@ const TableStylist = () => {
     const closePopup = () => {
         setIsPopupOpen(false);
     };
+    useEffect(() => {
+        dispatch(getAllStylist());
+    }, [dispatch]);
 
     return (
         <>

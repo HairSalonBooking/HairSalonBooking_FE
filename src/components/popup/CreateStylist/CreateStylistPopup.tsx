@@ -20,8 +20,7 @@ type CreateStylistPopupProps = {
 
 const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) => {
     const dispatch = useAppDispatch();
-    const { register, handleSubmit, formState: { errors } } = useForm<FormStylistData>();
-
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormStylistData>(); // Added reset here
     const [showPassword, setShowPassword] = useState(false);
 
     // Handler for toggling password visibility
@@ -41,6 +40,7 @@ const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) =>
             if (createStylist.fulfilled.match(result)) {
                 await dispatch(getAllStylist());
                 onClose();
+                reset();  // Reset the form after submission
             } else {
                 toast.error("Failed to create stylist");
             }
@@ -48,6 +48,11 @@ const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) =>
             console.error("Error creating stylist:", error);
             toast.error("Error creating stylist");
         }
+    };
+
+    const handleClose = () => {
+        reset();  // Reset form when the popup is closed
+        onClose();
     };
 
     return (
@@ -130,7 +135,7 @@ const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) =>
                     <div className="flex justify-between items-center space-y-4 sm:flex sm:space-y-0">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}  // Use handleClose here
                             className="py-2 px-4 w-full text-sm font-medium text-white bg-red-500 rounded-lg border border-gray-200 sm:w-auto hover:bg-red-700 focus:ring-4 focus:outline-none"
                         >
                             Cancel

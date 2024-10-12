@@ -48,7 +48,7 @@ const UpdateServicePopup: FC<UpdateServicePopupProps> = ({ isOpen, onClose, serv
         formData.append('description', data.description);
 
         if (data.image && typeof data.image !== 'string' && data.image.length > 0) {
-            formData.append('image', data.image[0]);  // Append new image if selected
+            formData.append('imageFile', data.image[0]);  // Key is 'imageFile' just like in Postman
         }
 
         formData.append('price', data.price.toString());

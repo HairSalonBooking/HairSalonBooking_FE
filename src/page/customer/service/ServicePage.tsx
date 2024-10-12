@@ -1,10 +1,18 @@
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import Header from "@/components/layout/Header/Header";
-import Footer from "@/components/layout/Footer/Footer";
 import { Link } from "react-router-dom";
-import { useAppSelector } from "@/services/store/store";
+import Footer from "@/components/layout/Footer/Footer";
+import { getAllService } from "@/services/features/service/serviceSlice";
 
 const ServicePage = () => {
+    const dispatch = useAppDispatch();
     const { services } = useAppSelector((state) => state.services);
+
+    // Gọi API để lấy dịch vụ mỗi khi trang reload
+    useEffect(() => {
+        dispatch(getAllService());
+    }, [dispatch]);
 
     return (
         <>
@@ -37,7 +45,6 @@ const ServicePage = () => {
                                     <div className="absolute bottom-2 left-2 text-white font-extrabold tracking-wide">
                                         <h3 className="shadow-md text-2xl">{service.name}</h3>
                                         <h3 className="shadow-md text-2xl">{service.price} $</h3>
-                                        <h3 className="shadow-md">{service.description}</h3>
                                     </div>
                                 </div>
                             </Link>

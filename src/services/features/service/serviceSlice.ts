@@ -119,7 +119,7 @@ export const updateService = createAsyncThunk<IService, { data: FormData }>(
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            if (response.data.success) {
+            if (response.data.errCode === 0) {
                 toast.success(`${response.data.errMessage}`);
             } else {
                 toast.error(`${response.data.errMessage}`);

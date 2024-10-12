@@ -17,7 +17,7 @@ type CreateServicePopupProps = {
 
 const CreateServicePopup: FC<CreateServicePopupProps> = ({ isOpen, onClose }) => {
     const dispatch = useAppDispatch();
-    const { register, handleSubmit, formState: { errors } } = useForm<FormServiceData>();
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormServiceData>();
 
     const onSubmit = async (data: FormServiceData) => {
         const formData = new FormData();
@@ -44,9 +44,13 @@ const CreateServicePopup: FC<CreateServicePopupProps> = ({ isOpen, onClose }) =>
         if (createService.fulfilled.match(result)) {
             await dispatch(getAllService());
             onClose();
+            reset(); // Reset form after successful submission
         }
     };
-
+    const handleClose = () => {
+        reset();  // Reset form when the popup is closed
+        onClose();
+    };
     return (
         <div
             id="info-popup"
@@ -104,9 +108,10 @@ const CreateServicePopup: FC<CreateServicePopupProps> = ({ isOpen, onClose }) =>
                     <div className="flex justify-between items-center space-y-4 sm:flex sm:space-y-0">
                         <button
                             type="button"
-                            onClick={onClose}
+                            onClick={handleClose}
                             className="py-2 px-4 w-full text-sm font-medium text-white bg-red-500 rounded-lg border border-gray-200 sm:w-auto hover:bg-red-700 focus:ring-4 focus:outline-none"
                         >
+
                             Cancel
                         </button>
                         <button

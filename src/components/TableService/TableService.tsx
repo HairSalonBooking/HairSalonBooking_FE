@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Table,
     TableBody,
@@ -57,6 +57,10 @@ const TableService = () => {
             closeDeletePopup();
         }
     };
+
+    useEffect(() => {
+        dispatch(getAllService());
+    }, [dispatch]);
     return (
         <>
             <div className="my-6 flex flex-row justify-between items-center">
