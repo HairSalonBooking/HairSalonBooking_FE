@@ -54,6 +54,7 @@ const BookingForm = () => {
             dispatch(getAllTimeByStylist({ stylistId: Number(stylistId), date: timestamp }))
                 .unwrap()
                 .then((times) => {
+                    console.log("Fetched available times:", times); // Log the times for debugging
                     setAvailableTimes(times);
                 })
                 .catch((error) => {
@@ -260,7 +261,7 @@ const BookingForm = () => {
                                 className={`p-3 rounded border ${watch("timeType") === timeType.timeType.toString() ? "bg-yellow-500 text-black" : "bg-white text-black"
                                     } focus:outline-none hover:bg-yellow-400`}
                                 onClick={() => {
-                                    setValue("timeType", timeType.timeType.toString());
+                                    setValue("timeType", timeType.timeType.toString()); // Make sure this sets the timeType correctly
                                     trigger("timeType");
                                 }}
                             >
@@ -271,6 +272,7 @@ const BookingForm = () => {
                         <p className="font-semibold text-red-600">No available time slots</p>
                     )}
                 </div>
+
                 {errors.timeType && <span className="text-red-500">Time slot is required</span>}
             </div>
 
