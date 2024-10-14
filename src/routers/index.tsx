@@ -16,6 +16,7 @@ import StylistManagement from '@/page/admin/StylistManagement/StylistManagement'
 import ServiceDetailPage from '@/page/customer/service/ServiceDetailPage'
 import UserManagement from '@/page/admin/UserManagement/UserManagement'
 import PaymentSuccessPage from '@/page/payment/PaymentSuccessPage'
+import NotFoundPage from '@/page/NotFoundPage'
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalonToken");
@@ -27,6 +28,7 @@ const AppRouter = () => {
             {token === null ? (
                 <>
                     <Route path='/login' element={<LoginPage />} />
+
                     <Route path='/register' element={<RegisterPage />} />
                     <Route path='/forgot-password' element={<ForgotPassWordPage />} />
                     <Route path='/reset-password/:token' element={<ResetPasswordPage />} />
@@ -35,12 +37,10 @@ const AppRouter = () => {
                     <Route path='/services' element={<ServicePage />} />
                     <Route path='/services/:id' element={<ServiceDetailPage />} />
                     <Route path='/contact' element={<ContactPage />} />
-                    <Route path="*" element={<Navigate to="/home" replace />} />
+                    <Route path="*" element={<Navigate to="/not-found" replace />} />
                     <Route path='/home' element={<Home />} />
                     <Route path='/payment/success' element={<PaymentSuccessPage />} />
-                    <Route path='/service-management' element={<ServiceManagement />} />
-                    <Route path='/stylist-management' element={<StylistManagement />} />
-                    <Route path='/users-management' element={<UserManagement />} />
+                    <Route path="/not-found" element={<NotFoundPage />} />
                 </>
             ) : (
                 <>
