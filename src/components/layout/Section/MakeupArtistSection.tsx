@@ -2,19 +2,25 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { NextArrow, PrevArrow } from "@/components/ui/Button/button";
-import { useAppSelector } from "@/services/store/store";
+import { useAppDispatch, useAppSelector } from "@/services/store/store";
+import { useEffect } from "react";
+import { getAllStylist } from "@/services/features/stylist/stylistSlice";
 const MakeupArtistSection = () => {
+    const dispatch = useAppDispatch();
     const { stylists } = useAppSelector((state) => state.stylists);
 
     const settings = {
         dots: true,
-        infinite: true,
+        infinite: false,
         speed: 500,
         slidesToShow: 3,
         slidesToScroll: 1,
         nextArrow: <NextArrow />, // Sử dụng nút tùy chỉnh
         prevArrow: <PrevArrow />, // Sử dụng nút tùy chỉnh
     };
+    useEffect(() => {
+        dispatch(getAllStylist());
+    }, [dispatch]);
 
     return (
         <section className="py-16 bg-[#f7f3e9]">

@@ -29,6 +29,7 @@ export const getAllTime = createAsyncThunk<ITime[], void>(
                     Authorization: `Bearer ${token}`,
                 },
             });
+            
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");

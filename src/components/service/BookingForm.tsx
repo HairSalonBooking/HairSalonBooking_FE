@@ -33,8 +33,6 @@ const BookingForm = () => {
 
     const { stylists } = useAppSelector((state) => state.stylists);
     const { services } = useAppSelector((state) => state.services);
-    const { times } = useAppSelector((state) => state.times);
-
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>();
 
     useEffect(() => {
@@ -54,7 +52,6 @@ const BookingForm = () => {
             dispatch(getAllTimeByStylist({ stylistId: Number(stylistId), date: timestamp }))
                 .unwrap()
                 .then((times) => {
-                    console.log("Fetched available times:", times); // Log the times for debugging
                     setAvailableTimes(times);
                 })
                 .catch((error) => {
@@ -108,31 +105,33 @@ const BookingForm = () => {
             return;
         }
 
-        // Chuyển đổi ngày sang timestamp
+        // Convert date to timestamp
         const date = new Date(data.date).getTime();
 
-        // Định dạng lại ngày và thời gian sang giờ Việt Nam
-        const selectedTime = times?.find(time => time.keyMap === data.timeType);
+        // Get the selected time type and extract valueVi for Vietnamese display
+        const selectedTime = availableTimes?.find(time => time.timeType === data.timeType);
+        const timeValueVi = selectedTime?.timeTypeData?.valueVi || ''; // Extract valueVi
+
+        // Format the date and time string for display in Vietnamese
         const formattedDate = new Date(data.date).toLocaleDateString('vi-VN', {
             timeZone: 'Asia/Ho_Chi_Minh',
         });
-        const timeString = `${formattedDate} - ${selectedTime?.valueVi || ''}`; // valueVi cho tiếng Việt
+        const timeString = `${formattedDate} - ${timeValueVi}`; // Set timeString using valueVi
 
-        // Lấy tên đầy đủ của stylist
+        // Get the full name of the stylist
         const stylist = stylists?.find(s => s.id === Number(data.stylistId));
         const stylistName = stylist ? `${stylist.firstName} ${stylist.lastName}` : '';
 
-        // Chuyển đổi serviceIds từ string[] sang number[]
+        // Convert serviceIds from string[] to number[]
         const serviceIds = selectedServices.map(s => Number(s.id));
 
         const payload = {
             ...data,
             date,
-            timeString,
+            timeString, // Use the formatted time string
             stylistName,
             serviceIds,
             amount: totalAmount,
-
         } as IBookingRequest;
 
         dispatch(customerCreateBooking(payload))
@@ -254,9 +253,7 @@ const BookingForm = () => {
                 <div className="grid grid-cols-4 gap-2">
                     {availableTimes.length > 0 ? (
                         availableTimes.map((timeType, index) => {
-                            console.log("Time type:", timeType);
                             return (
-
                                 <button
                                     key={index}
                                     type="button"
