@@ -3,7 +3,7 @@ import { ITimeBooking } from "@/interfaces/Time";
 import { customerCreateBooking } from "@/services/features/booking/bookingSlice";
 import { getAllService } from "@/services/features/service/serviceSlice";
 import { getAllStylist } from "@/services/features/stylist/stylistSlice";
-import { getAllTimeByStylist } from "@/services/features/timeBooking/timeBookingSlice";
+import { getAllTime, getAllTimeByStylist } from "@/services/features/timeBooking/timeBookingSlice";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -40,6 +40,7 @@ const BookingForm = () => {
     useEffect(() => {
         dispatch(getAllService());
         dispatch(getAllStylist());
+        dispatch(getAllTime());
         setShowService(true);
         setShowStylist(true);
     }, [dispatch]);
@@ -54,11 +55,9 @@ const BookingForm = () => {
             dispatch(getAllTimeByStylist({ stylistId: Number(stylistId), date: timestamp }))
                 .unwrap()
                 .then((times) => {
-                    console.log("Fetched available times:", times); // Log the times for debugging
                     setAvailableTimes(times);
                 })
                 .catch((error) => {
-                    console.error("Error fetching available times:", error);
                     setAvailableTimes([]);
                 });
         }
@@ -254,9 +253,7 @@ const BookingForm = () => {
                 <div className="grid grid-cols-4 gap-2">
                     {availableTimes.length > 0 ? (
                         availableTimes.map((timeType, index) => {
-                            console.log("Time type:", timeType);
                             return (
-
                                 <button
                                     key={index}
                                     type="button"
