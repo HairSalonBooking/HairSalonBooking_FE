@@ -7,7 +7,6 @@ export interface IBooking {
     date: string;
     timeType: string;
     token: string;
-    ServiceID: number | null;
     createdAt: string;
     updatedAt: string;
     customerData: ICustomerData;
