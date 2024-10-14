@@ -12,8 +12,9 @@ import ServicePage from '@/page/customer/service/ServicePage'
 import ContactPage from '@/page/customer/ContactPage'
 import ResetPasswordPage from '@/page/auth/ResetPassWord/ResetPasswordPage'
 import ServiceManagement from '@/page/admin/ServiceManagement/ServiceManagement'
-import StylistManagement from '@/page/admin/ServiceManagement/StylistManagement'
+import StylistManagement from '@/page/admin/StylistManagement/StylistManagement'
 import ServiceDetailPage from '@/page/customer/service/ServiceDetailPage'
+import UserManagement from '@/page/admin/UserManagement/UserManagement'
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalonToken");
@@ -24,7 +25,6 @@ const AppRouter = () => {
         <Routes>
             {token === null ? (
                 <>
-
                     <Route path='/login' element={<LoginPage />} />
                     <Route path='/register' element={<RegisterPage />} />
                     <Route path='/forgot-password' element={<ForgotPassWordPage />} />
@@ -38,9 +38,7 @@ const AppRouter = () => {
                     <Route path='/home' element={<Home />} />
                     <Route path='/service-management' element={<ServiceManagement />} />
                     <Route path='/stylist-management' element={<StylistManagement />} />
-
-
-
+                    <Route path='/users-management' element={<UserManagement />} />
                 </>
             ) : (
                 <>
@@ -50,29 +48,22 @@ const AppRouter = () => {
                     <Route path='/services' element={<ServicePage />} />
                     <Route path='/contact' element={<ContactPage />} />
                     <Route path='/about' element={<AboutPage />} />
-
-
                     {isCustomer && (
-
                         <>
                             <Route path='/profile' element={<Profile />} />
                             <Route path='/home' element={<Home />} />
-
                         </>
                     )}
                     {isAdmin && (
-
                         <>
                             <Route path='/profile' element={<Profile />} />
                             <Route path='/service-management' element={<ServiceManagement />} />
                             <Route path='/stylist-management' element={<StylistManagement />} />
-
-
+                            <Route path='/users-management' element={<UserManagement />} />
                         </>
                     )}
                 </>
             )}
-
         </Routes>
     )
 }
