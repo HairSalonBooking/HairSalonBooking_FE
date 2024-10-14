@@ -111,7 +111,7 @@ const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) =>
                                 className="w-full px-3 py-2 mt-1 border rounded-lg dark:bg-gray-700 dark:text-gray-300"
                             />
                             <div
-                                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white cursor-pointer text-lg"
+                                className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer text-lg"
                                 onClick={handleShowPass}
                             >
                                 {showPassword ? <FaEyeSlash /> : <FaEye />}

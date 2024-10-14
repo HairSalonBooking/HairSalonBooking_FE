@@ -128,7 +128,6 @@ const BookingForm = () => {
         const payload = {
             ...data,
             date,
-            timeType: selectedTime?.keyMap,
             timeString,
             stylistName,
             serviceIds,
