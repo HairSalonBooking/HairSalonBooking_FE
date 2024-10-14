@@ -28,7 +28,6 @@ const AppRouter = () => {
             {token === null ? (
                 <>
                     <Route path='/login' element={<LoginPage />} />
-
                     <Route path='/register' element={<RegisterPage />} />
                     <Route path='/forgot-password' element={<ForgotPassWordPage />} />
                     <Route path='/reset-password/:token' element={<ResetPasswordPage />} />
@@ -37,10 +36,12 @@ const AppRouter = () => {
                     <Route path='/services' element={<ServicePage />} />
                     <Route path='/services/:id' element={<ServiceDetailPage />} />
                     <Route path='/contact' element={<ContactPage />} />
-                    <Route path="*" element={<Navigate to="/not-found" replace />} />
                     <Route path='/home' element={<Home />} />
                     <Route path='/payment/success' element={<PaymentSuccessPage />} />
                     <Route path="/not-found" element={<NotFoundPage />} />
+                    <Route path='/' element={<Home />} />
+                    <Route path="*" element={<Navigate to="/not-found" replace />} />
+
                 </>
             ) : (
                 <>

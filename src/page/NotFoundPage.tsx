@@ -1,16 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const NotFound: React.FC = () => {
+const NotFoundPage: React.FC = () => {
     return (
-        <main className="h-screen w-full flex flex-col justify-center items-center bg-[#1A2238] relative">
-            {/* Background image */}
-            <div
-                className="absolute inset-0 bg-cover bg-center opacity-60"
-                style={{
-                    backgroundImage: "url('public/bg-2.jpg')", // Đường dẫn tới ảnh nền
-                }}
-            ></div>
+        <main className="h-screen w-full flex flex-col justify-center items-center relative">
+            {/* Background setup similar to Home page */}
+            <div aria-hidden="true" className="absolute inset-0 bg-hero-pattern bg-cover bg-center"></div>
+            <div aria-hidden="true" className="absolute inset-0 bg-black opacity-60"></div>
 
             {/* Content */}
             <h1 className="text-[15rem] font-extrabold text-white tracking-widest z-10">404</h1>
@@ -19,17 +15,13 @@ const NotFound: React.FC = () => {
             </div>
             <button className="mt-5 z-10">
                 <a
-                    className="relative inline-block text-sm font-medium text-[#FF6A3D] group active:text-orange-500 focus:outline-none focus:ring"
+                    className="inline-block px-6 py-3 text-sm font-semibold text-white bg-[#FF6A3D] rounded-full hover:bg-[#e65b2f] focus:outline-none focus:ring"
                 >
-                    <span className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-[#FF6A3D] group-hover:translate-y-0 group-hover:translate-x-0"></span>
-
-                    <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
-                        <Link to="/home">Go Home</Link>
-                    </span>
+                    <Link to="/home">Go Home</Link>
                 </a>
             </button>
         </main>
     );
 };
 
-export default NotFound;
+export default NotFoundPage;
