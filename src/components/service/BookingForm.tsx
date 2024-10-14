@@ -35,7 +35,7 @@ const BookingForm = () => {
     const { services } = useAppSelector((state) => state.services);
     const { times } = useAppSelector((state) => state.times);
 
-    const { register, handleSubmit, setValue, watch, formState: { errors }, trigger } = useForm<FormData>();
+    const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>();
 
     useEffect(() => {
         dispatch(getAllService());
@@ -254,20 +254,23 @@ const BookingForm = () => {
                 <label className="block text-sm font-bold mb-2">Select Time *</label>
                 <div className="grid grid-cols-4 gap-2">
                     {availableTimes.length > 0 ? (
-                        availableTimes.map((timeType, index) => (
-                            <button
-                                key={index}
-                                type="button"
-                                className={`p-3 rounded border ${watch("timeType") === timeType.timeType.toString() ? "bg-yellow-500 text-black" : "bg-white text-black"
-                                    } focus:outline-none hover:bg-yellow-400`}
-                                onClick={() => {
-                                    setValue("timeType", timeType.timeType.toString()); // Make sure this sets the timeType correctly
-                                    trigger("timeType");
-                                }}
-                            >
-                                {timeType.timeTypeData.valueVi}
-                            </button>
-                        ))
+                        availableTimes.map((timeType, index) => {
+                            console.log("Time type:", timeType);
+                            return (
+
+                                <button
+                                    key={index}
+                                    type="button"
+                                    className={`p-3 rounded border ${watch("timeType") === timeType.timeType ? "bg-yellow-500 text-black" : "bg-white text-black"
+                                        } focus:outline-none hover:bg-yellow-400`}
+                                    onClick={() => {
+                                        setValue("timeType", timeType.timeType); // Make sure this sets the timeType correctly
+                                    }}
+                                >
+                                    {timeType.timeTypeData.valueVi}
+                                </button>
+                            );
+                        })
                     ) : (
                         <p className="font-semibold text-red-600">No available time slots</p>
                     )}
