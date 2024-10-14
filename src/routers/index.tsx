@@ -15,6 +15,7 @@ import ServiceManagement from '@/page/admin/ServiceManagement/ServiceManagement'
 import StylistManagement from '@/page/admin/StylistManagement/StylistManagement'
 import ServiceDetailPage from '@/page/customer/service/ServiceDetailPage'
 import UserManagement from '@/page/admin/UserManagement/UserManagement'
+import PaymentSuccessPage from '@/page/payment/PaymentSuccessPage'
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalonToken");
@@ -36,6 +37,7 @@ const AppRouter = () => {
                     <Route path='/contact' element={<ContactPage />} />
                     <Route path="*" element={<Navigate to="/home" replace />} />
                     <Route path='/home' element={<Home />} />
+                    <Route path='/payment/success' element={<PaymentSuccessPage />} />
                     <Route path='/service-management' element={<ServiceManagement />} />
                     <Route path='/stylist-management' element={<StylistManagement />} />
                     <Route path='/users-management' element={<UserManagement />} />
