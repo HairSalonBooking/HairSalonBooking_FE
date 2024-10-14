@@ -107,19 +107,21 @@ const BookingForm = () => {
             return;
         }
 
-        // Convert date to timestamp
+        // Chuyển đổi ngày sang timestamp
         const date = new Date(data.date).getTime();
 
-        // Format date and time
+        // Định dạng lại ngày và thời gian sang giờ Việt Nam
         const selectedTime = times?.find(time => time.keyMap === data.timeType);
-        const formattedDate = new Date(data.date).toLocaleDateString('en-GB');
-        const timeString = `${formattedDate} - ${selectedTime?.valueEn || ''}`;
+        const formattedDate = new Date(data.date).toLocaleDateString('vi-VN', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+        });
+        const timeString = `${formattedDate} - ${selectedTime?.valueVi || ''}`; // valueVi cho tiếng Việt
 
-        // Get stylist's full name
+        // Lấy tên đầy đủ của stylist
         const stylist = stylists?.find(s => s.id === Number(data.stylistId));
         const stylistName = stylist ? `${stylist.firstName} ${stylist.lastName}` : '';
 
-        // Convert serviceIds from string[] to number[]
+        // Chuyển đổi serviceIds từ string[] sang number[]
         const serviceIds = selectedServices.map(s => Number(s.id));
 
         const payload = {
@@ -146,7 +148,6 @@ const BookingForm = () => {
                 toast.error(error.errMsg || 'An error occurred while booking.');
             });
     };
-
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="bg-[#201717] p-8 rounded-md shadow-md text-white">
             <p className="text-red-500 font-semibold text-sm mb-4">* Required fields</p>
@@ -263,7 +264,7 @@ const BookingForm = () => {
                                     trigger("timeType");
                                 }}
                             >
-                                {timeType.timeTypeData.valueEn}
+                                {timeType.timeTypeData.valueVi}
                             </button>
                         ))
                     ) : (
