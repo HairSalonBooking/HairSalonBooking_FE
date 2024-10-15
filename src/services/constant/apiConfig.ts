@@ -12,7 +12,7 @@ export const GET_USER_ENDPOINT = `${BASE_URL}/get-all-user`;
 export const EDIT_USER_ENDPOINT = `${BASE_URL}/edit-user`;
 export const DELETE_USER_ENDPOINT = `${BASE_URL}/delete-user`;
 export const GET_USER_BY_ID_ENDPOINT = `${BASE_URL}/get-user-by-id`;
-
+export const GET_USER_POINT_BY_ID_ENDPOINT = `${BASE_URL}/get-user-points`;
 
 //stylist
 export const GET_STYLIST_ENDPOINT = `${BASE_URL}/get-all-stylist`;

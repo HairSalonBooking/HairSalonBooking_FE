@@ -1,5 +1,5 @@
 import { IEditUser, IUser } from "@/interfaces/User";
-import { GET_USER_BY_ID_ENDPOINT, GET_USER_ENDPOINT } from "@/services/constant/apiConfig";
+import { GET_USER_BY_ID_ENDPOINT, GET_USER_ENDPOINT, GET_USER_POINT_BY_ID_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ type UserState = {
     loading: boolean;
     users: IUser[];
     user: IUser | null;
+    points: number;
     error: string[] | unknown;
 }
 
@@ -15,6 +16,7 @@ const initialState: UserState = {
     loading: false,
     users: [],
     user: null,
+    points: 0,
     error: null,
 }
 
@@ -75,6 +77,23 @@ export const editUserbyID = createAsyncThunk<IUser, {id:number, data: IEditUser}
         }
     }
 );
+export const getUserPointById = createAsyncThunk<number, {id:number}>(
+    "users/getUserPointById",
+    async (data, thunkAPI) => {
+        const { id } = data;
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.get(`${GET_USER_POINT_BY_ID_ENDPOINT}?id=${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+);
 
 
 export const userSlice = createSlice({
@@ -106,6 +125,18 @@ export const userSlice = createSlice({
             state.user = action.payload;
         });
         builder.addCase(getUserById.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+        //getUsersPointById
+        builder.addCase(getUserPointById.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getUserPointById.fulfilled, (state, action) => {
+            state.loading = false;
+            state.points = action.payload;  // Cập nhật điểm thay vì gán vào user
+        });
+        builder.addCase(getUserPointById.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
         });

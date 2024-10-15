@@ -8,11 +8,13 @@ export interface IUser {
     phoneNumber: string | null;
     gender: string | null;
     image: string | null;
-    refreshToken: string;
+    refreshToken: string | null;
     roleId: string;
     positionId: string | null;
     resetPasswordToken: string | null;
     resetPasswordExpires: string | null;
+    points: number;
+    status: string;
     createdAt: string;
     updatedAt: string;
 }
