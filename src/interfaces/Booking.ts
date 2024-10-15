@@ -37,4 +37,6 @@ export interface IBookingRequest {
     stylistName: string;
     timeString: string;
     timeType: string;
+    pointsToUse: number;
+    usePoints : boolean;
   }

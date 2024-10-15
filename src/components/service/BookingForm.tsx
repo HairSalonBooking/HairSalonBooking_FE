@@ -20,7 +20,8 @@ interface FormData {
     timeType: string;
     timeString: string;
     note?: string;
-
+    pointsToUse: number;
+    usePoints: boolean;
 }
 
 const BookingForm = () => {
@@ -30,9 +31,14 @@ const BookingForm = () => {
     const [selectedServices, setSelectedServices] = useState<{ id: string, price: number }[]>([{ id: "", price: 0 }]);
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [availableTimes, setAvailableTimes] = useState<ITimeBooking[]>([]);
+    const [discountedAmount, setDiscountedAmount] = useState<number>(0);
+    const [pointsApplied, setPointsApplied] = useState<boolean>(false); // Track if points are applied
 
     const { stylists } = useAppSelector((state) => state.stylists);
     const { services } = useAppSelector((state) => state.services);
+    const { auth } = useAppSelector((state) => state.auth); // Get auth from the store
+    const { user } = useAppSelector((state) => state.users); // Get user points
+
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>();
 
     useEffect(() => {
@@ -44,16 +50,14 @@ const BookingForm = () => {
 
     const stylistId = watch("stylistId");
     const date = watch("date");
+    const pointsToUse = watch("pointsToUse");
 
     useEffect(() => {
         if (stylistId && date) {
             const timestamp = new Date(date).getTime();
-
             dispatch(getAllTimeByStylist({ stylistId: Number(stylistId), date: timestamp }))
                 .unwrap()
-                .then((times) => {
-                    setAvailableTimes(times);
-                })
+                .then((times) => setAvailableTimes(times))
                 .catch((error) => {
                     console.error("Error fetching available times:", error);
                     setAvailableTimes([]);
@@ -61,13 +65,20 @@ const BookingForm = () => {
         }
     }, [stylistId, date, dispatch]);
 
-    // Calculate total amount based on selected services
+    // Function to calculate the total amount for the selected services
     const calculateTotalAmount = (selectedServices: { id: string, price: number }[]) => {
         const amount = selectedServices.reduce((acc, service) => acc + service.price, 0);
         setTotalAmount(amount);
+
+        // If points have been applied, update the total after discount
+        if (pointsApplied) {
+            handlePointsDiscount(pointsToUse, amount);
+        } else {
+            setDiscountedAmount(amount);
+        }
     };
 
-    // Handle service selection change
+    // Handles service change and recalculates total amount
     const handleServiceChange = (index: number, event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedServiceId = Number(event.target.value);
         const service = services?.find((s) => s.id === selectedServiceId);
@@ -79,12 +90,10 @@ const BookingForm = () => {
         }
     };
 
-    // Add new service field
     const addServiceField = () => {
         setSelectedServices([...selectedServices, { id: "", price: 0 }]);
     };
 
-    // Remove service from the list (cannot remove the first service)
     const removeService = (index: number) => {
         if (index !== 0) {
             const updatedServices = selectedServices.filter((_, i) => i !== index);
@@ -93,7 +102,29 @@ const BookingForm = () => {
         }
     };
 
-    // Handle form submission
+    // Handles the points discount
+    const handlePointsDiscount = (points: number, total: number) => {
+        if (points > (user?.points ?? 0)) {
+            toast.error(`You cannot use more than ${user?.points} points.`);
+            setValue("pointsToUse", user?.points ?? 0); // Set points to maximum available
+            return;
+        }
+        const discount = Math.floor(points / 10); // 10 points = $1
+        const newTotal = total - discount;
+        setDiscountedAmount(newTotal >= 0 ? newTotal : 0); // Ensure the total doesn't go negative
+    };
+
+    // Apply points and update the total with the discount
+    const applyPoints = () => {
+        if (pointsToUse > 0) {
+            setPointsApplied(true);
+            handlePointsDiscount(pointsToUse, totalAmount); // Apply points and calculate the new total
+        } else {
+            setPointsApplied(false);
+            setDiscountedAmount(totalAmount); // Reset to original total if no points are applied
+        }
+    };
+
     const onSubmit = (data: FormData) => {
         if (selectedServices.length === 0 || selectedServices[0].id === "") {
             toast.error('Please select at least one service');
@@ -105,33 +136,34 @@ const BookingForm = () => {
             return;
         }
 
-        // Convert date to timestamp
+        if (data.pointsToUse > (user?.points ?? 0)) {
+            toast.error(`You cannot use more than ${user?.points} points.`);
+            return;
+        }
+
+        data.usePoints = pointsApplied;
+
         const date = new Date(data.date).getTime();
-
-        // Get the selected time type and extract valueVi for Vietnamese display
         const selectedTime = availableTimes?.find(time => time.timeType === data.timeType);
-        const timeValueVi = selectedTime?.timeTypeData?.valueVi || ''; // Extract valueVi
-
-        // Format the date and time string for display in Vietnamese
-        const formattedDate = new Date(data.date).toLocaleDateString('vi-VN', {
-            timeZone: 'Asia/Ho_Chi_Minh',
-        });
-        const timeString = `${formattedDate} - ${timeValueVi}`; // Set timeString using valueVi
-
-        // Get the full name of the stylist
+        const timeValueVi = selectedTime?.timeTypeData?.valueVi || '';
+        const formattedDate = new Date(data.date).toLocaleDateString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
+        const timeString = `${formattedDate} - ${timeValueVi}`;
         const stylist = stylists?.find(s => s.id === Number(data.stylistId));
         const stylistName = stylist ? `${stylist.firstName} ${stylist.lastName}` : '';
-
-        // Convert serviceIds from string[] to number[]
         const serviceIds = selectedServices.map(s => Number(s.id));
+
+        const discount = Math.floor(data.pointsToUse / 10);
+        const finalAmount = totalAmount - discount;
 
         const payload = {
             ...data,
             date,
-            timeString, // Use the formatted time string
+            timeString,
             stylistName,
             serviceIds,
-            amount: totalAmount,
+            amount: finalAmount,
+            pointsToUse: data.pointsToUse,
+            usePoints: data.usePoints,
         } as IBookingRequest;
 
         dispatch(customerCreateBooking(payload))
@@ -147,6 +179,7 @@ const BookingForm = () => {
                 toast.error(error.errMsg || 'An error occurred while booking.');
             });
     };
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="bg-[#201717] p-8 rounded-md shadow-md text-white">
             <p className="text-red-500 font-semibold text-sm mb-4">* Required fields</p>
@@ -275,16 +308,31 @@ const BookingForm = () => {
                 {errors.timeType && <span className="text-red-500">Time slot is required</span>}
             </div>
 
-            <div className="mb-4">
-                <label className="block text-sm font-bold mb-2">Note</label>
-                <textarea
-                    {...register("note")}
-                    className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
-                />
-            </div>
+            {/* Conditionally render Points to Use if user is logged in */}
+            {auth && (
+                <div className="mb-4">
+                    <label className="block text-sm font-bold mb-2">Points to Use</label>
+                    <input
+                        type="number"
+                        {...register("pointsToUse")}
+                        min={0}
+                        max={user?.points} // Limit input to available points
+                        className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
+                    />
+                    {errors.pointsToUse && <span className="text-red-500">Points value is invalid</span>}
+
+                    <button
+                        type="button"
+                        onClick={applyPoints}
+                        className="bg-yellow-600 text-black py-2 px-4 rounded hover:bg-yellow-500 mt-2"
+                    >
+                        Apply Points
+                    </button>
+                </div>
+            )}
 
             <div className="mb-4">
-                <p className="text-lg font-bold">Total: {totalAmount.toLocaleString()} $</p>
+                <p className="text-lg font-bold">Total: {discountedAmount.toLocaleString()} $</p>
             </div>
 
             <button type="submit" className="bg-yellow-600 text-black py-3 px-4 rounded hover:bg-yellow-500">

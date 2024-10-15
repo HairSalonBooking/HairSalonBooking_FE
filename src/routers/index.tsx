@@ -51,10 +51,17 @@ const AppRouter = () => {
                     <Route path='/services' element={<ServicePage />} />
                     <Route path='/contact' element={<ContactPage />} />
                     <Route path='/about' element={<AboutPage />} />
+                    <Route path='/services/:id' element={<ServiceDetailPage />} />
+
                     {isCustomer && (
                         <>
                             <Route path='/profile' element={<Profile />} />
                             <Route path='/home' element={<Home />} />
+                            <Route path='/services/:id' element={<ServiceDetailPage />} />
+                            <Route path='/booking' element={<BookingPage />} />
+                            <Route path='/about' element={<AboutPage />} />
+                            <Route path='/services' element={<ServicePage />} />
+                            <Route path='/contact' element={<ContactPage />} />
                         </>
                     )}
                     {isAdmin && (
