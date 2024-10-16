@@ -35,3 +35,4 @@ export const GET_ALL_TIME_BOOKING_ENDPOINT = `${BASE_URL}/get-schedule-stylist-b
 //booking
 export const GET_BOOKING_ENDPOINT = `${BASE_URL}/get-all-booking`;
 export const CUSTOMER_BOOKING_ENDPOINT = `${BASE_URL}/customer-book-appointment`;
+export const VERIFY_BOOKING_ENDPOINT = `${BASE_URL}/payment-and-verify-book-appointment`;
