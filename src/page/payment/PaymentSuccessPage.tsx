@@ -34,9 +34,6 @@ const PaymentSuccessPage: React.FC = () => {
             const { token, paymentId, payerId, stylistId } = paymentDetails;
             dispatch(verifyBooking({ token, paymentId, payerId, stylistId }))
                 .then(unwrapResult)
-                .then(() => {
-                    setVerificationStatus('Verification successful');
-                })
                 .catch((error) => {
                     setVerificationStatus(`Verification failed: ${error.errMsg || 'Unknown error'}`);
                 });
@@ -73,7 +70,7 @@ const PaymentSuccessPage: React.FC = () => {
                     </div>
                 </div>
                 {verificationStatus && (
-                    <div className={`text-sm ${verificationStatus.includes('successful') ? 'text-green-600' : 'text-red-600'}`}>
+                    <div className="text-sm text-red-600">
                         {verificationStatus}
                     </div>
                 )}
