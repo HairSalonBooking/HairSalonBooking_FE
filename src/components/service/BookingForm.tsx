@@ -71,7 +71,7 @@ const BookingForm = () => {
         const amount = selectedServices.reduce((acc, service) => acc + service.price, 0);
         setTotalAmount(amount);
 
-        // If points have been applied and the user is logged in, update the total after discount
+        // Calculate discounted amount for display only
         if (pointsApplied && auth) {
             handlePointsDiscount(pointsToUse, amount);
         } else {
@@ -103,14 +103,25 @@ const BookingForm = () => {
         }
     };
 
-    // Handles the points discount
+    // Handles the points discount for display purposes
     const handlePointsDiscount = (points: number, total: number) => {
-        if (points > (user?.points ?? 0)) {
-            toast.error(`You cannot use more than ${user?.points} points.`);
-            setValue("pointsToUse", user?.points ?? 0); // Set points to maximum available
+        // Limit points to a maximum of 30 (30% discount)
+        if (points > 30) {
+            toast.error("You cannot use more than 30 points.");
+            setValue("pointsToUse", 30); // Set points to maximum of 30
             return;
         }
-        const discount = Math.floor(points / 10); // 10 points = $1
+
+        // Check if user has enough points
+        if (points > (user?.points ?? 0)) {
+            toast.error(`You do not have enough points. You only have ${user?.points} points.`);
+            setValue("pointsToUse", user?.points ?? 0); // Set points to the user's maximum available points
+            return;
+        }
+
+        // Calculate discount: 10 points = 10%, 20 points = 20%, 30 points = 30%
+        const discountPercentage = points; // Points directly represent the percentage
+        const discount = total * (discountPercentage / 100);
         const newTotal = total - discount;
         setDiscountedAmount(newTotal >= 0 ? newTotal : 0); // Ensure the total doesn't go negative
     };
@@ -137,8 +148,7 @@ const BookingForm = () => {
             return;
         }
 
-        data.usePoints = (data.pointsToUse && data.pointsToUse > 0) ? true : false;
-
+        data.usePoints = data.pointsToUse > 0;
 
         const date = new Date(data.date).getTime();
         const selectedTime = availableTimes?.find(time => time.timeType === data.timeType);
@@ -149,18 +159,16 @@ const BookingForm = () => {
         const stylistName = stylist ? `${stylist.firstName} ${stylist.lastName}` : '';
         const serviceIds = selectedServices.map(s => Number(s.id));
 
-        const discount = auth ? Math.floor(data.pointsToUse / 10) : 0; // Apply discount only if authenticated
-        const finalAmount = totalAmount - discount;
-
+        // Payload giữ nguyên totalAmount và chỉ sử dụng discountedAmount cho hiển thị
         const payload = {
             ...data,
             date,
             timeString,
             stylistName,
             serviceIds,
-            amount: finalAmount > 0 ? finalAmount : 0, // Ensure amount doesn't go below 0
+            amount: totalAmount, // Send original amount to backend, not the discounted one
             pointsToUse: auth ? data.pointsToUse : 0, // Use points only if authenticated
-            usePoints: data.usePoints, // Now correctly set to false if no points are used
+            usePoints: data.usePoints,
         } as IBookingRequest;
 
         dispatch(customerCreateBooking(payload))
@@ -169,7 +177,6 @@ const BookingForm = () => {
                 if (response.errCode === 0) {
                     toast.success("Booking successful, please check your email.");
                     dispatch(getUserById({ id: auth?.id ?? 0 }));
-
                 } else {
                     toast.error(response.errMsg);
                 }
@@ -220,8 +227,8 @@ const BookingForm = () => {
                         {...register("stylistId", { required: true })}
                         className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                     >
-                        <option value="" disabled selected>Select a stylist</option>
-                        {stylists && stylists.map((stylist) => (
+                        <option value="" disabled>Select a stylist</option>
+                        {stylists?.map((stylist) => (
                             <option key={stylist.id} value={stylist.id}>{stylist.firstName} {stylist.lastName}</option>
                         ))}
                     </select>
@@ -284,38 +291,32 @@ const BookingForm = () => {
                 <label className="block text-sm font-bold mb-2">Select Time *</label>
                 <div className="grid grid-cols-4 gap-2">
                     {availableTimes.length > 0 ? (
-                        availableTimes.map((timeType, index) => {
-                            return (
-                                <button
-                                    key={index}
-                                    type="button"
-                                    className={`p-3 rounded border ${watch("timeType") === timeType.timeType ? "bg-yellow-500 text-black" : "bg-white text-black"
-                                        } focus:outline-none hover:bg-yellow-400`}
-                                    onClick={() => {
-                                        setValue("timeType", timeType.timeType); // Make sure this sets the timeType correctly
-                                    }}
-                                >
-                                    {timeType.timeTypeData.valueVi}
-                                </button>
-                            );
-                        })
+                        availableTimes.map((timeType, index) => (
+                            <button
+                                key={index}
+                                type="button"
+                                className={`p-3 rounded border ${watch("timeType") === timeType.timeType ? "bg-yellow-500 text-black" : "bg-white text-black"
+                                    } focus:outline-none hover:bg-yellow-400`}
+                                onClick={() => setValue("timeType", timeType.timeType)}
+                            >
+                                {timeType.timeTypeData.valueVi}
+                            </button>
+                        ))
                     ) : (
                         <p className="font-semibold text-red-600">No available time slots</p>
                     )}
                 </div>
-
                 {errors.timeType && <span className="text-red-500">Time slot is required</span>}
             </div>
 
-            {/* Conditionally render Points to Use if user is logged in */}
             {auth && (
                 <div className="mb-4">
-                    <label className="block text-sm font-bold mb-2">Points to Use</label>
+                    <label className="block text-sm font-bold mb-2">Points to Use (Max 30 for 30%)</label>
                     <input
                         type="number"
                         {...register("pointsToUse")}
                         min={0}
-                        max={user?.points} // Limit input to available points
+                        max={30} // Limit input to maximum of 30 points
                         className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                     />
                     {errors.pointsToUse && <span className="text-red-500">Points value is invalid</span>}
@@ -331,7 +332,9 @@ const BookingForm = () => {
             )}
 
             <div className="mb-4">
-                <p className="text-lg font-bold">Total: {discountedAmount.toLocaleString()} $</p>
+                <p className="text-lg font-bold">
+                    Total: {totalAmount}$ - {pointsToUse}% = {discountedAmount.toFixed(2)} $
+                </p>
             </div>
 
             <button type="submit" className="bg-yellow-600 text-black py-3 px-4 rounded hover:bg-yellow-500">
