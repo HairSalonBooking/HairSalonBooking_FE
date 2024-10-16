@@ -1,11 +1,15 @@
 import { PaymentDetails } from '@/interfaces/Payment';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useAppDispatch } from '@/services/store/store';
+import { verifyBooking } from '@/services/features/booking/bookingSlice';
 
 const PaymentSuccessPage: React.FC = () => {
     const location = useLocation();
+    const dispatch = useAppDispatch();
     const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(null);
+    const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
 
     // Extract query params from URL
     useEffect(() => {
@@ -23,6 +27,21 @@ const PaymentSuccessPage: React.FC = () => {
             payerId,
         });
     }, [location.search]);
+
+    // Call verify booking API when payment details are available
+    useEffect(() => {
+        if (paymentDetails) {
+            const { token, paymentId, payerId, stylistId } = paymentDetails;
+            dispatch(verifyBooking({ token, paymentId, payerId, stylistId }))
+                .then(unwrapResult)
+                .then(() => {
+                    setVerificationStatus('Verification successful');
+                })
+                .catch((error) => {
+                    setVerificationStatus(`Verification failed: ${error.errMsg || 'Unknown error'}`);
+                });
+        }
+    }, [paymentDetails, dispatch]);
 
     if (!paymentDetails) {
         return <div>Loading payment details...</div>;
@@ -53,8 +72,13 @@ const PaymentSuccessPage: React.FC = () => {
                         <strong>Payer ID:</strong> {paymentDetails.payerId}
                     </div>
                 </div>
+                {verificationStatus && (
+                    <div className={`text-sm ${verificationStatus.includes('successful') ? 'text-green-600' : 'text-red-600'}`}>
+                        {verificationStatus}
+                    </div>
+                )}
                 <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300"
+                    className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition duration-300 mt-4"
                     onClick={() => window.location.href = '/'}
                 >
                     Return to Home
