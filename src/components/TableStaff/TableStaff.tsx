@@ -18,6 +18,7 @@ const TableStaff = () => {
     const { stylists } = useAppSelector(state => state.stylists); // Lấy danh sách stylists từ store
 
     const [selectedDate, setSelectedDate] = useState<string>(""); // Ngày đã chọn
+    // const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
 
     // Lấy danh sách booking khi ngày thay đổi
     useEffect(() => {
@@ -29,11 +30,18 @@ const TableStaff = () => {
 
     return (
         <>
-            <div className="my-6 flex flex-row justify-between items-center">
-                <h2 className="font-bold text-xl">Staff Booking Management</h2>
-            </div>
-
             {/* Date Picker để chọn ngày */}
+
+            <div className="my-6 flex flex-row justify-between items-center">
+                <h2 className="font-bold text-xl">Staff Booking Management
+                </h2>
+                <button
+                    className="border border-slate-600 p-2 rounded-lg text-white bg-green-600 font-bold"
+                // onClick={() => setIsCreatePopupOpen(true)} // Sử dụng trạng thái riêng
+                >
+                    Create Shedule
+                </button>
+            </div>
             <div className="my-4">
                 <label htmlFor="date-picker" className="font-bold">Select Date:</label>
                 <input
@@ -44,7 +52,6 @@ const TableStaff = () => {
                     min={new Date().toISOString().split("T")[0]} // Không cho phép chọn ngày trong quá khứ
                 />
             </div>
-
             {/* Bảng hiển thị bookings */}
             {selectedDate && (
                 <Table className="mt-8">
