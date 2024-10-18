@@ -22,17 +22,22 @@ const initialState: BookingState = {
 }
 
 
-export const getAllBooking = createAsyncThunk<IBooking[], void>(
+export const getAllBooking = createAsyncThunk<IBooking[], { date: string }>(
     "bookings/getAllBooking",
-    async (_, thunkAPI) => {
+    async ({ date }, thunkAPI) => {
         try {
             const token = sessionStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(GET_BOOKING_ENDPOINT, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
+                params: {
+                    date: date,  // Passing the date as a query parameter
+                },
             });
-            return response.data;
+
+            // Extract the bookings array from response.data
+            return response.data.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
         }

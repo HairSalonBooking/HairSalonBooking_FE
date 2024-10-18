@@ -39,3 +39,7 @@ export const VERIFY_BOOKING_ENDPOINT = `${BASE_URL}/payment-and-verify-book-appo
 
 // get booking of customer
 export const GET_BOOKING_CUSTOMER_ENDPOINT = `${BASE_URL}/get-booking-by-id`;
+
+
+//schudule
+export const CREATE_SCHEDULE_ENDPOINT = `${BASE_URL}/create-schedule`;
