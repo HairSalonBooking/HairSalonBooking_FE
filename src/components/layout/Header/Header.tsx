@@ -28,6 +28,7 @@ const Header = () => {
     }
   }, [dispatch, auth?.id]);
 
+
   return (
     <header>
       <nav className="absolute z-10 w-full px-64">
