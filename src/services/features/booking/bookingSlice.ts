@@ -1,6 +1,6 @@
 import { IBooking, IBookingRequest } from "@/interfaces/Booking";
 import { ICustomerBooking } from "@/interfaces/CustomerBooking";
-import { CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
+import {  CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_CUSTOMER_ENDPOINT, GET_BOOKING_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -90,14 +90,14 @@ export const getCustomerBooking = createAsyncThunk<ICustomerBooking[], { custome
         try {
             const token = sessionStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(
-                `${GET_BOOKING_ENDPOINT}/customer/${data.customerId}`,
+                `${GET_BOOKING_CUSTOMER_ENDPOINT}?customerId=${data.customerId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            return response.data;
+            return response.data.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
         }
