@@ -59,7 +59,7 @@ const TableStaff = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {Array.isArray(bookings) && bookings
+                        {bookings && bookings
                             .filter(booking => {
                                 // Lọc bookings theo ngày đã chọn
                                 const bookingDate = new Date(parseInt(booking.date));
@@ -80,7 +80,8 @@ const TableStaff = () => {
                                             {booking.statusId === 'S1' && 'Pending'}
                                             {booking.statusId === 'S2' && 'Confirm'}
                                             {booking.statusId === 'S3' && 'Success'}
-                                            {booking.statusId === 'S4' && 'Cancel'}</TableCell>
+                                            {booking.statusId === 'S4' && 'Cancel'}
+                                        </TableCell>
                                         <TableCell className="text-right">
                                             <button
                                                 className="border border-slate-600 p-2 rounded-lg text-white bg-red-600 font-bold ml-2"
@@ -91,7 +92,8 @@ const TableStaff = () => {
                                         </TableCell>
                                     </TableRow>
                                 );
-                            })}
+                            })
+                        }
                     </TableBody>
                 </Table>
             )}
