@@ -1,5 +1,5 @@
 import { ITime, ITimeBooking } from "@/interfaces/Time";
-import { GET_ALL_CODE_ENDPOINT, GET_ALL_TIME_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
+import { CREATE_SCHEDULE_ENDPOINT, GET_ALL_CODE_ENDPOINT, GET_ALL_TIME_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
@@ -60,6 +60,22 @@ export const getAllTimeByStylist = createAsyncThunk<
     }
 );
 
+export const createSchedule = createAsyncThunk<ITimeBooking, ITimeBooking, { rejectValue: { errCode: number, errMsg: string } }>(
+    "times/createSchedule",
+    async (data, thunkAPI) => {
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.post(CREATE_SCHEDULE_ENDPOINT, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+);
 export const timeBookingSlice = createSlice({
     name: "times",
     initialState,
@@ -92,6 +108,9 @@ export const timeBookingSlice = createSlice({
             state.loading = false;
             state.error = action.payload as string[];
         });
+        // create schedule
+
+        
     },
 });
 
