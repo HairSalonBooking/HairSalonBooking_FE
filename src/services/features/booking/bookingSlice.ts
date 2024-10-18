@@ -1,6 +1,6 @@
 import { IBooking, IBookingRequest } from "@/interfaces/Booking";
 import { ICustomerBooking } from "@/interfaces/CustomerBooking";
-import { CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_CUSTOMER_ENDPOINT, GET_BOOKING_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
+import { CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
