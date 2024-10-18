@@ -84,6 +84,26 @@ export const customerCreateBooking = createAsyncThunk<IBooking, IBookingRequest,
     }
 );
 
+export const getCustomerBooking = createAsyncThunk<ICustomerBooking[], { customerId: number }>(
+    "customerBookings/getCustomerBooking",
+    async (data, thunkAPI) => {
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.get(
+                `${GET_BOOKING_ENDPOINT}/customer/${data.customerId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+);
+
 export const verifyBooking = createAsyncThunk<
     IBooking,
     { token: string; paymentId: string; payerId: string; stylistId: string },
@@ -120,25 +140,7 @@ export const verifyBooking = createAsyncThunk<
         }
     }
 );
-export const getCustomerBooking = createAsyncThunk<ICustomerBooking[], { customerId: number }>(
-    "customerBookings/getCustomerBooking",
-    async (data, thunkAPI) => {
-        try {
-            const token = sessionStorage.getItem('hairSalonToken');
-            const response = await axiosInstance.get(
-                `${GET_BOOKING_CUSTOMER_ENDPOINT}?customerId=${data.customerId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            return response.data.data;
-        } catch (error: any) {
-            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
-        }
-    }
-);
+
 
 
 export const bookingSlice = createSlice({
@@ -197,7 +199,6 @@ export const bookingSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
-
     },
 });
 
