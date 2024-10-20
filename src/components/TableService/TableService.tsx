@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/table";
 import { useAppSelector, useAppDispatch } from "@/services/store/store";
 import { formatAnyDate } from "@/utils";
-import ConfirmDelete from "../popup/ConfirmDelete/ConfirmDelete"; // Import ConfirmDelete component
 import { deleteService, getAllService } from "@/services/features/service/serviceSlice";
 import UpdateServicePopup from "../popup/UpdateService/UpdateService";
 import { IService } from "@/interfaces/Service";
 import CreateServicePopup from "../popup/CreateService/CreateServicePopup";
+import PopupConfirmAction from "../popup/ConfirmDelete/PopupConfirmAction";
 
 const TableService = () => {
     const dispatch = useAppDispatch();
@@ -142,7 +142,11 @@ const TableService = () => {
             />
 
             {/* Popup xác nhận xóa */}
-            <ConfirmDelete
+            <PopupConfirmAction
+                title={"Xác nhận xóa"}
+                content={"Bạn có chắc chắn muốn xóa mục này không?"}
+                actionDelete={"Xóa"}
+                actionCancel={"Hủy"}
                 isOpen={isPopupOpen}
                 onClose={closeDeletePopup}
                 onConfirm={handleConfirmDelete}
