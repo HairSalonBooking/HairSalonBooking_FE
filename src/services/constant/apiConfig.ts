@@ -10,7 +10,7 @@ export const REFRESH_TOKEN_ENDPOINT = `${BASE_URL}/login`;
 //user
 export const GET_USER_ENDPOINT = `${BASE_URL}/get-all-user`;
 export const EDIT_USER_ENDPOINT = `${BASE_URL}/edit-user`;
-export const DELETE_USER_ENDPOINT = `${BASE_URL}/delete-user`;
+export const DISABLE_USER_ENDPOINT = `${BASE_URL}/change-user-status`;
 export const GET_USER_BY_ID_ENDPOINT = `${BASE_URL}/get-user-by-id`;
 export const GET_USER_POINT_BY_ID_ENDPOINT = `${BASE_URL}/get-user-points`;
 
@@ -39,7 +39,7 @@ export const VERIFY_BOOKING_ENDPOINT = `${BASE_URL}/payment-and-verify-book-appo
 
 // get booking of customer
 export const GET_BOOKING_CUSTOMER_ENDPOINT = `${BASE_URL}/get-booking-by-id`;
-
+export const CANCLE_BOOKING_BY_CUSTOMER_ENDPOINT = `${BASE_URL}/cancel-booking-for-customer`;
 
 //schudule
 export const CREATE_SCHEDULE_ENDPOINT = `${BASE_URL}/create-schedule`;
