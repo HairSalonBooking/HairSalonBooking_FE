@@ -1,8 +1,9 @@
 import { IBooking, IBookingRequest } from "@/interfaces/Booking";
 import { ICustomerBooking } from "@/interfaces/CustomerBooking";
-import {  CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_CUSTOMER_ENDPOINT, GET_BOOKING_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
+import { CANCLE_BOOKING_BY_CUSTOMER_ENDPOINT, CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_CUSTOMER_ENDPOINT, GET_BOOKING_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 
 type BookingState = {
@@ -146,8 +147,29 @@ export const verifyBooking = createAsyncThunk<
     }
 );
 
+export const cancleBookingByCustomer = createAsyncThunk<any, { bookingId: number }>(
+    "bookings/cancleBookingByCustomer",
+    async ({ bookingId }, thunkAPI) => {
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.put(`${CANCLE_BOOKING_BY_CUSTOMER_ENDPOINT}`,
+                { bookingId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (response.data.errCode === 0) {
+                toast.success("Booking canceled successfully");
+            }
+            return response.data; // Return the response data
 
-
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+)
 export const bookingSlice = createSlice({
     name: "bookings",
     initialState,
