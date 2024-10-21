@@ -10,38 +10,46 @@ import {
 } from "@/components/ui/table";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import { getAllBooking } from "@/services/features/booking/bookingSlice"; // Action to fetch bookings
+import CreateSchedulePopup from "../popup/CreateSchedule/CreateSchedulePopup";
 
 const TableStaff = () => {
     const dispatch = useAppDispatch();
 
-    const { bookings } = useAppSelector(state => state.bookings); // Lấy danh sách bookings từ store
-    const { stylists } = useAppSelector(state => state.stylists); // Lấy danh sách stylists từ store
+    const { bookings } = useAppSelector(state => state.bookings); // Fetch bookings from the store
+    const { stylists } = useAppSelector(state => state.stylists); // Fetch stylists from the store
 
-    const [selectedDate, setSelectedDate] = useState<string>(""); // Ngày đã chọn
-    // const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<string>(""); // Selected date
+    const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false); // State to control the popup
 
-    // Lấy danh sách booking khi ngày thay đổi
+    // Fetch bookings when the date changes
     useEffect(() => {
         if (selectedDate) {
-            const timestamp = new Date(selectedDate).getTime(); // Chuyển đổi ngày thành timestamp
-            dispatch(getAllBooking({ date: timestamp.toString() })); // Gọi action để fetch bookings theo ngày
+            const timestamp = new Date(selectedDate).getTime(); // Convert date to timestamp
+            dispatch(getAllBooking({ date: timestamp.toString() })); // Dispatch action to fetch bookings for the selected date
         }
     }, [selectedDate, dispatch]);
 
     return (
         <>
-            {/* Date Picker để chọn ngày */}
+            {/* Create Schedule Popup */}
+            {isCreatePopupOpen && (
+                <CreateSchedulePopup
+                    isOpen={isCreatePopupOpen}
+                    onClose={() => setIsCreatePopupOpen(false)} // Close popup handler
+                />
+            )}
 
+            {/* Date Picker to select date */}
             <div className="my-6 flex flex-row justify-between items-center">
-                <h2 className="font-bold text-xl">Staff Booking Management
-                </h2>
+                <h2 className="font-bold text-xl">Staff Booking Management</h2>
                 <button
                     className="border border-slate-600 p-2 rounded-lg text-white bg-green-600 font-bold"
-                // onClick={() => setIsCreatePopupOpen(true)} // Sử dụng trạng thái riêng
+                    onClick={() => setIsCreatePopupOpen(true)} // Open popup when clicked
                 >
-                    Create Shedule
+                    Create Schedule
                 </button>
             </div>
+
             <div className="my-4">
                 <label htmlFor="date-picker" className="font-bold">Select Date:</label>
                 <input
@@ -49,10 +57,11 @@ const TableStaff = () => {
                     id="date-picker"
                     className="ml-2 p-2 border border-gray-300 rounded"
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    min={new Date().toISOString().split("T")[0]} // Không cho phép chọn ngày trong quá khứ
+                    min={new Date().toISOString().split("T")[0]} // Prevent selection of past dates
                 />
             </div>
-            {/* Bảng hiển thị bookings */}
+
+            {/* Display bookings table */}
             {selectedDate && (
                 <Table className="mt-8">
                     <TableCaption>Bookings for {new Date(selectedDate).toLocaleDateString()}.</TableCaption>
@@ -68,14 +77,13 @@ const TableStaff = () => {
                     <TableBody>
                         {bookings && bookings
                             .filter(booking => {
-                                // Lọc bookings theo ngày đã chọn
+                                // Filter bookings by selected date
                                 const bookingDate = new Date(parseInt(booking.date));
                                 const selected = new Date(selectedDate);
-
                                 return bookingDate.toLocaleDateString() === selected.toLocaleDateString();
                             })
                             .map((booking) => {
-                                // Tìm stylist từ danh sách stylists
+                                // Find stylist from stylists array
                                 const stylist = stylists?.find(stylist => stylist.id === booking.stylistId);
 
                                 return (

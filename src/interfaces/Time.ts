@@ -23,3 +23,11 @@ interface ITimeTypeData {
     valueEn: string;
     valueVi: string;
 }
+
+export interface ICreateScheduleRequest {
+    arrSchedule: Array<{
+      stylistId: number;
+      date: number;
+      timeType: string;
+    }>;
+  }

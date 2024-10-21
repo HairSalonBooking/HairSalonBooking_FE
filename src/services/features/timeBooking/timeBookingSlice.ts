@@ -1,7 +1,8 @@
-import { ITime, ITimeBooking } from "@/interfaces/Time";
+import { ICreateScheduleRequest, ITime, ITimeBooking } from "@/interfaces/Time";
 import { CREATE_SCHEDULE_ENDPOINT, GET_ALL_CODE_ENDPOINT, GET_ALL_TIME_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 type TimeBookingState = {
     loading: boolean;
@@ -60,19 +61,31 @@ export const getAllTimeByStylist = createAsyncThunk<
     }
 );
 
-export const createSchedule = createAsyncThunk<ITimeBooking, ITimeBooking, { rejectValue: { errCode: number, errMsg: string } }>(
-    "times/createSchedule",
+export const createSchedule = createAsyncThunk<
+    { errCode: number; errMsg: string }, // Expected API response
+    ICreateScheduleRequest, // Payload (schedule data)
+    { rejectValue: { errCode: number; errMsg: string } }
+>(
+    "schedule/createSchedule",
     async (data, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = sessionStorage.getItem("hairSalonToken");
             const response = await axiosInstance.post(CREATE_SCHEDULE_ENDPOINT, data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            return response.data;
+            // Check errCode for success
+            if (response.data.errCode === 0) {
+                toast.success(`${response.data.errMsg}`); // Success toast
+            } else {
+                toast.error(`${response.data.errMsg}`); // Error toast
+            }
+
+            return response.data; // Return data for state update
         } catch (error: any) {
-            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+            toast.error(`${error.response?.data?.errMsg || 'An error occurred while creating the schedule.'}`); // Generic error toast
+            return thunkAPI.rejectWithValue(error.response?.data || { errCode: 500, errMsg: "Unknown error" });
         }
     }
 );
@@ -109,9 +122,23 @@ export const timeBookingSlice = createSlice({
             state.error = action.payload as string[];
         });
         // create schedule
-
-        
+        builder.addCase(createSchedule.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(createSchedule.fulfilled, (state, action) => {
+            state.loading = false;
+            if (action.payload.errCode === 0) {
+                // Success message handling (e.g., showing a toast notification)
+                console.log(action.payload.errMsg);
+            }
+        });
+        builder.addCase(createSchedule.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload ? action.payload.errMsg : "Unknown error";
+        });
     },
+        
+
 });
 
 export const { setError } = timeBookingSlice.actions;
