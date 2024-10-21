@@ -3,19 +3,17 @@ export interface ICustomerBooking {
     statusId: string;
     stylistId: number;
     customerId: number;
-    date: string; // date in milliseconds since UNIX epoch
+    date: string;
     timeType: string;
     token: string;
     pointsAwarded: boolean;
-    createdAt: string; // ISO 8601 date format
-    updatedAt: string; // ISO 8601 date format
+    createdAt: string;
+    updatedAt: string;
     customerData: ICustomerData;
-    timeTypeDataBooking: {
-        valueEn: string;
-        valueVi: string;
-    };
+    stylistDataBooking: IStylistDataBooking;
+    timeTypeDataBooking: ITimeTypeDataBooking;
+    services: IService[];
 }
-
 interface ICustomerData {
     email: string;
     firstName: string;
@@ -23,3 +21,21 @@ interface ICustomerData {
     gender: string | null;
     genderData: string | null;
 }
+
+interface IStylistDataBooking {
+    email: string;
+    firstName: string;
+    address: string | null;
+    gender: string | null;
+    genderData: string | null;
+}
+
+interface ITimeTypeDataBooking {
+    valueEn: string;
+    valueVi: string;
+}
+
+interface IService {
+    name: string;
+}
+
