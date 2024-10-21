@@ -30,7 +30,6 @@ const ViewBookingPage = () => {
                 dispatch(cancleBookingByCustomer({ bookingId: selectedBookingId }))
                     .unwrap()
                     .then(() => {
-                        toast.success("Booking cancelled successfully!");
                         dispatch(getCustomerBooking({ customerId: auth.id })); // Fetch updated bookings
                     })
                     .catch((error) => {
@@ -67,7 +66,14 @@ const ViewBookingPage = () => {
                             <tbody>
                                 {customerBooking && customerBooking.map((booking) => (
                                     <tr key={booking.id}>
-                                        <td className="border border-gray-700 px-4 py-2">{"DDDD"}</td>
+                                        <td className="border border-gray-700 px-4 py-2">
+                                            {booking.services.map((service, index) => (
+                                                <span key={index}>
+                                                    {service.name}
+                                                    {index < booking.services.length - 1 ? " , " : ""}
+                                                </span>
+                                            ))}
+                                        </td>                                        <td className="border border-gray-700 px-4 py-2">{booking.stylistDataBooking.firstName}</td>
                                         <td className="border border-gray-700 px-4 py-2">
                                             {booking.timeTypeDataBooking.valueEn} {new Date(parseInt(booking.date)).toLocaleDateString()}
                                         </td>
