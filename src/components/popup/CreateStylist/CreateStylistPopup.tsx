@@ -11,6 +11,7 @@ type FormStylistData = {
     lastName: string;
     firstName: string;
     phoneNumber: string;
+    positionId: string;  // Added positionId here
 };
 
 type CreateStylistPopupProps = {
@@ -20,15 +21,32 @@ type CreateStylistPopupProps = {
 
 const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) => {
     const dispatch = useAppDispatch();
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormStylistData>(); // Added reset here
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormStylistData>();
     const [showPassword, setShowPassword] = useState(false);
 
     // Handler for toggling password visibility
     const handleShowPass = () => setShowPassword(!showPassword);
 
     const onSubmit = async (data: FormStylistData) => {
+        // Map positionId based on the selected position
+        let positionMappedId = "";
+        switch (data.positionId) {
+            case "1":
+                positionMappedId = "P0"; // Apprentice Barber
+                break;
+            case "2":
+                positionMappedId = "P1"; // Barber
+                break;
+            case "3":
+                positionMappedId = "P2"; // Master Barber
+                break;
+            default:
+                positionMappedId = "P0"; // Default to Apprentice Barber if not selected
+        }
+
         const formData = {
             ...data,
+            positionId: positionMappedId, // Set the mapped positionId
             roleId: "R3", // Set roleId to "R3" for creating a stylist
             confirmPassword: data.password, // Assuming confirmPassword is the same as password
             success: true // Assuming success is a boolean value
@@ -132,10 +150,26 @@ const CreateStylistPopup: FC<CreateStylistPopupProps> = ({ isOpen, onClose }) =>
                         {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>}
                     </div>
 
+                    <div className="mb-4">
+                        <label className="block text-gray-700 dark:text-gray-400">
+                            Position
+                        </label>
+                        <select
+                            {...register("positionId", { required: "Position is required" })}
+                            className="w-full px-3 py-2 mt-1 border rounded-lg dark:bg-gray-700 dark:text-gray-300"
+                        >
+                            <option value="">Select position</option>
+                            <option value="1">Apprentice Barber</option>
+                            <option value="2">Barber</option>
+                            <option value="3">Master Barber</option>
+                        </select>
+                        {errors.positionId && <p className="text-red-500 text-sm">{errors.positionId.message}</p>}
+                    </div>
+
                     <div className="flex justify-between items-center space-y-4 sm:flex sm:space-y-0">
                         <button
                             type="button"
-                            onClick={handleClose}  // Use handleClose here
+                            onClick={handleClose}
                             className="py-2 px-4 w-full text-sm font-medium text-white bg-red-500 rounded-lg border border-gray-200 sm:w-auto hover:bg-red-700 focus:ring-4 focus:outline-none"
                         >
                             Cancel

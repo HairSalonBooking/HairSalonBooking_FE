@@ -5,6 +5,7 @@ import { NextArrow, PrevArrow } from "@/components/ui/Button/button";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import { useEffect } from "react";
 import { getAllStylist } from "@/services/features/stylist/stylistSlice";
+
 const MakeupArtistSection = () => {
     const dispatch = useAppDispatch();
     const { stylists } = useAppSelector((state) => state.stylists);
@@ -18,9 +19,24 @@ const MakeupArtistSection = () => {
         nextArrow: <NextArrow />, // Sử dụng nút tùy chỉnh
         prevArrow: <PrevArrow />, // Sử dụng nút tùy chỉnh
     };
+
     useEffect(() => {
         dispatch(getAllStylist());
     }, [dispatch]);
+
+    // Hàm chuyển đổi positionId thành tên vị trí
+    const getPositionName = (positionId: string) => {
+        switch (positionId) {
+            case "P0":
+                return "Apprentice Barber";
+            case "P1":
+                return "Barber";
+            case "P2":
+                return "Master Barber";
+            default:
+                return "Apprentice Barber";
+        }
+    };
 
     return (
         <section className="py-16 bg-[#f7f3e9]">
@@ -46,7 +62,8 @@ const MakeupArtistSection = () => {
                                 alt="Makeup Artist"
                                 className="w-full h-80 object-cover rounded-lg mb-4" />
                             <h3 className="text-2xl font-bold text-black">{stylist.firstName} {stylist.lastName}</h3>
-                            <p className="text-lg text-gray-600">{stylist.positionId} </p>
+                            {/* Hiển thị tên vị trí dựa trên positionId */}
+                            <p className="text-lg text-gray-600">{getPositionName(stylist.positionId ?? "Apprentice Barber")}</p>
                         </div>))}
                 </Slider>
             </div>
