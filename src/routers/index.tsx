@@ -1,7 +1,7 @@
 
 import LoginPage from '@/page/auth/Login/LoginPage'
 import RegisterPage from '@/page/auth/Register/RegisterPage'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom' //Navigate
 import ForgotPassWordPage from '@/page/auth/ForgotPassWord/ForgotPassWordPage'
 import { useAppSelector } from '@/services/store/store'
 import Home from '@/page/customer/home/HomePage'
