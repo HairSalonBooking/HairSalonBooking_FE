@@ -23,7 +23,7 @@ const initialState: StylistState = {
 
 export const getAllStylist = createAsyncThunk<IStylist[], void>(
     "stylists/getAllStylist",
-    async (_,thunkAPI) => {
+    async (_, thunkAPI) => {
         try {
             const token = sessionStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(GET_STYLIST_ENDPOINT, {
@@ -38,7 +38,7 @@ export const getAllStylist = createAsyncThunk<IStylist[], void>(
     }
 );
 
-export const getStylistById = createAsyncThunk<IStylist, {id:number}>(
+export const getStylistById = createAsyncThunk<IStylist, { id: number }>(
     "stylists/getStylistById",
     async (data, thunkAPI) => {
         const { id } = data;
@@ -120,7 +120,7 @@ export const stylistSlice = createSlice({
             state.error = action.payload;
         });
 
-        
+
     },
 
 });
