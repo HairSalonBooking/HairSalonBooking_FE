@@ -6,12 +6,12 @@ const PaymentCancelPage: React.FC = () => {
     const [cancelMessage, setCancelMessage] = useState<string | null>(null);
 
     useEffect(() => {
-        // Extract query params from URL (lấy token từ URL)
+        // Extract query params from URL
         const searchParams = new URLSearchParams(location.search);
         const token = searchParams.get('token') || '';
 
         if (token) {
-            // Nếu có token, bạn có thể hiển thị hoặc xử lý thêm
+            // Handle token or display it
             setCancelMessage('Your payment was cancelled. Please try again or contact support if needed.');
         } else {
             setCancelMessage('Payment cancellation information is missing.');
