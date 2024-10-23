@@ -1,7 +1,7 @@
 
 import LoginPage from '@/page/auth/Login/LoginPage'
 import RegisterPage from '@/page/auth/Register/RegisterPage'
-import { Route, Routes } from 'react-router-dom' //Navigate
+import { Navigate, Route, Routes } from 'react-router-dom'
 import ForgotPassWordPage from '@/page/auth/ForgotPassWord/ForgotPassWordPage'
 import { useAppSelector } from '@/services/store/store'
 import Home from '@/page/customer/home/HomePage'
@@ -43,7 +43,7 @@ const AppRouter = () => {
                     <Route path='/payment/success' element={<PaymentSuccessPage />} />
                     <Route path="/not-found" element={<NotFoundPage />} />
                     <Route path='/' element={<Home />} />
-                    {/* <Route path="*" element={<Navigate to="/not-found" replace />} /> */}
+                    <Route path="*" element={<Navigate to="/not-found" replace />} />
                     <Route path="/staff-management" element={<StaffManagement />} />
                     <Route path="/payment/cancel" element={< PaymentCancelPage />} />
 
