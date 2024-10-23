@@ -43,7 +43,7 @@ const AppRouter = () => {
                     <Route path='/payment/success' element={<PaymentSuccessPage />} />
                     <Route path="/not-found" element={<NotFoundPage />} />
                     <Route path='/' element={<Home />} />
-                    <Route path="*" element={<Navigate to="/not-found" replace />} />
+                    {/* <Route path="*" element={<Navigate to="/not-found" replace />} /> */}
                     <Route path="/staff-management" element={<StaffManagement />} />
                     <Route path='/payment/cancel/:token' element={<PaymentCancelPage />} />
 
