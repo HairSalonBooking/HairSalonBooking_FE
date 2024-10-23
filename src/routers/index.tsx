@@ -19,6 +19,7 @@ import PaymentSuccessPage from '@/page/payment/PaymentSuccessPage'
 import NotFoundPage from '@/page/NotFoundPage'
 import ViewBookingPage from '@/page/customer/booking/ViewBookingPage'
 import StaffManagement from '@/page/staff/StaffManagement/StaffManagement'
+import PaymentCancelPage from '@/page/payment/PaymentCancelPage'
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalonToken");
@@ -44,6 +45,7 @@ const AppRouter = () => {
                     <Route path='/' element={<Home />} />
                     <Route path="*" element={<Navigate to="/not-found" replace />} />
                     <Route path="/staff-management" element={<StaffManagement />} />
+                    <Route path='payment/cancel' element={<PaymentCancelPage />} />
 
                 </>
             ) : (
@@ -70,7 +72,6 @@ const AppRouter = () => {
                     )}
                     {isAdmin && (
                         <>
-                            <Route path='/profile' element={<Profile />} />
                             <Route path='/service-management' element={<ServiceManagement />} />
                             <Route path='/stylist-management' element={<StylistManagement />} />
                             <Route path='/users-management' element={<UserManagement />} />
