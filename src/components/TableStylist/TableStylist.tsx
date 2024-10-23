@@ -13,9 +13,11 @@ import { formatAnyDate } from "@/utils";
 import { IStylist } from "@/interfaces/Stylist";
 import CreateStylistPopup from "../popup/CreateStylist/CreateStylistPopup";
 import { getAllStylist } from "@/services/features/stylist/stylistSlice";
+import useFormatCurrency from "@/utils/useFortmatCurrency";
 
 const TableStylist = () => {
     const dispatch = useAppDispatch();
+    const formatCurrency = useFormatCurrency();
 
     const { stylists } = useAppSelector(state => state.stylists); // Lấy dữ liệu stylist từ store
     const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -52,9 +54,10 @@ const TableStylist = () => {
                         <TableHead>Email</TableHead>
                         <TableHead>Phone Number</TableHead>
                         <TableHead>Gender</TableHead>
-                        <TableHead className="text-right">Created At</TableHead>
-                        <TableHead className="text-right">Updated At</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
+                        <TableHead className="text-right">Base Salary</TableHead>
+                        <TableHead className="text-right">Bonuses</TableHead>
+                        <TableHead className="text-right">Total Salary</TableHead>
+                        <TableHead className="text-right">Paid On</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -65,11 +68,16 @@ const TableStylist = () => {
                             <TableCell>{stylist.email}</TableCell>
                             <TableCell>{stylist.phoneNumber ?? "N/A"}</TableCell>
                             <TableCell>{stylist.gender ?? "N/A"}</TableCell>
-                            <TableCell className="text-right">{formatAnyDate(stylist.createdAt)}</TableCell>
-                            <TableCell className="text-right">{formatAnyDate(stylist.updatedAt)}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(stylist.salaryData?.BaseSalary)}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(stylist.salaryData?.Bonuses)}</TableCell>
+                            <TableCell className="text-right">{formatCurrency(stylist.salaryData?.TotalSalary)}</TableCell>
                             <TableCell className="text-right">
-                                <button className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold">Edit</button>
-                                <button className="border border-slate-600 p-2 rounded-lg text-white bg-red-600 font-bold ml-2">Delete</button>
+                                {stylist.salaryData?.PaidOn ? (
+                                    formatAnyDate(stylist.salaryData?.PaidOn)
+                                ) : (
+                                    <button className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold">Pay</button>
+                                )}
+
                             </TableCell>
                         </TableRow>
                     ))}
