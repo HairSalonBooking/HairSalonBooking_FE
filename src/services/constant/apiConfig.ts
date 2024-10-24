@@ -27,10 +27,7 @@ export const CREATE_SERVICE_ENDPOINT = `${BASE_URL}/create-service`;
 export const EDIT_SERVICE_ENDPOINT = `${BASE_URL}/update-service`;
 export const DELETE_SERVICE_ENDPOINT = `${BASE_URL}/delete-service`;
 
-//allCode
 
-export const GET_ALL_CODE_ENDPOINT = `${BASE_URL}/get-allcode`;
-export const GET_ALL_TIME_BOOKING_ENDPOINT = `${BASE_URL}/get-schedule-stylist-by-date`;
 
 //booking
 export const GET_BOOKING_ENDPOINT = `${BASE_URL}/get-all-booking`;
@@ -39,7 +36,10 @@ export const VERIFY_BOOKING_ENDPOINT = `${BASE_URL}/payment-and-verify-book-appo
 
 // get booking of customer
 export const GET_BOOKING_CUSTOMER_ENDPOINT = `${BASE_URL}/get-booking-by-id`;
-export const CANCLE_BOOKING_BY_CUSTOMER_ENDPOINT = `${BASE_URL}/cancel-booking-for-customer`;
+export const CANCEL_BOOKING_BY_CUSTOMER_ENDPOINT = `${BASE_URL}/cancel-booking-for-customer`;
 
-//schudule
+//staff
 export const CREATE_SCHEDULE_ENDPOINT = `${BASE_URL}/create-schedule`;
+export const GET_ALL_CODE_ENDPOINT = `${BASE_URL}/get-allcode`;
+export const GET_ALL_TIME_BOOKING_ENDPOINT = `${BASE_URL}/get-schedule-stylist-by-date`;
+export const CANCEL_BOOKING_BY_STAFF_ENDPOINT = `${BASE_URL}/cancel-booking-for-staff`;
