@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
-import { createSchedule, getAllTime } from "@/services/features/timeBooking/timeBookingSlice";
+import { createSchedule, getAllTimeByStylist, getAllTime } from "@/services/features/timeBooking/timeBookingSlice";
 import { getAllStylist } from "@/services/features/stylist/stylistSlice";
+import { ITimeBooking } from "@/interfaces/Time";
 
 interface CreateSchedulePopupProps {
     isOpen: boolean;
@@ -13,20 +14,36 @@ const CreateSchedulePopup: React.FC<CreateSchedulePopupProps> = ({ isOpen, onClo
 
     const { times } = useAppSelector(state => state.times); // Fetch available time slots
     const { stylists } = useAppSelector(state => state.stylists); // Fetch stylists
-
+    const [bookedTimes, setBookedTimes] = useState<string[]>([]); // Store booked time slots for stylist
     const [selectedStylist, setSelectedStylist] = useState<number | null>(null); // Stylist selection
     const [selectedDate, setSelectedDate] = useState<string>(""); // Date selection
     const [selectedTimes, setSelectedTimes] = useState<string[]>([]); // Selected time slots
 
+    // Fetch stylists and all available time slots when popup opens
     useEffect(() => {
         if (isOpen) {
-            dispatch(getAllTime(),
-            );
-            dispatch(getAllStylist()) // Fetch available time slots when popup opens
+            dispatch(getAllStylist());
+            dispatch(getAllTime()); // Fetch all time slots from API
         }
     }, [isOpen, dispatch]);
 
+    // Fetch booked time slots for the selected stylist and date
+    useEffect(() => {
+        if (selectedStylist && selectedDate) {
+            const dateTimestamp = new Date(selectedDate).getTime(); // Convert date to timestamp
+            dispatch(getAllTimeByStylist({ stylistId: selectedStylist, date: dateTimestamp }))
+                .unwrap()
+                .then((times) => {
+                    const booked = times.map((time: ITimeBooking) => time.timeType); // Get booked time slots
+                    setBookedTimes(booked); // Store booked times
+                })
+                .catch((error) => {
+                    console.error("Error fetching booked times:", error);
+                });
+        }
+    }, [selectedStylist, selectedDate, dispatch]);
 
+    // Toggle selected time slots
     const toggleTimeSelection = (timeKey: string) => {
         if (selectedTimes.includes(timeKey)) {
             setSelectedTimes(selectedTimes.filter(time => time !== timeKey));
@@ -35,6 +52,7 @@ const CreateSchedulePopup: React.FC<CreateSchedulePopupProps> = ({ isOpen, onClo
         }
     };
 
+    // Handle form submission
     const handleSubmit = () => {
         if (selectedStylist && selectedDate && selectedTimes.length > 0) {
             const dateTimestamp = new Date(selectedDate).getTime(); // Convert date to timestamp
@@ -96,15 +114,15 @@ const CreateSchedulePopup: React.FC<CreateSchedulePopupProps> = ({ isOpen, onClo
                 <div className="my-4">
                     <label className="block mb-2 font-bold">Select Time Slots:</label>
                     <div className="grid grid-cols-3 gap-2">
-                        {times && times.map(time => (
+                        {times && times.map((time) => (
                             <button
                                 key={time.keyMap}
                                 type="button"
-                                className={`border p-2 rounded ${selectedTimes.includes(time.keyMap) ? "bg-green-600 text-white" : "bg-gray-100"
+                                className={`border p-2 rounded ${bookedTimes.includes(time.keyMap) ? "bg-green-600 text-white" : selectedTimes.includes(time.keyMap) ? "bg-blue-600 text-white" : "bg-gray-100"
                                     }`}
                                 onClick={() => toggleTimeSelection(time.keyMap)}
                             >
-                                {time.valueVi} {/* Display time in Vietnamese */}
+                                {time.valueVi} {/* Display time */}
                             </button>
                         ))}
                     </div>

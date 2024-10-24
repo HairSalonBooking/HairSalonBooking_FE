@@ -15,6 +15,7 @@ export interface ITimeBooking {
     date: string;
     timeType: string;
     stylistId: number;
+    stylistData: IStylistData;
     createdAt: string;
     updatedAt: string;
     timeTypeData: ITimeTypeData;
@@ -22,6 +23,11 @@ export interface ITimeBooking {
 interface ITimeTypeData {
     valueEn: string;
     valueVi: string;
+}
+
+interface IStylistData {
+    firstName: string;
+    lastName: string;
 }
 
 export interface ICreateScheduleRequest {
