@@ -69,6 +69,7 @@ const TableStaff = () => {
                         <TableRow>
                             <TableHead>Stylist Name</TableHead>
                             <TableHead>Customer Name</TableHead>
+                            <TableHead>Email</TableHead>
                             <TableHead>Time</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead className="text-right">Action</TableHead>
@@ -90,6 +91,7 @@ const TableStaff = () => {
                                     <TableRow key={booking.id}>
                                         <TableCell>{stylist ? `${stylist.firstName} ${stylist.lastName}` : "Unknown Stylist"}</TableCell>
                                         <TableCell>{booking.customerData.firstName}</TableCell>
+                                        <TableCell>{booking.customerData.email}</TableCell>
                                         <TableCell>{booking.timeTypeDataBooking.valueEn}</TableCell>
                                         <TableCell>
                                             {booking.statusId === 'S1' && 'Pending'}

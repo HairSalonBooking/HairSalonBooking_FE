@@ -9,9 +9,9 @@ const ViewBookingPage = () => {
     const dispatch = useAppDispatch();
     const { auth } = useAppSelector((state) => state.auth);
     const { customerBooking } = useAppSelector((state) => state.bookings);
-    const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null); // State for selected booking ID
-    const [isPopupOpen, setIsPopupOpen] = useState(false); // State to control the popup
-    const [loading, setLoading] = useState(false); // State for loading status
+    const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (auth?.id !== undefined) {
@@ -20,31 +20,29 @@ const ViewBookingPage = () => {
     }, [dispatch, auth?.id]);
 
     const handleCancelClick = (bookingId: number) => {
-        setSelectedBookingId(bookingId); // Set the selected booking ID
-        setIsPopupOpen(true); // Open the confirmation popup
-    };
-    const handleConfirmCancel = () => {
-        if (selectedBookingId !== null) {
-            if (auth?.id) {  // Kiểm tra nếu auth và auth.id không null hoặc undefined
-                setLoading(true); // Start loading
-                dispatch(cancleBookingByCustomer({ bookingId: selectedBookingId }))
-                    .unwrap()
-                    .then(() => {
-                        dispatch(getCustomerBooking({ customerId: auth.id })); // Fetch updated bookings
-                    })
-                    .catch((error) => {
-                        toast.error(error.message);
-                    })
-                    .finally(() => {
-                        setLoading(false); // Stop loading
-                        setIsPopupOpen(false); // Close the popup
-                    });
-            } else {
-                toast.error("User is not authenticated.");
-            }
-        }
+        setSelectedBookingId(bookingId);
+        setIsPopupOpen(true);
     };
 
+    const handleConfirmCancel = () => {
+        if (selectedBookingId !== null && auth?.id) {
+            setLoading(true);
+            dispatch(cancleBookingByCustomer({ bookingId: selectedBookingId }))
+                .unwrap()
+                .then(() => {
+                    dispatch(getCustomerBooking({ customerId: auth.id }));
+                })
+                .catch((error) => {
+                    toast.error(error.message);
+                })
+                .finally(() => {
+                    setLoading(false);
+                    setIsPopupOpen(false);
+                });
+        } else {
+            toast.error("User is not authenticated.");
+        }
+    };
 
     return (
         <div className="relative min-h-screen bg-gray-900 text-gray-200">
@@ -53,44 +51,59 @@ const ViewBookingPage = () => {
                 <div className="container mx-auto pt-36 pb-20 px-10">
                     {loading && <div className="text-center text-white mb-4">Processing...</div>}
                     <div className="md:flex md:space-x-16 justify-center">
-                        <table className="table-auto border-collapse border border-gray-700 text-left">
-                            <thead>
+                        <table className="min-w-full table-auto bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                            <thead className="bg-gray-900 text-gray-200">
                                 <tr>
-                                    <th className="border border-gray-700 px-4 py-2">Service Name</th>
-                                    <th className="border border-gray-700 px-4 py-2">Stylist</th>
-                                    <th className="border border-gray-700 px-4 py-2">Application Day</th>
-                                    <th className="border border-gray-700 px-4 py-2">Status</th>
-                                    <th className="border border-gray-700 px-4 py-2">Action</th>
+                                    <th className="px-6 py-3 text-left uppercase font-medium text-gray-300">Service Name</th>
+                                    <th className="px-6 py-3 text-left uppercase font-medium text-gray-300">Stylist</th>
+                                    <th className="px-6 py-3 text-left uppercase font-medium text-gray-300">Application Day</th>
+                                    <th className="px-6 py-3 text-center uppercase font-medium text-gray-300">Status</th>
+                                    <th className="px-6 py-3 text-center uppercase font-medium text-gray-300">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {customerBooking && customerBooking.map((booking) => (
-                                    <tr key={booking.id}>
-                                        <td className="border border-gray-700 px-4 py-2">
-                                            {booking.services.map((service, index) => (
-                                                <span key={index}>
+                            <tbody className="divide-y divide-gray-700">
+                                {customerBooking && customerBooking.map((booking, index) => (
+                                    <tr key={booking.id} className={`${index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'} hover:bg-gray-600 transition duration-200`}>
+                                        <td className="px-6 py-4 whitespace-nowrap text-gray-300">
+                                            {booking.services.map((service, i) => (
+                                                <span key={i}>
                                                     {service.name}
-                                                    {index < booking.services.length - 1 ? " , " : ""}
+                                                    {i < booking.services.length - 1 ? ", " : ""}
                                                 </span>
                                             ))}
-                                        </td>                                        <td className="border border-gray-700 px-4 py-2">{booking.stylistDataBooking.firstName}</td>
-                                        <td className="border border-gray-700 px-4 py-2">
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-300">{booking.stylistDataBooking?.firstName || 'N/A'}</td>
+                                        <td className="px-6 py-4 text-gray-300">
                                             {booking.timeTypeDataBooking.valueEn} {new Date(parseInt(booking.date)).toLocaleDateString()}
                                         </td>
-                                        <td className="border border-gray-700 px-4 py-2">
-                                            {booking.statusId === 'S1' && 'Pending'}
-                                            {booking.statusId === 'S2' && 'Confirm'}
-                                            {booking.statusId === 'S3' && 'Success'}
-                                            {booking.statusId === 'S4' && 'Cancel'}
+                                        <td className="px-6 py-4 text-center">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-semibold inline-block 
+                                                ${booking.statusId === 'S1' ? 'bg-yellow-500 text-gray-900' :
+                                                    booking.statusId === 'S2' ? 'bg-blue-500 text-gray-900' :
+                                                        booking.statusId === 'S3' ? 'bg-green-500 text-gray-900' :
+                                                            'bg-red-500 text-gray-900'}`}>
+                                                {booking.statusId === 'S1' && 'Pending'}
+                                                {booking.statusId === 'S2' && 'Confirm'}
+                                                {booking.statusId === 'S3' && 'Success'}
+                                                {booking.statusId === 'S4' && 'Cancel'}
+                                            </span>
                                         </td>
-                                        <td className="border border-gray-700 px-4 py-2">
-                                            {booking.statusId !== 'S4' && (
+                                        <td className="px-6 py-4 text-center">
+                                            {booking.statusId === 'S1' ? (
                                                 <button
-                                                    className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-700 rounded-md"
-                                                    onClick={() => handleCancelClick(booking.id)} // Trigger popup with booking ID
+                                                    className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md shadow-lg transition-colors duration-200"
+                                                    onClick={() => handleCancelClick(booking.id)}
                                                 >
                                                     Cancel
                                                 </button>
+                                            ) : (
+                                                <span className="inline-block px-4 py-2 text-xs font-semibold rounded-full w-full text-center
+                                                    ${booking.statusId === 'S2' ? 'bg-blue-500 text-gray-900' :
+                                                    booking.statusId === 'S3' ? 'bg-green-500 text-gray-900' : 
+                                                    'bg-yellow-500 text-gray-900'}">
+                                                    {booking.statusId === 'S2' && '\u00A0'}
+                                                    {booking.statusId === 'S3' && '\u00A0'}
+                                                </span>
                                             )}
                                         </td>
                                     </tr>
@@ -103,8 +116,8 @@ const ViewBookingPage = () => {
                     title="Are you sure you want to cancel this booking?"
                     content="This action cannot be undone."
                     isOpen={isPopupOpen}
-                    onClose={() => setIsPopupOpen(false)} // Close the popup
-                    onConfirm={handleConfirmCancel} // Confirm cancellation
+                    onClose={() => setIsPopupOpen(false)}
+                    onConfirm={handleConfirmCancel}
                     actionCancel="No"
                     actionDelete="Yes, Cancel"
                 />

@@ -83,7 +83,7 @@ export const getUserPointById = createAsyncThunk<number, { id: number }>(
         const { id } = data;
         try {
             const token = sessionStorage.getItem('hairSalonToken');
-            const response = await axiosInstance.get(`${GET_USER_POINT_BY_ID_ENDPOINT}?id=${id}`, {
+            const response = await axiosInstance.put(`${GET_USER_POINT_BY_ID_ENDPOINT}?id=${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
