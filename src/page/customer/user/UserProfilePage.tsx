@@ -55,6 +55,12 @@ const Profile = () => {
             [e.target.name]: e.target.value,
         });
     };
+    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
 
     // Handle avatar change (preview and save the file)
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -228,16 +234,12 @@ const Profile = () => {
                                         </div>
                                         <div>
                                             <label className="block font-medium">Gender</label>
+
                                             <select
                                                 name="gender"
                                                 value={formData.gender}
-                                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                                                    setFormData({
-                                                        ...formData,
-                                                        gender: e.target.value,
-                                                    });
-                                                }}
-                                                className="w-full px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600"
+                                                onChange={handleSelectChange}  // Select uses handleSelectChange
+                                                className="w-full px-4 py-3 border rounded-lg bg-gray-800 text-white"
                                             >
                                                 <option value="Male">Male</option>
                                                 <option value="Female">Female</option>
