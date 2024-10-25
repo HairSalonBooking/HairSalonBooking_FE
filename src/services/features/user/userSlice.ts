@@ -1,5 +1,5 @@
 import { IEditUser, IUser } from "@/interfaces/User";
-import { DISABLE_USER_ENDPOINT, GET_USER_BY_ID_ENDPOINT, GET_USER_ENDPOINT, GET_USER_POINT_BY_ID_ENDPOINT } from "@/services/constant/apiConfig";
+import { DISABLE_USER_ENDPOINT, EDIT_USER_ENDPOINT, GET_USER_BY_ID_ENDPOINT, GET_USER_ENDPOINT, GET_USER_POINT_BY_ID_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -55,24 +55,23 @@ export const getUserById = createAsyncThunk<IUser, { id: number }>(
     }
 );
 
-export const editUserbyID = createAsyncThunk<IUser, { id: number, data: IEditUser }>(
-    "users/editUserById",
-    async ({ id, data }, thunkAPI) => {
+export const editUserbyID = createAsyncThunk<IEditUser, { data: FormData }>(
+    "users/editUser",
+    async ({ data }, thunkAPI) => {
         try {
             const token = sessionStorage.getItem('hairSalonToken');
-            const response = await axiosInstance.put(`${GET_USER_ENDPOINT}/${id}`, data, {
+            const response = await axiosInstance.put(`${EDIT_USER_ENDPOINT}`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
                 },
             });
-            if (response.data.success === false) {
-                toast.error(response.data.errMessage);
-            }
-            if (response.data.success === true) {
-                toast.success(response.data.errMessage);
+            if (response.data.errCode === 0) {
+                toast.success(`${response.data.message}`);
             }
             return response.data;
         } catch (error: any) {
+            toast.error(`${error.response?.data?.errors || "Unknown error"}`);
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
         }
     }
@@ -161,6 +160,18 @@ export const userSlice = createSlice({
             state.loading = false;
             state.error = action.payload;
         });
+        //editUser
+        builder.addCase(editUserbyID.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(editUserbyID.fulfilled, (state) => {
+            state.loading = false;
+        });
+        builder.addCase(editUserbyID.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+
     }
 });
 

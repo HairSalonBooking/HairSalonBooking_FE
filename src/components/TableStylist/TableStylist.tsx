@@ -64,10 +64,10 @@ const TableStylist = () => {
                     {stylists && stylists.map((stylist: IStylist) => (
                         <TableRow key={stylist.id}>
                             <TableCell className="font-medium">{stylist.firstName}</TableCell>
-                            <TableCell>{stylist.lastName ?? "N/A"}</TableCell>
+                            <TableCell>{stylist.lastName ?? '\u00A0'}</TableCell>
                             <TableCell>{stylist.email}</TableCell>
-                            <TableCell>{stylist.phoneNumber ?? "N/A"}</TableCell>
-                            <TableCell>{stylist.gender ?? "N/A"}</TableCell>
+                            <TableCell>{stylist.phoneNumber ?? '\u00A0'}</TableCell>
+                            <TableCell>{stylist.gender ?? '\u00A0'}</TableCell>
                             <TableCell className="text-right">{formatCurrency(stylist.salaryData?.BaseSalary)}</TableCell>
                             <TableCell className="text-right">{formatCurrency(stylist.salaryData?.Bonuses)}</TableCell>
                             <TableCell className="text-right">{formatCurrency(stylist.salaryData?.TotalSalary)}</TableCell>

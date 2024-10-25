@@ -22,9 +22,10 @@ export interface IUser {
 export interface IEditUser {
     firstName: string;
     lastName: string;
+    gender: string;
     email: string;
     address: string;
-    phone: string;
-    birthday: string;
+    phoneNumber: string;
+    image: string | null;
 
 }
