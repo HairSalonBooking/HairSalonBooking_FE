@@ -2,43 +2,137 @@ import React, { useState, useEffect } from "react";
 import Header from "@/components/layout/Header/Header";
 import "react-datepicker/dist/react-datepicker.css";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
-import { getUserById } from "@/services/features/user/userSlice";
+import { getUserById, editUserbyID } from "@/services/features/user/userSlice";
+import { toast } from "react-toastify";
 
 const Profile = () => {
-    const dispath = useAppDispatch();
+    const dispatch = useAppDispatch();
     const [isEditing, setIsEditing] = useState(false);
     const { auth } = useAppSelector((state) => state.auth);
     const { user } = useAppSelector((state) => state.users);
 
+    // State to manage form data
+    const [formData, setFormData] = useState({
+        firstName: user?.firstName || "",
+        lastName: user?.lastName || "",
+        gender: user?.gender || "",
+        address: user?.address || "",
+        phoneNumber: user?.phoneNumber || "",
+        email: user?.email || "",
+        imageFile: null as File | null,  // Image file state
+    });
+
+    // State to manage avatar URL
+    const [avatar, setAvatar] = useState(user?.image || "https://example.com/default-avatar.png");
+
+    // Fetch user information when component mounts
     useEffect(() => {
-        if (auth?.id) { dispath(getUserById({ id: auth.id })); }
-    }, [dispath, auth?.id]);
+        if (auth?.id) {
+            dispatch(getUserById({ id: auth.id }));
+        }
+    }, [dispatch, auth?.id]);
 
-    // Initialize formData state based on user data
+    // Update formData and avatar when user data changes
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                firstName: user.firstName,
+                lastName: user.lastName,
+                gender: user.gender || "",
+                address: user.address || "",
+                phoneNumber: user.phoneNumber || "",
+                email: user.email,
+                imageFile: null,
+            });
+            setAvatar(user.image || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png");
+        }
+    }, [user]);
 
+    // Handle input changes for text fields
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
 
-    const [avatar, setAvatar] = useState(
-        "https://scontent.fsgn5-3.fna.fbcdn.net/v/t39.30808-6/460869808_3762001557399439_4877959658229225624_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeG7ePPB6KZv4DwKgU2W3E-0XfZoyybNOQNd9mjLJs05A-LIsxdHXe-Aq0soB8TtVxPdzXyXVTwFUk_iGL7ZoN2R&_nc_ohc=Zhm5Jjp46nMQ7kNvgFkx8Bx&_nc_ht=scontent.fsgn5-3.fna&_nc_gid=AXsnFg9YaFBT3YJMy7P14Uj&oh=00_AYAr52N9nJ-22pusore8kOzR4G1vS9ZKm2B5mbCYOclAlA&oe=6700AC4F"
-    );
-
-
+    // Handle avatar change (preview and save the file)
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setFormData({
+                ...formData,
+                imageFile: file,
+            });
+
             const fileReader = new FileReader();
             fileReader.onload = (event) => {
                 if (event.target?.result) {
                     setAvatar(event.target.result.toString());
                 }
             };
-            fileReader.readAsDataURL(e.target.files[0]);
+            fileReader.readAsDataURL(file);
         }
     };
 
-    const handleEditToggle = () => {
-        setIsEditing(!isEditing);
+    // Handle saving changes
+    const handleSaveChanges = async () => {
+        if (!auth?.id) {
+            toast.error("User ID is missing");
+            return;
+        }
+
+        // Validate phone number and email
+        const phoneNumber = formData.phoneNumber || user?.phoneNumber || "";
+        const email = formData.email || user?.email || "";
+
+        if (!phoneNumber || !email) {
+            if (!phoneNumber) {
+                toast.error("Phone number is required");
+            }
+            if (!email) {
+                toast.error("Email is required");
+            }
+            return;
+        }
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            toast.error("Invalid email format");
+            return;
+        }
+
+        const data = new FormData();
+        data.append("id", auth.id.toString());  // Ensure ID is added to form data
+        data.append("firstName", formData.firstName);
+        data.append("lastName", formData.lastName);
+        data.append("gender", formData.gender);
+        data.append("address", formData.address);
+        data.append("phoneNumber", phoneNumber);  // Use updated or existing phone number
+        data.append("email", email);  // Use updated or existing email
+
+        if (formData.imageFile) {
+            data.append("imageFile", formData.imageFile);  // Append image file to form data
+        }
+
+
+        const result = await dispatch(editUserbyID({ data }));
+        if (editUserbyID.fulfilled.match(result)) {
+            setIsEditing(false);  // Disable editing mode
+            if (auth?.id) {
+                dispatch(getUserById({ id: auth.id }));
+            }
+        }
     };
 
-
+    // Toggle between edit and view mode
+    const handleEditToggle = () => {
+        if (isEditing) {
+            if (auth?.id) {
+                dispatch(getUserById({ id: auth.id }));  // Refresh user data when canceling
+            }
+        }
+        setIsEditing(!isEditing);
+    };
     return (
         <div className="relative min-h-screen bg-gray-900 text-gray-200">
             <div className="relative z-10">
@@ -67,9 +161,8 @@ const Profile = () => {
                                 )}
                             </div>
                             <h1 className="text-4xl font-semibold text-white mb-3">
-                                {user?.firstName} {user?.lastName}
+                                {user?.lastName || ""} {user?.firstName}
                             </h1>
-                            <p className="text-gray-400 mb-6">Owner at HairCare Platform</p>
                             {!isEditing && (
                                 <button
                                     onClick={handleEditToggle}
@@ -91,7 +184,9 @@ const Profile = () => {
                                             <input
                                                 type="text"
                                                 name="firstName"
-                                                value={user?.firstName}
+                                                placeholder="Enter your first name"
+                                                value={formData.firstName}
+                                                onChange={handleInputChange}
                                                 className="w-full px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600"
                                             />
                                         </div>
@@ -100,8 +195,9 @@ const Profile = () => {
                                             <input
                                                 type="text"
                                                 name="lastName"
-                                                value={user?.lastName}
-
+                                                placeholder="Enter your last name"
+                                                value={formData.lastName}
+                                                onChange={handleInputChange}
                                                 className="w-full px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600"
                                             />
                                         </div>
@@ -109,21 +205,54 @@ const Profile = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div>
                                             <label className="block font-medium">Phone Number</label>
-                                            <input
-                                                type="text"
-                                                name="phoneNumber"
-                                                value={user?.phoneNumber ?? ""}
-
-                                                className="w-full px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600"
-                                            />
+                                            <div className="flex items-center">
+                                                <input
+                                                    type="text"
+                                                    name="phoneNumber"
+                                                    placeholder="Enter your phone number"
+                                                    value={formData.phoneNumber}
+                                                    onChange={(e) => {
+                                                        // Ensure only 9 digits are entered after +84
+                                                        const phoneNumber = e.target.value.replace(/\D/g, '');  // Remove non-numeric characters
+                                                        if (phoneNumber.length <= 9) {
+                                                            setFormData({
+                                                                ...formData,
+                                                                phoneNumber: phoneNumber,
+                                                            });
+                                                        }
+                                                    }}
+                                                    maxLength={9} // Limit input to 9 digits
+                                                    className="w-full px-4 py-3 border rounded-r-lg bg-gray-800 text-white border-gray-600"
+                                                />
+                                            </div>
                                         </div>
+                                        <div>
+                                            <label className="block font-medium">Gender</label>
+                                            <select
+                                                name="gender"
+                                                value={formData.gender}
+                                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                                                    setFormData({
+                                                        ...formData,
+                                                        gender: e.target.value,
+                                                    });
+                                                }}
+                                                className="w-full px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600"
+                                            >
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div>
                                             <label className="block font-medium">Email</label>
                                             <input
                                                 type="email"
                                                 name="email"
-                                                value={user?.email}
-
+                                                placeholder="Enter your email"
+                                                value={formData.email}
+                                                onChange={handleInputChange}
                                                 className="w-full px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600"
                                             />
                                         </div>
@@ -134,8 +263,9 @@ const Profile = () => {
                                             <input
                                                 type="text"
                                                 name="address"
-                                                value={user?.address ?? ""}
-
+                                                placeholder="Enter your address"
+                                                value={formData.address}
+                                                onChange={handleInputChange}
                                                 className="w-full px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600"
                                             />
                                         </div>
@@ -148,7 +278,7 @@ const Profile = () => {
                                             Cancel
                                         </button>
                                         <button
-                                            // onClick={handleSaveChanges}
+                                            onClick={handleSaveChanges}
                                             className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-green-600"
                                         >
                                             Save Changes
@@ -161,13 +291,13 @@ const Profile = () => {
                                         <div>
                                             <label className="block font-medium text-gray-400">First Name</label>
                                             <p className="px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600">
-                                                {user?.firstName}
+                                                {formData.firstName || '\u00A0'}
                                             </p>
                                         </div>
                                         <div>
                                             <label className="block font-medium text-gray-400">Last Name</label>
                                             <p className="px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600">
-                                                {user?.lastName}
+                                                {formData.lastName || '\u00A0'}
                                             </p>
                                         </div>
                                     </div>
@@ -175,33 +305,31 @@ const Profile = () => {
                                         <div>
                                             <label className="block font-medium text-gray-400">Phone Number</label>
                                             <p className="px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600">
-                                                {user?.phoneNumber}
+                                                {"+84" + formData.phoneNumber || '\u00A0'}
                                             </p>
                                         </div>
                                         <div>
                                             <label className="block font-medium text-gray-400">Gender</label>
                                             <p className="px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600">
-                                                {user?.gender}
+                                                {formData.gender || '\u00A0'}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
                                         <div>
                                             <label className="block font-medium text-gray-400">Email</label>
                                             <p className="px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600">
-                                                {user?.email}
+                                                {formData.email || '\u00A0'}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         <div>
-                                            <label className="block font-medium text-gray-400"> Address</label>
+                                            <label className="block font-medium text-gray-400">Address</label>
                                             <p className="px-4 py-3 border rounded-lg bg-gray-800 text-white border-gray-600">
-                                                {user?.address}
+                                                {formData.address || '\u00A0'}
                                             </p>
                                         </div>
-
                                     </div>
                                 </div>
                             )}

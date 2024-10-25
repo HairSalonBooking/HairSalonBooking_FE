@@ -69,10 +69,10 @@ const TableUser = () => {
                     {users && users.map((user: IUser) => (
                         <TableRow key={user.id}>
                             <TableCell className="font-medium">{user.firstName}</TableCell>
-                            <TableCell>{user.lastName ?? "N/A"}</TableCell>
+                            <TableCell>{user.lastName ?? '\u00A0'}</TableCell>
                             <TableCell>{user.email}</TableCell>
-                            <TableCell>{user.phoneNumber ?? "N/A"}</TableCell>
-                            <TableCell>{user.gender ?? "N/A"}</TableCell>
+                            <TableCell>{user.phoneNumber ?? '\u00A0'}</TableCell>
+                            <TableCell>{user.gender ?? '\u00A0'}</TableCell>
                             <TableCell className="text-right">{formatAnyDate(user.createdAt)}</TableCell>
                             <TableCell className="text-right">{formatAnyDate(user.updatedAt)}</TableCell>
                             <TableCell className="text-right">
