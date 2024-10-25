@@ -281,7 +281,7 @@ const BookingForm = () => {
                 <input
                     type="date"
                     {...register("date", { required: true })}
-                    min={new Date().toISOString().split("T")[0]}
+                    min={new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' })}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
                 {errors.date && <span className="text-red-500">Booking date is required</span>}
