@@ -27,6 +27,8 @@ const AppRouter = () => {
     const { auth } = useAppSelector((state) => state.auth);
     const isCustomer = auth?.roleId === "R4"
     const isAdmin = auth?.roleId === "R2"
+    const isStaff = auth?.roleId === "R1"
+
     return (
         <Routes>
             {token === null ? (
@@ -45,8 +47,6 @@ const AppRouter = () => {
                     <Route path="/not-found" element={<NotFoundPage />} />
                     <Route path='/' element={<Home />} />
                     <Route path="*" element={<Navigate to="/not-found" replace />} />
-                    <Route path="/staff-management" element={<StaffManagement />} />
-                    <Route path="/schedule-management" element={<ScheduleManagement />} />
                     <Route path="/payment/cancel" element={< PaymentCancelPage />} />
 
 
@@ -75,10 +75,15 @@ const AppRouter = () => {
                     )}
                     {isAdmin && (
                         <>
-                            <Route path='/profile' element={<Profile />} />
                             <Route path='/service-management' element={<ServiceManagement />} />
                             <Route path='/stylist-management' element={<StylistManagement />} />
                             <Route path='/users-management' element={<UserManagement />} />
+                        </>
+                    )}
+                    {isStaff && (
+                        <>
+                            <Route path="/staff-management" element={<StaffManagement />} />
+                            <Route path="/schedule-management" element={<ScheduleManagement />} />
                         </>
                     )}
                 </>

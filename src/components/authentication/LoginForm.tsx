@@ -33,8 +33,10 @@ const LoginForm = () => {
                 const role = response.roleId;
                 if (role === "R2") {
                     navigate("/service-management");
-                } else if (role === "Staff") {
-                    navigate("/product-management");
+                } else if (role === "R1") {
+                    navigate("/staff-management");
+                } else if (role === "R3") {
+                    navigate("/stylist-management");
                 } else if (role === "R4") {
                     navigate("/home");
                 }
