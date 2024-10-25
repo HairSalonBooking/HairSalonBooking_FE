@@ -1,6 +1,6 @@
 import { IBooking, IBookingRequest } from "@/interfaces/Booking";
 import { ICustomerBooking } from "@/interfaces/CustomerBooking";
-import { CANCEL_BOOKING_BY_CUSTOMER_ENDPOINT, CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_CUSTOMER_ENDPOINT, GET_BOOKING_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
+import { CANCEL_BOOKING_BY_CUSTOMER_ENDPOINT, CANCEL_BOOKING_BY_STAFF_ENDPOINT, CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_CUSTOMER_ENDPOINT, GET_BOOKING_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -147,8 +147,8 @@ export const verifyBooking = createAsyncThunk<
     }
 );
 
-export const cancleBookingByCustomer = createAsyncThunk<any, { bookingId: number }>(
-    "bookings/cancleBookingByCustomer",
+export const cancelBookingByCustomer = createAsyncThunk<any, { bookingId: number }>(
+    "bookings/cancelBookingByCustomer",
     async ({ bookingId }, thunkAPI) => {
         try {
             const token = sessionStorage.getItem('hairSalonToken');
@@ -161,7 +161,9 @@ export const cancleBookingByCustomer = createAsyncThunk<any, { bookingId: number
                 }
             );
             if (response.data.errCode === 0) {
-                toast.success("Booking canceled successfully");
+                toast.success(`${response.data.errMsg}`);
+            } else {
+                toast.error(`${response.data.errMsg}`);
             }
             return response.data; // Return the response data
 
@@ -169,7 +171,33 @@ export const cancleBookingByCustomer = createAsyncThunk<any, { bookingId: number
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
         }
     }
-)
+);
+export const cancelBookingByStaff = createAsyncThunk<any, { bookingId: number, email: string, firstName: string, stylistName: string, timeString: string }>(
+    "bookings/cancelBookingByStaff",
+    async ({ bookingId, email, firstName, stylistName, timeString }, thunkAPI) => {
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.post(`${CANCEL_BOOKING_BY_STAFF_ENDPOINT}`,
+                { bookingId, email, firstName, stylistName, timeString }, // Gửi thêm các trường cần thiết
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (response.data.errCode === 0) {
+                toast.success(`${response.data.errMsg}`);
+            } else {
+                toast.error(`${response.data.errMsg}`);
+            }
+            return response.data; // Return the response data
+
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+);
+
 export const bookingSlice = createSlice({
     name: "bookings",
     initialState,
@@ -226,6 +254,7 @@ export const bookingSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
+        
     },
 });
 

@@ -1,6 +1,6 @@
 import Header from '@/components/layout/Header/Header';
 import PopupConfirmAction from '@/components/popup/ConfirmDelete/PopupConfirmAction';
-import { getCustomerBooking, cancleBookingByCustomer } from '@/services/features/booking/bookingSlice';
+import { getCustomerBooking, cancelBookingByCustomer } from '@/services/features/booking/bookingSlice';
 import { useAppDispatch, useAppSelector } from '@/services/store/store';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
@@ -27,7 +27,7 @@ const ViewBookingPage = () => {
     const handleConfirmCancel = () => {
         if (selectedBookingId !== null && auth?.id) {
             setLoading(true);
-            dispatch(cancleBookingByCustomer({ bookingId: selectedBookingId }))
+            dispatch(cancelBookingByCustomer({ bookingId: selectedBookingId }))
                 .unwrap()
                 .then(() => {
                     dispatch(getCustomerBooking({ customerId: auth.id }));
