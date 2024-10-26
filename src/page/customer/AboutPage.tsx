@@ -10,24 +10,24 @@ const AboutPage = () => {
                     {/* Breadcrumb */}
                     <nav className="text-sm mb-5 flex justify-center">
                         <a href="/home" className="text-white hover:text-yellow-500">
-                            Trang chủ
+                            Home
                         </a>
                         <span className="mx-2 text-gray-400">/</span>
                         <a href="/about" className="text-gray-400">
-                            Giới Thiệu
+                            About Us
                         </a>
                     </nav>
 
                     {/* Title */}
-                    <h1 className="text-center text-4xl font-bold mb-5">Giới Thiệu</h1>
+                    <h1 className="text-center text-4xl font-bold mb-5">About Us</h1>
 
                     {/* Section 1 */}
                     <div className="mb-16">
                         <h2 className="text-3xl font-bold mb-4">
-                            HairCare Salon: Tôn Vinh Vẻ Đẹp Tự Nhiên Của Bạn
+                            HairCare Salon: Celebrating Your Natural Beauty
                         </h2>
                         <p className="text-lg mb-6">
-                            Tại HairCare Salon, chúng tôi tin rằng mái tóc không chỉ là một phần của ngoại hình mà còn là nét độc đáo thể hiện cá tính của mỗi người. Được thành lập với sứ mệnh mang đến sự hoàn hảo trong từng chi tiết, HairCare Salon tự hào là nơi mang đến các dịch vụ chăm sóc tóc chuyên nghiệp, từ cắt tóc, tạo kiểu, đến các liệu pháp phục hồi tóc chuyên sâu.
+                            At HairCare Salon, we believe that hair is not just part of your appearance but a unique reflection of each individual’s personality. Founded with the mission to provide perfection in every detail, HairCare Salon is proud to offer professional hair care services, from haircuts and styling to intensive hair restoration treatments.
                         </p>
                         <img
                             src="https://archello.s3.eu-central-1.amazonaws.com/images/2022/04/25/noke-architects-hair-salon-interiors-inspired-by-desert-landscape-wellness-centres-archello.1650910390.2929.jpg" // Replace with the correct image URL
@@ -39,14 +39,10 @@ const AboutPage = () => {
                     {/* Section 2 */}
                     <div className="mb-16">
                         <h2 className="text-3xl font-bold mb-4">
-                            Xing Hair Salon: Làm Đẹp Tóc - Tạo Nên Cá Tính Riêng
+                            Xing Hair Salon: Hair Beauty - Creating Your Own Identity
                         </h2>
                         <p className="text-lg mb-6">
-                            Với đội ngũ chuyên gia giàu kinh nghiệm và sự tận tâm trong từng thao tác,
-                            chúng tôi cam kết mang lại cho khách hàng không chỉ là một diện mạo mới mà còn là
-                            sự tự tin và hài lòng tuyệt đối. HairCare Salon luôn cập nhật các xu hướng thời
-                            trang tóc mới nhất, sử dụng những sản phẩm chăm sóc tóc cao cấp để đảm bảo mái tóc
-                            của bạn luôn được nuôi dưỡng và khỏe mạnh.
+                            With a team of experienced professionals and dedication in every action, we commit to providing customers not only a new look but also absolute confidence and satisfaction. HairCare Salon constantly updates the latest hair fashion trends, using high-end hair care products to ensure your hair is always nourished and healthy.
                         </p>
                         <img
                             src="https://images.squarespace-cdn.com/content/v1/5e29bc191bc1146fbde14230/1633447847079-C597QL7C8T0C6T284ECU/salon+interior+design.jpg" // Replace with the correct image URL
@@ -57,18 +53,12 @@ const AboutPage = () => {
 
                     {/* Section 3 */}
                     <div className="mb-16">
-                        <h2 className="text-3xl font-bold mb-4">Dịch Vụ Tại Xing Hair Salon</h2>
+                        <h2 className="text-3xl font-bold mb-4">Services at Xing Hair Salon</h2>
                         <p className="text-lg mb-6">
-                            Tại salon, chúng tôi cung cấp các dịch vụ cắt, tạo kiểu, và chăm
-                            sóc tóc đặc biệt dành riêng cho khách hàng. Bất kỳ nhu cầu nào về
-                            tóc của bạn, chúng tôi luôn sẵn sàng cung cấp giải pháp tốt nhất.
+                            At the salon, we offer cutting, styling, and special hair care services tailored specifically for our customers. Whatever your hair needs, we are always ready to provide the best solution.
                         </p>
                         <p className="text-lg mb-6">
-                            Với không gian hiện đại, phong cách sang trọng, khách hàng khi đến
-                            với chúng tôi không chỉ để làm đẹp mà còn để trải nghiệm không
-                            gian thư giãn tuyệt vời. Mỗi dịch vụ của chúng tôi đều đi kèm với
-                            các sản phẩm chăm sóc tóc cao cấp, cam kết mang lại sự hài lòng
-                            tuyệt đối.
+                            With a modern space and luxurious style, customers coming to us not only for beauty treatments but also to experience a wonderful relaxing space. Each of our services comes with premium hair care products, ensuring absolute satisfaction.
                         </p>
                         <img
                             src="https://www.takarahairdressing.co.uk/images/salon-design/step-2-left.jpg" // Replace with the correct image URL
@@ -77,17 +67,13 @@ const AboutPage = () => {
                         />
                     </div>
 
-                    {/* Section 4*/}
+                    {/* Section 4 */}
                     <div className="mb-16">
                         <h2 className="text-3xl font-bold mb-4">
-                            Chất Lượng Và Khách Hàng Là Trên Hết
+                            Quality and Customers Above All
                         </h2>
                         <p className="text-lg mb-6">
-                            Không gian sang trọng và thoải mái của HairCare Salon
-                            được thiết kế để mang đến cho bạn những phút giây thư giãn
-                            trọn vẹn trong quá trình làm đẹp. Tại đây, khách hàng không
-                            chỉ được tận hưởng dịch vụ chăm sóc tóc hoàn hảo mà còn được
-                            phục vụ tận tình, chu đáo với tinh thần chuyên nghiệp.
+                            The luxurious and comfortable space of HairCare Salon is designed to give you a full relaxing experience during your beauty treatments. Here, customers not only enjoy perfect hair care services but also receive attentive and thoughtful service with professionalism.
                         </p>
                         <img
                             src="https://cdn.prod.website-files.com/65e78d77c85e6169e48b2f17/66331c087fcec9581f31394d_interior1%2520%25281%2529.jpeg" // Replace with the correct image URL
@@ -99,14 +85,10 @@ const AboutPage = () => {
                     {/* Section 5 */}
                     <div className="mb-16">
                         <h2 className="text-3xl font-bold mb-4">
-                            Liên Hệ Với HairCare Salon Ngay Hôm Nay
-
+                            Contact HairCare Salon Today
                         </h2>
                         <p className="text-lg mb-6">
-                            Nếu bạn đang tìm kiếm một salon chất lượng và đáng tin cậy để nhuộm tóc và làm đẹp tóc tại quận 9,
-                            hãy đến với Xing Hair Salon địa chỉ Tòa S5.02 - The Rainbow - Vinhomes Grand Park.
-                            Chúng tôi sẽ biến ước mơ về mái tóc hoàn hảo của bạn thành hiện thực.
-                            Hãy để HairCare Salon giúp bạn tỏa sáng và thể hiện cá tính qua mái tóc của mình.
+                            If you are looking for a high-quality and trustworthy salon to dye and beautify your hair in District 9, come to Xing Hair Salon at Tower S5.02 - The Rainbow - Vinhomes Grand Park. We will turn your dream of perfect hair into reality. Let HairCare Salon help you shine and express your personality through your hair.
                         </p>
                         <img
                             src="https://img.freepik.com/premium-photo/industrial-hair-dressing-barbershop-hair-salon-interior-design-concept_861577-1497.jpg" // Replace with the correct image URL
