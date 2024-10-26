@@ -4,16 +4,16 @@ import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import Header from "@/components/layout/Header/Header";
 import Footer from "@/components/layout/Footer/Footer";
 import { getServiceById } from "@/services/features/service/serviceSlice";
-import { ClipLoader } from "react-spinners";  // Thêm react-spinners để hiển thị loading
+import { ClipLoader } from "react-spinners";  // Import react-spinners to display loading
 
 const ServiceDetailPage = () => {
-    const { id } = useParams();  // Lấy id từ URL
+    const { id } = useParams();  // Get id from URL
     const dispatch = useAppDispatch();
     const { service, loading } = useAppSelector((state) => state.services);
 
     useEffect(() => {
         if (id) {
-            dispatch(getServiceById({ id: Number(id) }));  // Gọi API với id
+            dispatch(getServiceById({ id: Number(id) }));  // Call API with id
         }
     }, [dispatch, id]);
 
@@ -26,7 +26,7 @@ const ServiceDetailPage = () => {
     }
 
     if (!service) {
-        return <div className="text-center text-white">Không tìm thấy dịch vụ.</div>;
+        return <div className="text-center text-white">Service not found.</div>;
     }
 
     return (
@@ -37,11 +37,11 @@ const ServiceDetailPage = () => {
                     {/* Breadcrumb */}
                     <nav className="text-sm mb-5 flex justify-center">
                         <a href="/home" className="text-white hover:text-yellow-500">
-                            Trang chủ
+                            Home
                         </a>
                         <span className="mx-2 text-gray-400">/</span>
                         <a href="/services" className="text-gray-400">
-                            Dịch Vụ
+                            Services
                         </a>
                         <span className="mx-2 text-gray-400">/</span>
                         <span className="text-yellow-500">{service.name}</span>
@@ -61,7 +61,7 @@ const ServiceDetailPage = () => {
                             <p className="text-2xl font-semibold text-yellow-500 mb-10">Price: {service.price} $</p>
                             <a href="/booking">
                                 <button className="bg-yellow-500 text-black font-bold py-3 px-8 rounded-full shadow-lg hover:bg-yellow-600 transition-all">
-                                    Đặt Lịch
+                                    Book Now
                                 </button>
                             </a>
                         </div>
