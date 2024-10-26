@@ -22,15 +22,15 @@ const ServicePage = () => {
                     {/* Breadcrumb */}
                     <nav className="text-sm mb-5 flex justify-center">
                         <a href="/home" className="text-white hover:text-yellow-500">
-                            Trang chủ
+                            Home
                         </a>
                         <span className="mx-2 text-gray-400">/</span>
                         <a href="/services" className="text-gray-400">
-                            Dịch Vụ
+                            Services
                         </a>
                     </nav>
                     {/* Title */}
-                    <h1 className="text-center text-4xl font-bold mb-5">Dịch Vụ</h1>
+                    <h1 className="text-center text-4xl font-bold mb-5">Service</h1>
 
                     {/* Services Grid */}
                     <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -55,7 +55,7 @@ const ServicePage = () => {
                     <div className="text-center mt-10">
                         <a href="/booking">
                             <button className="bg-yellow-500 text-black font-bold py-3 px-6 rounded-full shadow-lg hover:bg-yellow-600 transition-all">
-                                Đặt Lịch
+                                Booking
                             </button>
                         </a>
                     </div>
