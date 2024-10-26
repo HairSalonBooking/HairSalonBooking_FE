@@ -9,6 +9,8 @@ import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { ClipLoader } from "react-spinners";
+
 
 interface FormData {
     phone: string;
@@ -29,6 +31,8 @@ const BookingForm = () => {
     const dispatch = useAppDispatch();
     const [showService, setShowService] = useState(false);
     const [showStylist, setShowStylist] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
     const [selectedServices, setSelectedServices] = useState<{ id: string, price: number }[]>([{ id: "", price: 0 }]);
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [availableTimes, setAvailableTimes] = useState<ITimeBooking[]>([]);
@@ -159,21 +163,24 @@ const BookingForm = () => {
         const stylistName = stylist ? `${stylist.firstName} ${stylist.lastName}` : '';
         const serviceIds = selectedServices.map(s => Number(s.id));
 
-        // Payload giữ nguyên totalAmount và chỉ sử dụng discountedAmount cho hiển thị
+        // Bật trạng thái loading
+        setIsLoading(true);
+
         const payload = {
             ...data,
             date,
             timeString,
             stylistName,
             serviceIds,
-            amount: totalAmount, // Send original amount to backend, not the discounted one
-            pointsToUse: auth ? data.pointsToUse : 0, // Use points only if authenticated
+            amount: totalAmount,
+            pointsToUse: auth ? data.pointsToUse : 0,
             usePoints: data.usePoints,
         } as IBookingRequest;
 
         dispatch(customerCreateBooking(payload))
             .unwrap()
             .then((response) => {
+                setIsLoading(false); // Tắt trạng thái loading sau khi hoàn thành
                 if (response.errCode === 0) {
                     toast.success("Booking successful, please check your email.");
                     dispatch(getUserById({ id: auth?.id ?? 0 }));
@@ -182,6 +189,7 @@ const BookingForm = () => {
                 }
             })
             .catch((error) => {
+                setIsLoading(false); // Tắt trạng thái loading trong trường hợp lỗi
                 toast.error(error.errMsg || 'An error occurred while booking.');
             });
     };
@@ -337,8 +345,8 @@ const BookingForm = () => {
                 </p>
             </div>
 
-            <button type="submit" className="bg-yellow-600 text-black py-3 px-4 rounded hover:bg-yellow-500">
-                Book Appointment
+            <button type="submit" className="bg-yellow-600 text-black py-3 px-4 rounded hover:bg-yellow-500" disabled={isLoading}>
+                {isLoading ? <ClipLoader color="#000" size={24} /> : "Book Appointment"}
             </button>
         </form>
     );
