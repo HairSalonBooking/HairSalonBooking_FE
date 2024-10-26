@@ -19,6 +19,7 @@ export interface IStylist {
     salaryData: ISalaryData;
 }
 export interface ISalaryData {
+    SalaryId: number;
     TotalSalary: string;
     BaseSalary: string;
     Bonuses: string;
