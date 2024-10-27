@@ -15,15 +15,16 @@ import CreateStylistPopup from "../popup/CreateStylist/CreateStylistPopup";
 import { getAllStylist, paidSalary } from "@/services/features/stylist/stylistSlice";
 import useFormatCurrency from "@/utils/useFortmatCurrency";
 import PopupConfirmAction from "../popup/ConfirmDelete/PopupConfirmAction";
+import CreateSalaryStylist from "./CreateSalaryStylist";
 
 const TableStylist = () => {
     const dispatch = useAppDispatch();
     const formatCurrency = useFormatCurrency();
     const [isPopupConfirmOpen, setIsPopupConfirmOpen] = useState(false);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [stylistIdToPaidOn, setServiceIdToPaidOn] = useState<number | null>(null);
-
-    const { stylists } = useAppSelector(state => state.stylists); // Lấy dữ liệu stylist từ store
+    const { stylists } = useAppSelector(state => state.stylists);
+    const [isPopupCreateSalary, setIsPopupCreateSalary] = useState(false);
+    const [chooseStylistId, setChooseStylistId] = useState<number | null>(null);
 
     const openPopup = () => {
         setIsPopupOpen(true);
@@ -32,25 +33,37 @@ const TableStylist = () => {
     const closePopup = () => {
         setIsPopupOpen(false);
     };
+
     useEffect(() => {
         dispatch(getAllStylist());
     }, [dispatch]);
 
-    // handlePaidOnClick: Hàm xử lý khi nhấn vào nút "Pay" để chuyển khoản lương cho nhân viên
     const handlePaidOnClick = (id: number) => {
-        setServiceIdToPaidOn(id);
+        setChooseStylistId(id);
         setIsPopupConfirmOpen(true);
     };
+
     const closeConfirmPopup = () => {
         setIsPopupConfirmOpen(false);
-        setServiceIdToPaidOn(null);
+        setChooseStylistId(null);
     };
+
     const handleConfirmPaidOn = async () => {
-        if (stylistIdToPaidOn !== null) {
-            await dispatch(paidSalary({ id: stylistIdToPaidOn }));
+        if (chooseStylistId !== null) {
+            await dispatch(paidSalary({ id: chooseStylistId }));
             dispatch(getAllStylist());
             closeConfirmPopup();
         }
+    };
+
+    const handleOpenCreateSalary = (id: number) => {
+        setChooseStylistId(id);
+        setIsPopupCreateSalary(true);
+    };
+
+    const closeCreateSalaryPopup = () => {
+        setIsPopupCreateSalary(false);
+        setChooseStylistId(null);
     };
 
     return (
@@ -77,6 +90,7 @@ const TableStylist = () => {
                         <TableHead className="text-right">Base Salary</TableHead>
                         <TableHead className="text-right">Bonuses</TableHead>
                         <TableHead className="text-right">Total Salary</TableHead>
+                        <TableHead className="text-right">New Salary</TableHead>
                         <TableHead className="text-right">Paid On</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -92,27 +106,46 @@ const TableStylist = () => {
                             <TableCell className="text-right">{formatCurrency(stylist.salaryData?.Bonuses)}</TableCell>
                             <TableCell className="text-right">{formatCurrency(stylist.salaryData?.TotalSalary)}</TableCell>
                             <TableCell className="text-right">
-                                {stylist.salaryData?.PaidOn ? (
-                                    formatAnyDate(stylist.salaryData?.PaidOn)
-                                ) : (
+                                {stylist.salaryData?.SalaryId === null && (
                                     <button
-                                        onClick={() => handlePaidOnClick(stylist.salaryData.SalaryId)}
-                                        className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold"
+                                        onClick={() => handleOpenCreateSalary(stylist.id)}
+                                        className="border border-green-600 p-2 rounded-lg text-white bg-green-500 font-bold"
                                     >
-                                        Pay
-                                    </button>
-                                )}
+                                        Create Salary
+                                    </button>)}
+                            </TableCell>
 
+                            <TableCell className="text-right">
+                                {stylist.salaryData?.SalaryId !== null && stylist.salaryData.PaidOn === null ? (
+                                    <>
+                                        <button
+                                            onClick={() => handlePaidOnClick(stylist.salaryData.SalaryId)}
+                                            className="border border-slate-600 p-2 rounded-lg text-white bg-slate-800 font-bold"
+                                        >
+                                            Pay
+                                        </button>
+
+                                    </>
+                                ) : (
+                                    stylist.salaryData?.PaidOn !== null && (
+                                        <span className="text-xs block mt-2">
+                                            {formatAnyDate(stylist.salaryData.PaidOn)}
+                                        </span>
+                                    )
+
+                                )}
                             </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
 
-            {/* Popup component */}
             <CreateStylistPopup isOpen={isPopupOpen} onClose={closePopup} />
-
-            {/* Popup xác nhận xóa */}
+            <CreateSalaryStylist
+                isOpen={isPopupCreateSalary}
+                onClose={closeCreateSalaryPopup}
+                stylistId={chooseStylistId ?? undefined}
+            />
             <PopupConfirmAction
                 title={"Confirm salary transfer for employee"}
                 content={"Are you sure you want to transfer the salary for this employee?"}
