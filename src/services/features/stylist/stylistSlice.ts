@@ -1,6 +1,6 @@
 import { IAccount, IRegister } from "@/interfaces/Account";
-import { IStylist } from "@/interfaces/Stylist";
-import { GET_STYLIST_BY_ID_ENDPOINT, GET_STYLIST_ENDPOINT, PAID_SALARY_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
+import { ICreateSalary, IStylist } from "@/interfaces/Stylist";
+import { CREATE_SALARY_FOR_STYLIST_ENDPOINT, GET_STYLIST_BY_ID_ENDPOINT, GET_STYLIST_ENDPOINT, PAID_SALARY_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -76,6 +76,29 @@ export const createStylist = createAsyncThunk<IAccount, IRegister>(
     }
 );
 
+export const createSalaryForStylist = createAsyncThunk<Object, ICreateSalary>(
+    "stylists/createSalaryForStylist",
+    async (data: ICreateSalary, thunkAPI) => {
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.post(CREATE_SALARY_FOR_STYLIST_ENDPOINT, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.data.message) {
+                toast.error(`${response.data.message}`);
+            } else if (!response.data.message) {
+                toast.success("Create Salary Successfully");
+            }
+            return response.data;
+        } catch (error: any) {
+            toast.error("Server Error");
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+);
+
 export const paidSalary = createAsyncThunk<Object, { id: number }>(
     "stylists/paidSalary",
     async (id, thunkAPI) => {
@@ -139,6 +162,18 @@ export const stylistSlice = createSlice({
             state.loading = false;
         });
         builder.addCase(createStylist.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+
+        //createSalaryForStylist
+        builder.addCase(createSalaryForStylist.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(createSalaryForStylist.fulfilled, (state) => {
+            state.loading = false;
+        });
+        builder.addCase(createSalaryForStylist.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
         });
