@@ -36,7 +36,7 @@ const LoginForm = () => {
                 } else if (role === "R1") {
                     navigate("/staff-management");
                 } else if (role === "R3") {
-                    navigate("/stylist-management");
+                    navigate("/shift-stylist");
                 } else if (role === "R4") {
                     navigate("/home");
                 }
