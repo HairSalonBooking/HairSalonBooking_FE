@@ -35,7 +35,7 @@ export const DELETE_SERVICE_ENDPOINT = `${BASE_URL}/delete-service`;
 export const GET_BOOKING_ENDPOINT = `${BASE_URL}/get-all-booking`;
 export const CUSTOMER_BOOKING_ENDPOINT = `${BASE_URL}/customer-book-appointment`;
 export const VERIFY_BOOKING_ENDPOINT = `${BASE_URL}/payment-and-verify-book-appointment`;
-
+export const GET_BOOKING_FOR_STYLIST_ENDPOINT = `${BASE_URL}/get-list-customer-booking-for-stylist`;
 // get booking of customer
 export const GET_BOOKING_CUSTOMER_ENDPOINT = `${BASE_URL}/get-booking-by-id`;
 export const CANCEL_BOOKING_BY_CUSTOMER_ENDPOINT = `${BASE_URL}/cancel-booking-for-customer`;
