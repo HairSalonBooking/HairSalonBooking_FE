@@ -1,6 +1,6 @@
 import { IBooking, IBookingRequest } from "@/interfaces/Booking";
 import { ICustomerBooking } from "@/interfaces/CustomerBooking";
-import { CANCEL_BOOKING_BY_CUSTOMER_ENDPOINT, CANCEL_BOOKING_BY_STAFF_ENDPOINT, CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_CUSTOMER_ENDPOINT, GET_BOOKING_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
+import { CANCEL_BOOKING_BY_CUSTOMER_ENDPOINT, CANCEL_BOOKING_BY_STAFF_ENDPOINT, CUSTOMER_BOOKING_ENDPOINT, GET_BOOKING_CUSTOMER_ENDPOINT, GET_BOOKING_ENDPOINT, GET_BOOKING_FOR_STYLIST_ENDPOINT, VERIFY_BOOKING_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -103,6 +103,27 @@ export const getCustomerBooking = createAsyncThunk<ICustomerBooking[], { custome
                     },
                 }
             );
+            return response.data.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+);
+
+export const getBookingForStylist = createAsyncThunk<IBooking[], { stylistId: number, date: string }>(
+    "bookings/getBookingForStylist",
+    async ({ stylistId, date }, thunkAPI) => {
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.get(`${GET_BOOKING_FOR_STYLIST_ENDPOINT}?stylistId=${stylistId}&date=${date}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                params: {
+                    stylistId: stylistId,
+                },
+            });
+
             return response.data.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
@@ -254,7 +275,20 @@ export const bookingSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
-        
+
+        // Get Booking For Stylist
+        builder.addCase(getBookingForStylist.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(getBookingForStylist.fulfilled, (state, action) => {
+            state.loading = false;
+            state.bookings = action.payload;
+        });
+        builder.addCase(getBookingForStylist.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
     },
 });
 
