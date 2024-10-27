@@ -201,23 +201,13 @@ const BookingForm = () => {
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Phone Number *</label>
                 <input
-                    type="tel" // Chỉ cho phép nhập số
-                    {...register("phone", {
-                        required: "Phone number is required",
-                        pattern: {
-                            value: /^[0-9]{10,11}$/, // Đảm bảo số điện thoại chỉ chứa số và có độ dài từ 10-11 ký tự
-                            message: "Invalid phone number. Please enter a valid phone number.",
-                        },
-                    })}
-                    onKeyDown={(e) => {
-                        if (!/[0-9]/.test(e.key) && e.key !== "Backspace" && e.key !== "Tab") {
-                            e.preventDefault(); // Ngăn nhập ký tự không phải số
-                        }
-                    }}
+                    type="text"
+                    {...register("phone", { required: true })}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
-                {errors.phone && <span className="text-red-500">{errors.phone.message}</span>}
+                {errors.phone && <span className="text-red-500">Phone number is required</span>}
             </div>
+
             <div className="mb-4">
                 <label className="block text-sm font-bold mb-2">Full Name *</label>
                 <input
@@ -232,16 +222,10 @@ const BookingForm = () => {
                 <label className="block text-sm font-bold mb-2">Email *</label>
                 <input
                     type="email"
-                    {...register("email", {
-                        required: "Email is required",
-                        pattern: {
-                            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Regex kiểm tra email hợp lệ
-                            message: "Invalid email address",
-                        },
-                    })}
+                    {...register("email", { required: true })}
                     className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                 />
-                {errors.email && <span className="text-red-500">{errors.email.message}</span>}
+                {errors.email && <span className="text-red-500">Email is required</span>}
             </div>
 
             <div className="mb-4">
