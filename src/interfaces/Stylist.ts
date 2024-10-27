@@ -28,3 +28,9 @@ export interface ISalaryData {
     PaidOn: string | null;
 }
 
+export interface ICreateSalary {
+    stylistId: number
+    month: number;
+    year: number;
+}
+
