@@ -81,6 +81,7 @@ const TableStaff = () => {
                     id="date-picker"
                     className="ml-2 p-2 border border-gray-300 rounded"
                     onChange={(e) => setSelectedDate(e.target.value)}
+                    min={new Date().toISOString().split("T")[0]} // Prevent selection of past dates
                 />
             </div>
 
@@ -160,8 +161,6 @@ const TableStaff = () => {
                 onConfirm={handleConfirmCancel}
                 actionCancel="No"
                 actionDelete="Yes, Cancel"
-                loading={loading} // Truyền trạng thái loading
-
             />
 
             {/* Loading state */}
