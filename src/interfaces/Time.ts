@@ -19,6 +19,8 @@ export interface ITimeBooking {
     createdAt: string;
     updatedAt: string;
     timeTypeData: ITimeTypeData;
+    isPast?: boolean; // Add the isPast property
+
 }
 interface ITimeTypeData {
     valueEn: string;
