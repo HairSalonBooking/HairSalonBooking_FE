@@ -21,6 +21,7 @@ import ViewBookingPage from '@/page/customer/booking/ViewBookingPage'
 import StaffManagement from '@/page/staff/StaffManagement/StaffManagement'
 import PaymentCancelPage from '@/page/payment/PaymentCancelPage'
 import ScheduleManagement from '@/page/staff/ScheduleManagement/ScheduleManagement'
+import DashboardPage from '@/page/admin/Dashboard/DashboardPage'
 import ShiftManagementOfStylist from '@/page/stylist/TablbeShiftOfStylist/ShiftManagementOfStylist'
 
 const AppRouter = () => {
@@ -52,6 +53,7 @@ const AppRouter = () => {
                     <Route path="/payment/cancel" element={< PaymentCancelPage />} />
 
 
+
                 </>
             ) : (
                 <>
@@ -80,6 +82,8 @@ const AppRouter = () => {
                             <Route path='/service-management' element={<ServiceManagement />} />
                             <Route path='/stylist-management' element={<StylistManagement />} />
                             <Route path='/users-management' element={<UserManagement />} />
+                            <Route path='/dashboard' element={<DashboardPage />} />
+
                         </>
                     )}
                     {isStaff && (
