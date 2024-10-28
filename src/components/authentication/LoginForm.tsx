@@ -32,7 +32,7 @@ const LoginForm = () => {
 
                 const role = response.roleId;
                 if (role === "R2") {
-                    navigate("/service-management");
+                    navigate("/dashboard");
                 } else if (role === "R1") {
                     navigate("/staff-management");
                 } else if (role === "R3") {
