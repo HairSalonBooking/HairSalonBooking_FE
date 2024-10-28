@@ -66,7 +66,7 @@ const SideBar: React.FC<SideBarProps> = ({ onToggle }) => {
                         <ul className="space-y-2">
                             <li>
                                 <Link
-                                    to="#"
+                                    to="/dashboard"
                                     className="flex items-center p-2 text-gray-300 rounded-lg hover:bg-gray-700 group"
                                 >
                                     <svg
@@ -127,7 +127,7 @@ const SideBar: React.FC<SideBarProps> = ({ onToggle }) => {
                                 </Link>
                             </li>
                             <li>
-                                <Link 
+                                <Link
                                     to="/users-management"
                                     className="flex items-center p-2 text-gray-300 rounded-lg hover:bg-gray-700 group"
                                 >
