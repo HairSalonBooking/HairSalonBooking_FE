@@ -18,10 +18,11 @@ export interface IBooking {
 interface ICustomerData {
     email: string;
     firstName: string;
+    lastName: string;
     address: string;
 }
 
-interface ITimeTypeDataBooking { 
+interface ITimeTypeDataBooking {
     valueEn: string;
     valueVi: string;
 }
@@ -38,5 +39,5 @@ export interface IBookingRequest {
     timeString: string;
     timeType: string;
     pointsToUse: number;
-    usePoints : boolean;
-  }
+    usePoints: boolean;
+}
