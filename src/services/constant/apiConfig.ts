@@ -19,8 +19,8 @@ export const GET_STYLIST_ENDPOINT = `${BASE_URL}/get-all-stylist`;
 export const GET_STYLIST_BY_ID_ENDPOINT = `${BASE_URL}/get-detail-stylist-by-id`;
 export const PAID_SALARY_ENDPOINT = `${BASE_URL}/update-paid-on-salaries`;
 export const CREATE_SALARY_FOR_STYLIST_ENDPOINT = `${BASE_URL}/calculate-salary`;
-
-
+export const COMPLETE_BOOKING_BY_STYLIST_ENDPOINT = `${BASE_URL}/complete-service`;
+export const VIEW_SALARY_BY_STYLIST_ENDPOINT = `${BASE_URL}/get-salaries-by-stylistId`;
 //service
 
 export const GET_SERVICE_ENDPOINT = `${BASE_URL}/get-all-services`;
@@ -45,3 +45,9 @@ export const CREATE_SCHEDULE_ENDPOINT = `${BASE_URL}/create-schedule`;
 export const GET_ALL_CODE_ENDPOINT = `${BASE_URL}/get-allcode`;
 export const GET_ALL_TIME_BOOKING_ENDPOINT = `${BASE_URL}/get-schedule-stylist-by-date`;
 export const CANCEL_BOOKING_BY_STAFF_ENDPOINT = `${BASE_URL}/cancel-booking-for-staff`;
+
+//dashboard
+export const TOTAL_USERS_ENDPOINT = `${BASE_URL}/total-users`;
+export const TOTAL_REVENUE_ENDPOINT = `${BASE_URL}/revenue`;
+export const TOTAL_BOOKINGS_ENDPOINT = `${BASE_URL}/total-bookings`;
+export const TOTAL_FEEDBACK_ENDPOINT = `${BASE_URL}/total-feedback`;
