@@ -7,6 +7,7 @@ export interface IAccount {
     accessToken: string,
     errCode: number,
     success : boolean,
+    status : string,
     
 }
 
