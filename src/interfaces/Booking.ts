@@ -9,6 +9,7 @@ export interface IBooking {
     token: string;
     createdAt: string;
     updatedAt: string;
+    stylistDataBooking: IStylistDataBooking;
     customerData: ICustomerData;
     timeTypeDataBooking: ITimeTypeDataBooking;
     errCode: number;
@@ -25,6 +26,14 @@ interface ICustomerData {
 interface ITimeTypeDataBooking {
     valueEn: string;
     valueVi: string;
+}
+interface IStylistDataBooking {
+    email: string;
+    firstName: string;
+    lastName: string;
+    address: string | null;
+    gender: string | null;
+    genderData: string | null;
 }
 export interface IBookingRequest {
     amount: number;

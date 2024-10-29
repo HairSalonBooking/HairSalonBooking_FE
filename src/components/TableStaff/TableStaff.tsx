@@ -9,23 +9,27 @@ import {
     TableRow
 } from "@/components/ui/table";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
-import { getAllBooking, cancelBookingByStaff } from "@/services/features/booking/bookingSlice"; // Import necessary actions
-import PopupConfirmAction from "@/components/popup/ConfirmDelete/PopupConfirmAction"; // Import Popup for confirm action
+import { getAllBooking, cancelBookingByStaff } from "@/services/features/booking/bookingSlice";
+import PopupConfirmAction from "@/components/popup/ConfirmDelete/PopupConfirmAction";
 
 const TableStaff = () => {
     const dispatch = useAppDispatch();
-
-    const { bookings } = useAppSelector(state => state.bookings); // Fetch bookings from the store
-    const { stylists } = useAppSelector(state => state.stylists); // Fetch stylists from the store
+    const { bookings } = useAppSelector(state => state.bookings);
 
     const [selectedDate, setSelectedDate] = useState<string>(""); // Selected date
-    const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null); // Selected booking for cancel
-    const [selectedEmail, setSelectedEmail] = useState<string | null>(null); // Selected email for booking
-    const [selectedFirstName, setSelectedFirstName] = useState<string | null>(null); // Selected firstName for booking
-    const [selectedStylistName, setSelectedStylistName] = useState<string | null>(null); // Selected stylistName for booking
-    const [selectedTimeString, setSelectedTimeString] = useState<string | null>(null); // Selected timeString for booking
-    const [isPopupOpen, setIsPopupOpen] = useState(false); // Popup confirm state
-    const [loading, setLoading] = useState(false); // Loading state when processing cancel
+    const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null);
+    const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
+    const [selectedFirstName, setSelectedFirstName] = useState<string | null>(null);
+    const [selectedStylistName, setSelectedStylistName] = useState<string | null>(null);
+    const [selectedTimeString, setSelectedTimeString] = useState<string | null>(null);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    // Set default date to today's date when component is mounted
+    useEffect(() => {
+        const today = new Date().toISOString().split("T")[0]; // Get today's date in 'yyyy-mm-dd' format
+        setSelectedDate(today); // Set selected date to today
+    }, []);
 
     // Fetch bookings when the date changes
     useEffect(() => {
@@ -49,7 +53,6 @@ const TableStaff = () => {
     const handleConfirmCancel = () => {
         if (selectedBookingId !== null && selectedEmail && selectedFirstName && selectedStylistName && selectedTimeString) {
             setLoading(true);
-
             // Gửi toàn bộ payload
             dispatch(cancelBookingByStaff({
                 bookingId: selectedBookingId,
@@ -80,8 +83,8 @@ const TableStaff = () => {
                     type="date"
                     id="date-picker"
                     className="ml-2 p-2 border border-gray-300 rounded"
+                    value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    min={new Date().toISOString().split("T")[0]} // Prevent selection of past dates
                 />
             </div>
 
@@ -102,52 +105,59 @@ const TableStaff = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {bookings && bookings
-                            .filter(booking => {
-                                const bookingDate = new Date(parseInt(booking.date));
-                                const selected = new Date(selectedDate);
-                                return bookingDate.toLocaleDateString() === selected.toLocaleDateString();
-                            })
-                            .map((booking) => {
-                                const stylist = stylists?.find(stylist => stylist.id === booking.stylistId);
+                        {bookings && bookings.length > 0 ? (
+                            bookings
+                                .filter(booking => {
+                                    const bookingDate = new Date(parseInt(booking.date));
+                                    const selected = new Date(selectedDate);
+                                    return bookingDate.toLocaleDateString() === selected.toLocaleDateString();
+                                })
+                                .map((booking) => {
 
-                                return (
-                                    <TableRow key={booking.id} className="odd:bg-gray-50 even:bg-white hover:bg-gray-100">
-                                        <TableCell className="p-4">{stylist ? `${stylist.firstName} ${stylist.lastName}` : "Unknown Stylist"}</TableCell>
-                                        <TableCell className="p-4">{booking.customerData.firstName}</TableCell>
-                                        <TableCell className="p-4">{booking.customerData.email}</TableCell>
-                                        <TableCell className="p-4">{booking.timeTypeDataBooking.valueEn}</TableCell>
-                                        <TableCell className="p-4">
-                                            {booking.statusId === 'S1' && <span className="text-yellow-500 font-semibold">Pending</span>}
-                                            {booking.statusId === 'S2' && <span className="text-blue-500 font-semibold">Confirm</span>}
-                                            {booking.statusId === 'S3' && <span className="text-green-500 font-semibold">Success</span>}
-                                            {booking.statusId === 'S4' && <span className="text-red-500 font-semibold">Cancelled</span>}
-                                        </TableCell>
-                                        <TableCell className="p-4 text-right w-32">
-                                            {(booking.statusId === 'S1' || booking.statusId === 'S2') ? (
-                                                <button
-                                                    className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md shadow-lg transition-colors duration-200"
-                                                    onClick={() => handleCancelClick(
-                                                        booking.id,
-                                                        booking.customerData.email,
-                                                        booking.customerData.firstName,
-                                                        `${stylist?.lastName} ${stylist?.firstName}`,
-                                                        booking.timeTypeDataBooking.valueEn
-                                                    )}
-                                                >
-                                                    Cancel
-                                                </button>
-                                            ) : (
-                                                <span className="inline-block px-4 py-2 text-xs font-semibold rounded-full w-full text-center">
-                                                    {booking.statusId === 'S3' && '\u00A0'}
-                                                    {booking.statusId === 'S4' && '\u00A0'}
-                                                </span>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })
-                        }
+                                    return (
+                                        <TableRow key={booking.id} className="odd:bg-gray-50 even:bg-white hover:bg-gray-100">
+                                            {/* <TableCell className="p-4">{stylist ? `${stylist.firstName} ${stylist.lastName}` : "Unknown Stylist"}</TableCell> */}
+                                            <TableCell className="p-4">{booking.stylistDataBooking.firstName} {booking.stylistDataBooking.lastName}</TableCell>
+                                            <TableCell className="p-4">{booking.customerData.firstName}</TableCell>
+                                            <TableCell className="p-4">{booking.customerData.email}</TableCell>
+                                            <TableCell className="p-4">{booking.timeTypeDataBooking.valueEn}</TableCell>
+                                            <TableCell className="p-4">
+                                                {booking.statusId === 'S1' && <span className="text-yellow-500 font-semibold">Pending</span>}
+                                                {booking.statusId === 'S2' && <span className="text-blue-500 font-semibold">Confirm</span>}
+                                                {booking.statusId === 'S3' && <span className="text-green-500 font-semibold">Success</span>}
+                                                {booking.statusId === 'S4' && <span className="text-red-500 font-semibold">Cancelled</span>}
+                                            </TableCell>
+                                            <TableCell className="p-4 text-right w-32">
+                                                {(booking.statusId === 'S1' || booking.statusId === 'S2') ? (
+                                                    <button
+                                                        className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md shadow-lg transition-colors duration-200"
+                                                        onClick={() => handleCancelClick(
+                                                            booking.id,
+                                                            booking.customerData.email,
+                                                            booking.customerData.firstName,
+                                                            `${booking.stylistDataBooking.firstName} ${booking.stylistDataBooking.lastName}`,
+                                                            booking.timeTypeDataBooking.valueEn
+                                                        )}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                ) : (
+                                                    <span className="inline-block px-4 py-2 text-xs font-semibold rounded-full w-full text-center">
+                                                        {booking.statusId === 'S3' && '\u00A0'}
+                                                        {booking.statusId === 'S4' && '\u00A0'}
+                                                    </span>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={5} className="p-4 text-center text-gray-500">
+                                    No bookings found for the selected date.
+                                </TableCell>
+                            </TableRow>
+                        )}
                     </TableBody>
                 </Table>
             )}

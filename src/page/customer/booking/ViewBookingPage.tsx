@@ -44,6 +44,13 @@ const ViewBookingPage = () => {
         }
     };
 
+    // Sort the bookings based on the date in descending order
+    const sortedBookings = customerBooking?.slice().sort((a, b) => {
+        const dateA = new Date(parseInt(a.date));
+        const dateB = new Date(parseInt(b.date));
+        return dateB.getTime() - dateA.getTime(); // Sort descending
+    });
+
     return (
         <div className="relative min-h-screen bg-gray-900 text-gray-200">
             <div className="relative z-10">
@@ -62,7 +69,7 @@ const ViewBookingPage = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-700">
-                                {customerBooking && customerBooking.map((booking, index) => (
+                                {sortedBookings && sortedBookings.map((booking, index) => (
                                     <tr key={booking.id} className={`${index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'} hover:bg-gray-600 transition duration-200`}>
                                         <td className="px-6 py-4 whitespace-nowrap text-gray-300">
                                             {booking.services.map((service, i) => (
@@ -97,10 +104,7 @@ const ViewBookingPage = () => {
                                                     Cancel
                                                 </button>
                                             ) : (
-                                                <span className="inline-block px-4 py-2 text-xs font-semibold rounded-full w-full text-center
-                                                    ${booking.statusId === 'S2' ? 'bg-blue-500 text-gray-900' :
-                                                    booking.statusId === 'S3' ? 'bg-green-500 text-gray-900' : 
-                                                    'bg-yellow-500 text-gray-900'}">
+                                                <span className="inline-block px-4 py-2 text-xs font-semibold rounded-full w-full text-center">
                                                     {booking.statusId === 'S2' && '\u00A0'}
                                                     {booking.statusId === 'S3' && '\u00A0'}
                                                 </span>

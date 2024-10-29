@@ -25,6 +25,7 @@ interface ICustomerData {
 interface IStylistDataBooking {
     email: string;
     firstName: string;
+    lastName: string;
     address: string | null;
     gender: string | null;
     genderData: string | null;
