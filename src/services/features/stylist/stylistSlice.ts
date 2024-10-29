@@ -1,6 +1,6 @@
 import { IAccount, IRegister } from "@/interfaces/Account";
 import { ICreateSalary, IStylist } from "@/interfaces/Stylist";
-import { CREATE_SALARY_FOR_STYLIST_ENDPOINT, GET_STYLIST_BY_ID_ENDPOINT, GET_STYLIST_ENDPOINT, PAID_SALARY_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
+import { COMPLETE_BOOKING_BY_STYLIST_ENDPOINT, CREATE_SALARY_FOR_STYLIST_ENDPOINT, GET_STYLIST_BY_ID_ENDPOINT, GET_STYLIST_ENDPOINT, PAID_SALARY_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -105,6 +105,30 @@ export const paidSalary = createAsyncThunk<Object, { id: number }>(
         try {
             const token = sessionStorage.getItem('hairSalonToken');
             const response = await axiosInstance.put(`${PAID_SALARY_ENDPOINT}`, id, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.data.errCode === 0) {
+                toast.success(`${response.data.errMessage}`);
+            } else {
+                toast.error(`${response.data.errMessage}`);
+            }
+            return response.data;
+        } catch (error: any) {
+            toast.error("Server Error");
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+);
+
+export const completeBookingByStylist = createAsyncThunk<Object, { bookingId: number, email: string }>(
+    "stylists/completeBookingByStylist",
+    async ({ bookingId, email }, thunkAPI) => {
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.post(`${COMPLETE_BOOKING_BY_STYLIST_ENDPOINT}`,
+                { bookingId, email }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

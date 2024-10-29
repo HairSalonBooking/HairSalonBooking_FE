@@ -62,7 +62,26 @@ const BookingForm = () => {
             const timestamp = new Date(date).getTime();
             dispatch(getAllTimeByStylist({ stylistId: Number(stylistId), date: timestamp }))
                 .unwrap()
-                .then((times) => setAvailableTimes(times))
+                .then((times) => {
+                    const currentDate = new Date();
+                    const selectedDate = new Date(date);
+
+                    if (selectedDate.toDateString() === currentDate.toDateString()) {
+                        // It's today, filter out times that are in the past
+                        const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes(); // Get current time in minutes
+                        const filteredTimes = times.map((time) => {
+                            const [hours, minutes] = time.timeTypeData.valueVi.split(":").map(Number);
+                            const timeInMinutes = hours * 60 + minutes;
+                            return {
+                                ...time,
+                                isPast: timeInMinutes <= currentTime, // Mark the time slot as past
+                            };
+                        });
+                        setAvailableTimes(filteredTimes);
+                    } else {
+                        setAvailableTimes(times.map((time) => ({ ...time, isPast: false }))); // No disabled times if not today
+                    }
+                })
                 .catch((error) => {
                     console.error("Error fetching available times:", error);
                     setAvailableTimes([]);
@@ -303,9 +322,12 @@ const BookingForm = () => {
                             <button
                                 key={index}
                                 type="button"
-                                className={`p-3 rounded border ${watch("timeType") === timeType.timeType ? "bg-yellow-500 text-black" : "bg-white text-black"
+                                className={`p-3 rounded border ${timeType.isPast ? "bg-gray-300 text-gray-500 cursor-not-allowed" : watch("timeType") === timeType.timeType
+                                    ? "bg-yellow-500 text-black"
+                                    : "bg-white text-black"
                                     } focus:outline-none hover:bg-yellow-400`}
-                                onClick={() => setValue("timeType", timeType.timeType)}
+                                onClick={() => !timeType.isPast && setValue("timeType", timeType.timeType)} // Prevent clicking if disabled
+                                disabled={timeType.isPast} // Disable the button if the time is past
                             >
                                 {timeType.timeTypeData.valueVi}
                             </button>
