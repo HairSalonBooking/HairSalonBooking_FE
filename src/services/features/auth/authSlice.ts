@@ -44,7 +44,14 @@ export const loginAccount = createAsyncThunk<IAccount, string | Object>(
     async (data, thunkAPI) => {
         try {
             const response = await axiosInstance.post(LOGIN_ENDPOINT, data);
-            const { success, accessToken, refreshToken, errMessage } = response.data;
+            const { success, accessToken, refreshToken, errMessage, status } = response.data;
+
+            // Kiểm tra trạng thái của người dùng
+            if (status === "Inactive") {
+                const inactiveMessage = "Your account is inactive. Please contact support.";
+                toast.error(inactiveMessage);
+                return thunkAPI.rejectWithValue(inactiveMessage);
+            }
 
             if (!success) {
                 toast.error(errMessage || "Login failed");
@@ -62,6 +69,7 @@ export const loginAccount = createAsyncThunk<IAccount, string | Object>(
         }
     }
 );
+
 export const forgotPassword = createAsyncThunk<IAccount, string>(
     'auth/forgotPassword',
     async (email, thunkAPI) => {
