@@ -43,7 +43,6 @@ const Header = () => {
             <ul className="flex space-x-6 font-medium text-white">
               <li><a href="/services" className="hover:text-yellow-700">Service</a></li>
               <li><a href="/about" className="hover:text-yellow-700">About</a></li>
-              <li><a href="/blog" className="hover:text-yellow-700">Blog</a></li>
               <li><a href="/contact" className="hover:text-yellow-700">Contact</a></li>
             </ul>
 
