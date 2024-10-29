@@ -20,6 +20,7 @@ export const GET_STYLIST_BY_ID_ENDPOINT = `${BASE_URL}/get-detail-stylist-by-id`
 export const PAID_SALARY_ENDPOINT = `${BASE_URL}/update-paid-on-salaries`;
 export const CREATE_SALARY_FOR_STYLIST_ENDPOINT = `${BASE_URL}/calculate-salary`;
 export const COMPLETE_BOOKING_BY_STYLIST_ENDPOINT = `${BASE_URL}/complete-service`;
+export const VIEW_SALARY_BY_STYLIST_ENDPOINT = `${BASE_URL}/get-salaries-by-stylistId`;
 
 
 
