@@ -23,6 +23,7 @@ import PaymentCancelPage from '@/page/payment/PaymentCancelPage'
 import ScheduleManagement from '@/page/staff/ScheduleManagement/ScheduleManagement'
 import DashboardPage from '@/page/admin/Dashboard/DashboardPage'
 import ShiftManagementOfStylist from '@/page/stylist/TablbeShiftOfStylist/ShiftManagementOfStylist'
+import Salary from '@/page/stylist/SalaryManagement/Salary'
 
 const AppRouter = () => {
     const token = sessionStorage.getItem("hairSalonToken");
@@ -95,6 +96,7 @@ const AppRouter = () => {
                     {isStylist && (
                         <>
                             <Route path="/shift-stylist" element={<ShiftManagementOfStylist />} />
+                            <Route path='/salary-stylist' element={<Salary />} />
                         </>
                     )}
 

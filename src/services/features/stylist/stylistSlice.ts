@@ -1,6 +1,7 @@
 import { IAccount, IRegister } from "@/interfaces/Account";
+import { ISalary } from "@/interfaces/Salary";
 import { ICreateSalary, IStylist } from "@/interfaces/Stylist";
-import { COMPLETE_BOOKING_BY_STYLIST_ENDPOINT, CREATE_SALARY_FOR_STYLIST_ENDPOINT, GET_STYLIST_BY_ID_ENDPOINT, GET_STYLIST_ENDPOINT, PAID_SALARY_ENDPOINT, REGISTER_ENDPOINT } from "@/services/constant/apiConfig";
+import { COMPLETE_BOOKING_BY_STYLIST_ENDPOINT, CREATE_SALARY_FOR_STYLIST_ENDPOINT, GET_STYLIST_BY_ID_ENDPOINT, GET_STYLIST_ENDPOINT, PAID_SALARY_ENDPOINT, REGISTER_ENDPOINT, VIEW_SALARY_BY_STYLIST_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
@@ -11,6 +12,7 @@ type StylistState = {
     loading: boolean;
     stylists: IStylist[] | null;
     stylist: IStylist | null;
+    salary: ISalary[] | null;
     error: string[] | unknown;
 }
 
@@ -18,6 +20,7 @@ const initialState: StylistState = {
     loading: false,
     stylists: null,
     stylist: null,
+    salary: null,
     error: null,
 }
 
@@ -94,6 +97,25 @@ export const createSalaryForStylist = createAsyncThunk<Object, ICreateSalary>(
             return response.data;
         } catch (error: any) {
             toast.error("Server Error");
+            return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
+        }
+    }
+);
+
+export const viewSalaryByStylist = createAsyncThunk<ISalary[], { stylistId: number }>(
+    "stylists/viewSalaryByStylist",
+    async (data, thunkAPI) => {
+        const { stylistId } = data;
+        try {
+            const token = sessionStorage.getItem('hairSalonToken');
+            const response = await axiosInstance.get(`${VIEW_SALARY_BY_STYLIST_ENDPOINT}?stylistId=${stylistId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+            return response.data;
+        } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
         }
     }
@@ -198,6 +220,19 @@ export const stylistSlice = createSlice({
             state.loading = false;
         });
         builder.addCase(createSalaryForStylist.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+
+        //viewSalaryByStylist
+        builder.addCase(viewSalaryByStylist.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(viewSalaryByStylist.fulfilled, (state, action) => {
+            state.loading = false;
+            state.salary = action.payload;
+        });
+        builder.addCase(viewSalaryByStylist.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
         });
