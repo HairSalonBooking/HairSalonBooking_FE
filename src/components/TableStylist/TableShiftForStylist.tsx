@@ -10,6 +10,7 @@ import {
     TableHeader,
     TableRow,
 } from "../ui/table";
+import { completeBookingByStylist } from "@/services/features/stylist/stylistSlice";
 
 const TableShiftForStylist = () => {
     // Get bookings and stylist data from the store
@@ -34,6 +35,18 @@ const TableShiftForStylist = () => {
             ).finally(() => setLoading(false));
         }
     }, [selectedDate, dispatch, auth?.id]);
+
+    const handleCompleteBooking = (bookingId: number, email: string) => {
+        dispatch(completeBookingByStylist({ bookingId, email })).then(() => {
+            dispatch(
+                getBookingForStylist({
+                    stylistId: Number(auth?.id),
+                    date: new Date(selectedDate).getTime().toString(),
+                })
+            );
+        }
+        )
+    }
 
     return (
         <>
@@ -72,6 +85,9 @@ const TableShiftForStylist = () => {
                             </TableHead>
                             <TableHead className="p-4 text-left text-gray-600 font-bold w-1/6">
                                 Status
+                            </TableHead>
+                            <TableHead className="p-4 text-left text-gray-600 font-bold w-1/6">
+                                Actions
                             </TableHead>
                         </TableRow>
                     </TableHeader>
@@ -121,6 +137,21 @@ const TableShiftForStylist = () => {
                                                     <span className="text-red-500 font-semibold">
                                                         Cancelled
                                                     </span>
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="p-4">
+                                                {booking.statusId === "S2" && (
+                                                    <button
+                                                        className="text-green-500"
+                                                        onClick={() =>
+                                                            handleCompleteBooking(
+                                                                booking.id,
+                                                                booking.customerData.email
+                                                            )
+                                                        }
+                                                    >
+                                                        Complete
+                                                    </button>
                                                 )}
                                             </TableCell>
                                         </TableRow>
