@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
-
+import { logoutUser } from "@/services/features/auth/authSlice";
 
 interface FormData {
     phone: string;
@@ -32,7 +32,7 @@ const BookingForm = () => {
     const [showService, setShowService] = useState(false);
     const [showStylist, setShowStylist] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
+    const [isAccountInactive, setIsAccountInactive] = useState(false); // To check inactive account
     const [selectedServices, setSelectedServices] = useState<{ id: string, price: number }[]>([{ id: "", price: 0 }]);
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [availableTimes, setAvailableTimes] = useState<ITimeBooking[]>([]);
@@ -41,12 +41,13 @@ const BookingForm = () => {
 
     const { stylists } = useAppSelector((state) => state.stylists);
     const { services } = useAppSelector((state) => state.services);
-    const { auth } = useAppSelector((state) => state.auth); // Get auth from the store
-    const { user } = useAppSelector((state) => state.users); // Get user points
+    const { auth } = useAppSelector((state) => state.auth);
+    const { user } = useAppSelector((state) => state.users);
 
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>();
 
     useEffect(() => {
+        // Fetch all services and stylists
         dispatch(getAllService());
         dispatch(getAllStylist());
         setShowService(true);
@@ -58,6 +59,28 @@ const BookingForm = () => {
     const pointsToUse = watch("pointsToUse");
 
     useEffect(() => {
+        // Check if user is inactive
+        if (auth?.id) {
+            dispatch(getUserById({ id: auth.id }))
+                .unwrap()
+                .then((userData) => {
+                    if (userData.status === "Inactive") {
+                        setIsAccountInactive(true);
+                        toast.error("Your account is inactive. You will be logged out in 1 seconds.");
+
+                        setTimeout(() => {
+                            dispatch(logoutUser());
+                        }, 1000);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error checking user status:", error);
+                });
+        }
+    }, [auth?.id, dispatch]);
+
+    useEffect(() => {
+        // Fetch available time slots for selected stylist and date
         if (stylistId && date) {
             const timestamp = new Date(date).getTime();
             dispatch(getAllTimeByStylist({ stylistId: Number(stylistId), date: timestamp }))
@@ -67,19 +90,18 @@ const BookingForm = () => {
                     const selectedDate = new Date(date);
 
                     if (selectedDate.toDateString() === currentDate.toDateString()) {
-                        // It's today, filter out times that are in the past
-                        const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes(); // Get current time in minutes
+                        const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes();
                         const filteredTimes = times.map((time) => {
                             const [hours, minutes] = time.timeTypeData.valueVi.split(":").map(Number);
                             const timeInMinutes = hours * 60 + minutes;
                             return {
                                 ...time,
-                                isPast: timeInMinutes <= currentTime, // Mark the time slot as past
+                                isPast: timeInMinutes <= currentTime,
                             };
                         });
                         setAvailableTimes(filteredTimes);
                     } else {
-                        setAvailableTimes(times.map((time) => ({ ...time, isPast: false }))); // No disabled times if not today
+                        setAvailableTimes(times.map((time) => ({ ...time, isPast: false })));
                     }
                 })
                 .catch((error) => {
@@ -89,20 +111,17 @@ const BookingForm = () => {
         }
     }, [stylistId, date, dispatch]);
 
-    // Function to calculate the total amount for the selected services
     const calculateTotalAmount = (selectedServices: { id: string, price: number }[]) => {
         const amount = selectedServices.reduce((acc, service) => acc + service.price, 0);
         setTotalAmount(amount);
 
-        // Calculate discounted amount for display only
         if (pointsApplied && auth) {
             handlePointsDiscount(pointsToUse, amount);
         } else {
-            setDiscountedAmount(amount); // No discount applied if not logged in or no points are used
+            setDiscountedAmount(amount);
         }
     };
 
-    // Handles service change and recalculates total amount
     const handleServiceChange = (index: number, event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedServiceId = Number(event.target.value);
         const service = services?.find((s) => s.id === selectedServiceId);
@@ -126,41 +145,41 @@ const BookingForm = () => {
         }
     };
 
-    // Handles the points discount for display purposes
     const handlePointsDiscount = (points: number, total: number) => {
-        // Limit points to a maximum of 30 (30% discount)
         if (points > 30) {
             toast.error("You cannot use more than 30 points.");
-            setValue("pointsToUse", 30); // Set points to maximum of 30
+            setValue("pointsToUse", 30);
             return;
         }
 
-        // Check if user has enough points
         if (points > (user?.points ?? 0)) {
             toast.error(`You do not have enough points. You only have ${user?.points} points.`);
-            setValue("pointsToUse", user?.points ?? 0); // Set points to the user's maximum available points
+            setValue("pointsToUse", user?.points ?? 0);
             return;
         }
 
-        // Calculate discount: 10 points = 10%, 20 points = 20%, 30 points = 30%
-        const discountPercentage = points; // Points directly represent the percentage
+        const discountPercentage = points;
         const discount = total * (discountPercentage / 100);
         const newTotal = total - discount;
-        setDiscountedAmount(newTotal >= 0 ? newTotal : 0); // Ensure the total doesn't go negative
+        setDiscountedAmount(newTotal >= 0 ? newTotal : 0);
     };
 
-    // Apply points and update the total with the discount
     const applyPoints = () => {
         if (auth && pointsToUse > 0) {
             setPointsApplied(true);
-            handlePointsDiscount(pointsToUse, totalAmount); // Apply points and calculate the new total
+            handlePointsDiscount(pointsToUse, totalAmount);
         } else {
             setPointsApplied(false);
-            setDiscountedAmount(totalAmount); // Reset to original total if no points or not logged in
+            setDiscountedAmount(totalAmount);
         }
     };
 
     const onSubmit = (data: FormData) => {
+        if (isAccountInactive) {
+            toast.error("Cannot proceed with booking. Your account is inactive.");
+            return;
+        }
+
         if (selectedServices.length === 0 || selectedServices[0].id === "") {
             toast.error('Please select at least one service');
             return;
@@ -182,7 +201,6 @@ const BookingForm = () => {
         const stylistName = stylist ? `${stylist.firstName} ${stylist.lastName}` : '';
         const serviceIds = selectedServices.map(s => Number(s.id));
 
-        // Bật trạng thái loading
         setIsLoading(true);
 
         const payload = {
@@ -199,7 +217,7 @@ const BookingForm = () => {
         dispatch(customerCreateBooking(payload))
             .unwrap()
             .then((response) => {
-                setIsLoading(false); // Tắt trạng thái loading sau khi hoàn thành
+                setIsLoading(false);
                 if (response.errCode === 0) {
                     toast.success("Booking successful, please check your email.");
                     dispatch(getUserById({ id: auth?.id ?? 0 }));
@@ -208,13 +226,17 @@ const BookingForm = () => {
                 }
             })
             .catch((error) => {
-                setIsLoading(false); // Tắt trạng thái loading trong trường hợp lỗi
+                setIsLoading(false);
                 toast.error(error.errMsg || 'An error occurred while booking.');
             });
     };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="bg-[#201717] p-8 rounded-md shadow-md text-white">
+            {isAccountInactive && (
+                <p className="text-red-600 font-semibold text-sm mb-4">Your account is inactive.</p>
+            )}
+
             <p className="text-red-500 font-semibold text-sm mb-4">* Required fields</p>
 
             <div className="mb-4">
@@ -326,8 +348,8 @@ const BookingForm = () => {
                                     ? "bg-yellow-500 text-black"
                                     : "bg-white text-black"
                                     } focus:outline-none hover:bg-yellow-400`}
-                                onClick={() => !timeType.isPast && setValue("timeType", timeType.timeType)} // Prevent clicking if disabled
-                                disabled={timeType.isPast} // Disable the button if the time is past
+                                onClick={() => !timeType.isPast && setValue("timeType", timeType.timeType)}
+                                disabled={timeType.isPast}
                             >
                                 {timeType.timeTypeData.valueVi}
                             </button>
@@ -346,7 +368,7 @@ const BookingForm = () => {
                         type="number"
                         {...register("pointsToUse")}
                         min={0}
-                        max={30} // Limit input to maximum of 30 points
+                        max={30}
                         className="w-full p-3 bg-zinc-800 border border-zinc-700 text-white rounded focus:outline-none focus:border-yellow-500"
                     />
                     {errors.pointsToUse && <span className="text-red-500">Points value is invalid</span>}
@@ -367,7 +389,7 @@ const BookingForm = () => {
                 </p>
             </div>
 
-            <button type="submit" className="bg-yellow-600 text-black py-3 px-4 rounded hover:bg-yellow-500" disabled={isLoading}>
+            <button type="submit" className="bg-yellow-600 text-black py-3 px-4 rounded hover:bg-yellow-500" disabled={isLoading || isAccountInactive}>
                 {isLoading ? <ClipLoader color="#000" size={24} /> : "Book Appointment"}
             </button>
         </form>
