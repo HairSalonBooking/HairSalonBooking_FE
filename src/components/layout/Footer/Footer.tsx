@@ -57,27 +57,17 @@ const Footer: React.FC = () => {
                             </a>
                         </li>
                         <li>
-                            <a href="#" className="hover:text-white">
+                            <a href="/about" className="hover:text-white">
                                 About
                             </a>
                         </li>
                         <li>
-                            <a href="#" className="hover:text-white">
+                            <a href="/services" className="hover:text-white">
                                 Services
                             </a>
                         </li>
                         <li>
-                            <a href="#" className="hover:text-white">
-                                Work
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="hover:text-white">
-                                Blog
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" className="hover:text-white">
+                            <a href="/contact" className="hover:text-white">
                                 Contact
                             </a>
                         </li>
