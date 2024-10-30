@@ -139,8 +139,9 @@ export const verifyBooking = createAsyncThunk<
     "bookings/verifyBooking",
     async (data, thunkAPI) => {
         try {
+            const token = localStorage.getItem('hairSalonToken'); // Lấy token từ localStorage
             const params = new URLSearchParams();
-            params.append("token", data.token);
+            params.append("token", data.token);  // Nếu bạn vẫn muốn truyền token này qua params
             params.append("paymentId", data.paymentId);
             params.append("payerId", data.payerId);
             params.append("stylistId", data.stylistId);
@@ -148,6 +149,7 @@ export const verifyBooking = createAsyncThunk<
             const response = await axiosInstance.post(VERIFY_BOOKING_ENDPOINT, params, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': `Bearer ${token}`,  // Thêm token vào header Authorization
                 },
             });
 
@@ -167,6 +169,7 @@ export const verifyBooking = createAsyncThunk<
         }
     }
 );
+
 
 export const cancelBookingByCustomer = createAsyncThunk<any, { bookingId: number }>(
     "bookings/cancelBookingByCustomer",
