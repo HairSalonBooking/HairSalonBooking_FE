@@ -13,11 +13,11 @@ const TableSalaryOfStylist = () => {
         dispatch(viewSalaryByStylist({
             stylistId: Number(auth?.id)
         }));
-    }, []);
+    }, [auth?.id, dispatch]);
     return (
         <>
             <div className="my-6 flex flex-row justify-between items-center">
-                <h2 className="font-bold text-xl">List Service Management</h2>
+                <h2 className="font-bold text-xl">Salary For Stylist</h2>
             </div>
 
             <Table>

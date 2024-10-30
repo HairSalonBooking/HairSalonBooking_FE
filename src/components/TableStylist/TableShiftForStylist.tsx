@@ -22,6 +22,12 @@ const TableShiftForStylist = () => {
     const [selectedDate, setSelectedDate] = useState<string>(""); // Selected date
     const [loading, setLoading] = useState(false); // Loading state for data fetch
 
+    // Set today's date as default on component mount
+    useEffect(() => {
+        const today = new Date().toISOString().split("T")[0]; // Get today's date in 'yyyy-mm-dd' format
+        setSelectedDate(today); // Set selected date to today
+    }, []);
+
     // Fetch bookings when the date changes
     useEffect(() => {
         if (selectedDate) {
@@ -44,9 +50,8 @@ const TableShiftForStylist = () => {
                     date: new Date(selectedDate).getTime().toString(),
                 })
             );
-        }
-        )
-    }
+        });
+    };
 
     return (
         <>
@@ -61,6 +66,7 @@ const TableShiftForStylist = () => {
                     type="date"
                     id="date-picker"
                     className="ml-2 p-2 border border-gray-300 rounded"
+                    value={selectedDate} // Set the value to the current selected date
                     onChange={(e) => setSelectedDate(e.target.value)}
                     min={new Date().toISOString().split("T")[0]} // Prevent past date selection
                 />
@@ -130,7 +136,7 @@ const TableShiftForStylist = () => {
                                                 )}
                                                 {booking.statusId === "S3" && (
                                                     <span className="text-green-500 font-semibold">
-                                                        Success
+                                                        Complete
                                                     </span>
                                                 )}
                                                 {booking.statusId === "S4" && (

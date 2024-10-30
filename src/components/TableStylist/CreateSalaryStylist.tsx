@@ -36,7 +36,7 @@ const CreateSalaryStylist: FC<CreateSalaryStylistProps> = ({
             await dispatch(getAllStylist()).unwrap();
             reset(); // Reset the form fields
             onClose(); // Close the popup
-        } catch (err) {
+        } catch {
             toast.error("An error occurred while creating the salary.");
         }
     };

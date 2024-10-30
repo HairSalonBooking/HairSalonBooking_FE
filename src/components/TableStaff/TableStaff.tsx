@@ -124,7 +124,7 @@ const TableStaff = () => {
                                             <TableCell className="p-4">
                                                 {booking.statusId === 'S1' && <span className="text-yellow-500 font-semibold">Pending</span>}
                                                 {booking.statusId === 'S2' && <span className="text-blue-500 font-semibold">Confirm</span>}
-                                                {booking.statusId === 'S3' && <span className="text-green-500 font-semibold">Success</span>}
+                                                {booking.statusId === 'S3' && <span className="text-green-500 font-semibold">Complete</span>}
                                                 {booking.statusId === 'S4' && <span className="text-red-500 font-semibold">Cancelled</span>}
                                             </TableCell>
                                             <TableCell className="p-4 text-right w-32">
