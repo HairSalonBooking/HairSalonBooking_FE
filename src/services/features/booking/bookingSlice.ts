@@ -141,7 +141,7 @@ export const verifyBooking = createAsyncThunk<
         try {
             const token = localStorage.getItem('hairSalonToken'); // Lấy token từ localStorage
             const params = new URLSearchParams();
-            // params.append("token", data.token); 
+            params.append("token", data.token); 
             params.append("paymentId", data.paymentId);
             params.append("payerId", data.payerId);
             params.append("stylistId", data.stylistId);
