@@ -24,7 +24,7 @@ export const getAllService = createAsyncThunk<IService[], void>(
     "services/getAllService",
     async (_, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(GET_SERVICE_ENDPOINT, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -42,7 +42,7 @@ export const getServiceById = createAsyncThunk<IService, { id: number }>(
     async (data, thunkAPI) => {
         const { id } = data;
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(`${GET_SERVICE_BY_ID_ENDPOINT}?id=${id}`,
                 {
                     headers: {
@@ -60,7 +60,7 @@ export const createService = createAsyncThunk<IService, FormData>(
     'services/createService',
     async (data, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.post(CREATE_SERVICE_ENDPOINT, data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -88,7 +88,7 @@ export const deleteService = createAsyncThunk<IService, { id: number }>(
     async (data, thunkAPI) => {
         const { id } = data;
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.delete(`${DELETE_SERVICE_ENDPOINT}?id=${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -112,7 +112,7 @@ export const updateService = createAsyncThunk<IService, { data: FormData }>(
     async (data, thunkAPI) => {
         const { data: formData } = data;
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.put(`${EDIT_SERVICE_ENDPOINT}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,

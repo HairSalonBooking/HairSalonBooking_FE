@@ -28,7 +28,7 @@ export const getAllStylist = createAsyncThunk<IStylist[], void>(
     "stylists/getAllStylist",
     async (_, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(GET_STYLIST_ENDPOINT, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -46,7 +46,7 @@ export const getStylistById = createAsyncThunk<IStylist, { id: number }>(
     async (data, thunkAPI) => {
         const { id } = data;
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(`${GET_STYLIST_BY_ID_ENDPOINT}/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -83,7 +83,7 @@ export const createSalaryForStylist = createAsyncThunk<Object, ICreateSalary>(
     "stylists/createSalaryForStylist",
     async (data: ICreateSalary, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.post(CREATE_SALARY_FOR_STYLIST_ENDPOINT, data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -107,7 +107,7 @@ export const viewSalaryByStylist = createAsyncThunk<ISalary[], { stylistId: numb
     async (data, thunkAPI) => {
         const { stylistId } = data;
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(`${VIEW_SALARY_BY_STYLIST_ENDPOINT}?stylistId=${stylistId}`,
                 {
                     headers: {
@@ -125,7 +125,7 @@ export const paidSalary = createAsyncThunk<Object, { id: number }>(
     "stylists/paidSalary",
     async (id, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.put(`${PAID_SALARY_ENDPOINT}`, id, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -148,7 +148,7 @@ export const completeBookingByStylist = createAsyncThunk<Object, { bookingId: nu
     "stylists/completeBookingByStylist",
     async ({ bookingId, email }, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.post(`${COMPLETE_BOOKING_BY_STYLIST_ENDPOINT}`,
                 { bookingId, email }, {
                 headers: {

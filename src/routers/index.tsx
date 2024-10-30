@@ -26,7 +26,7 @@ import ShiftManagementOfStylist from '@/page/stylist/TablbeShiftOfStylist/ShiftM
 import Salary from '@/page/stylist/SalaryManagement/Salary'
 
 const AppRouter = () => {
-    const token = sessionStorage.getItem("hairSalonToken");
+    const token = localStorage.getItem("hairSalonToken");
     const { auth } = useAppSelector((state) => state.auth);
     const isCustomer = auth?.roleId === "R4"
     const isAdmin = auth?.roleId === "R2"

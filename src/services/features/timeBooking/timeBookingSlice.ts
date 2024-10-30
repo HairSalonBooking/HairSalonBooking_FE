@@ -24,7 +24,7 @@ export const getAllTime = createAsyncThunk<ITime[], void>(
     "times/getAllTime",
     async (_, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(`${GET_ALL_CODE_ENDPOINT}?type=TIME`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -48,7 +48,7 @@ export const getAllTimeByStylist = createAsyncThunk<
     "times/getAllTimeBookings",
     async ({ stylistId, date }, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(`${GET_ALL_TIME_BOOKING_ENDPOINT}?stylistId=${stylistId}&date=${date}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ export const createSchedule = createAsyncThunk<
     "schedule/createSchedule",
     async (data, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem("hairSalonToken");
+            const token = localStorage.getItem("hairSalonToken");
             const response = await axiosInstance.post(CREATE_SCHEDULE_ENDPOINT, data, {
                 headers: {
                     Authorization: `Bearer ${token}`,

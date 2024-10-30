@@ -58,8 +58,8 @@ export const loginAccount = createAsyncThunk<IAccount, string | Object>(
                 return thunkAPI.rejectWithValue(errMessage || "Login failed");
             }
 
-            sessionStorage.setItem('hairSalonToken', accessToken);
-            sessionStorage.setItem('hairSalonRefreshToken', refreshToken);
+            localStorage.setItem('hairSalonToken', accessToken);
+            localStorage.setItem('hairSalonRefreshToken', refreshToken);
             toast.success("Login successful");
 
             return response.data;
@@ -128,8 +128,8 @@ export const refreshAccessToken = createAsyncThunk<string, void>(
     'auth/refreshAccessToken',
     async (_, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
-            const refreshToken = sessionStorage.getItem('hairSalonRefreshToken');
+            const token = localStorage.getItem('hairSalonToken');
+            const refreshToken = localStorage.getItem('hairSalonRefreshToken');
 
             if (!refreshToken) {
                 throw new Error('No refresh token available');
@@ -141,8 +141,8 @@ export const refreshAccessToken = createAsyncThunk<string, void>(
             });
 
             if (response.data.success) {
-                sessionStorage.setItem('hairSalonToken', response.data.accessToken);
-                sessionStorage.setItem('hairSalonRefreshToken', response.data.refreshToken);
+                localStorage.setItem('hairSalonToken', response.data.accessToken);
+                localStorage.setItem('hairSalonRefreshToken', response.data.refreshToken);
                 return response.data.accessToken;
             }
         } catch (error: any) {
@@ -162,10 +162,10 @@ export const authSlice = createSlice({
             state.error = action.payload;
         },
         logoutUser: (state) => {
-            // Xóa thông tin đăng nhập khỏi sessionStorage
-            sessionStorage.removeItem('hairSalonToken');
-            sessionStorage.removeItem('hairSalonRefreshToken');
-            sessionStorage.removeItem('user'); // nếu bạn lưu thông tin user ở đây
+            // Xóa thông tin đăng nhập khỏi localStorage
+            localStorage.removeItem('hairSalonToken');
+            localStorage.removeItem('hairSalonRefreshToken');
+            localStorage.removeItem('user'); // nếu bạn lưu thông tin user ở đây
 
             // Reset lại trạng thái auth
             state.auth = null;
