@@ -27,7 +27,7 @@ export const getAllBooking = createAsyncThunk<IBooking[], { date: string }>(
     "bookings/getAllBooking",
     async ({ date }, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(GET_BOOKING_ENDPOINT, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ export const customerCreateBooking = createAsyncThunk<IBooking, IBookingRequest,
     "bookings/customerCreateBooking",
     async (data, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const params = new URLSearchParams();
 
             // Append regular fields
@@ -94,7 +94,7 @@ export const getCustomerBooking = createAsyncThunk<ICustomerBooking[], { custome
     "customerBookings/getCustomerBooking",
     async (data, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(
                 `${GET_BOOKING_CUSTOMER_ENDPOINT}?customerId=${data.customerId}`,
                 {
@@ -114,7 +114,7 @@ export const getBookingForStylist = createAsyncThunk<IBooking[], { stylistId: nu
     "bookings/getBookingForStylist",
     async ({ stylistId, date }, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.get(`${GET_BOOKING_FOR_STYLIST_ENDPOINT}?stylistId=${stylistId}&date=${date}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -172,7 +172,7 @@ export const cancelBookingByCustomer = createAsyncThunk<any, { bookingId: number
     "bookings/cancelBookingByCustomer",
     async ({ bookingId }, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.put(`${CANCEL_BOOKING_BY_CUSTOMER_ENDPOINT}`,
                 { bookingId },
                 {
@@ -197,7 +197,7 @@ export const cancelBookingByStaff = createAsyncThunk<any, { bookingId: number, e
     "bookings/cancelBookingByStaff",
     async ({ bookingId, email, firstName, stylistName, timeString }, thunkAPI) => {
         try {
-            const token = sessionStorage.getItem('hairSalonToken');
+            const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.post(`${CANCEL_BOOKING_BY_STAFF_ENDPOINT}`,
                 { bookingId, email, firstName, stylistName, timeString }, // Gửi thêm các trường cần thiết
                 {

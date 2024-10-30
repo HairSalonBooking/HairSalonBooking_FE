@@ -13,7 +13,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        const accessToken = sessionStorage.getItem('hairSalonToken');
+        const accessToken = localStorage.getItem('hairSalonToken');
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
