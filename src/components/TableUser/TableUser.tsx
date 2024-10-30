@@ -9,7 +9,6 @@ import {
     TableRow
 } from "@/components/ui/table";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
-import { formatAnyDate } from "@/utils";
 import { getAllUser, disableUserByAdmin } from "@/services/features/user/userSlice"; // Import action
 import { IUser } from "@/interfaces/User";
 import PopupConfirmAction from "../popup/ConfirmDelete/PopupConfirmAction";
@@ -23,6 +22,22 @@ const TableUser = () => {
     useEffect(() => {
         dispatch(getAllUser());
     }, [dispatch]);
+
+    // Hàm ánh xạ roleId thành vai trò tương ứng
+    const getRoleLabel = (roleId: string) => {
+        switch (roleId) {
+            case "R1":
+                return "Staff";
+            case "R2":
+                return "Admin";
+            case "R3":
+                return "Stylist";
+            case "R4":
+                return "Customer";
+            default:
+                return "Unknown";
+        }
+    };
 
     // Hàm mở popup xác nhận
     const handleToggleStatus = (user: IUser) => {
@@ -45,6 +60,9 @@ const TableUser = () => {
         }
     };
 
+    // Lọc những người dùng không phải Admin (R2)
+    const filteredUsers = users?.filter((user: IUser) => user.roleId !== "R2");
+
     return (
         <>
             <div className="my-6 flex flex-row justify-between items-center">
@@ -60,21 +78,19 @@ const TableUser = () => {
                         <TableHead>Email</TableHead>
                         <TableHead>Phone Number</TableHead>
                         <TableHead>Gender</TableHead>
-                        <TableHead className="text-right">Created At</TableHead>
-                        <TableHead className="text-right">Updated At</TableHead>
+                        <TableHead className="text-right">Role</TableHead>
                         <TableHead className="text-right">Action</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {users && users.map((user: IUser) => (
+                    {filteredUsers && filteredUsers.map((user: IUser) => (
                         <TableRow key={user.id}>
                             <TableCell className="font-medium">{user.firstName}</TableCell>
                             <TableCell>{user.lastName ?? '\u00A0'}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell>{user.phoneNumber ?? '\u00A0'}</TableCell>
                             <TableCell>{user.gender ?? '\u00A0'}</TableCell>
-                            <TableCell className="text-right">{formatAnyDate(user.createdAt)}</TableCell>
-                            <TableCell className="text-right">{formatAnyDate(user.updatedAt)}</TableCell>
+                            <TableCell className="text-right">{getRoleLabel(user.roleId)}</TableCell>
                             <TableCell className="text-right">
                                 {user.status === "Active" ? (
                                     <button

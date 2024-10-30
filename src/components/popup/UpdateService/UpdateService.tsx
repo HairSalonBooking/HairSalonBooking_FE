@@ -65,7 +65,7 @@ const UpdateServicePopup: FC<UpdateServicePopupProps> = ({ isOpen, onClose, serv
             id="info-popup"
             className={`${isOpen ? "flex" : "hidden"} fixed inset-0 z-50 items-center justify-center backdrop-blur-sm bg-black/50`}
         >
-            <div className="relative p-4 w-full max-w-lg bg-white rounded-lg shadow dark:bg-gray-800 md:p-8">
+            <div className="relative p-4 w-full max-w-2xl bg-white rounded-lg shadow dark:bg-gray-800 md:p-8 h-[90vh] overflow-y-auto">
                 <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
                     Update Service
                 </h3>
@@ -88,7 +88,7 @@ const UpdateServicePopup: FC<UpdateServicePopupProps> = ({ isOpen, onClose, serv
                         </label>
                         <textarea
                             {...register("description", { required: "Description is required" })}
-                            className="w-full px-3 py-2 mt-1 border rounded-lg dark:bg-gray-700 dark:text-gray-300"
+                            className="w-full px-3 py-2 mt-1 border rounded-lg dark:bg-gray-700 dark:text-gray-300 h-32"  // Increase the height
                         />
                         {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
                     </div>
@@ -98,7 +98,7 @@ const UpdateServicePopup: FC<UpdateServicePopupProps> = ({ isOpen, onClose, serv
                             Image
                         </label>
                         {imageUrl && (
-                            <img src={imageUrl} alt="Service" className="mb-2 w-full h-40 object-cover rounded-lg" />
+                            <img src={imageUrl} alt="Service" className="mb-2 w-full h-60 object-cover rounded-lg" />  // Increase the height of the image
                         )}
                         <input
                             type="file"
@@ -137,6 +137,8 @@ const UpdateServicePopup: FC<UpdateServicePopupProps> = ({ isOpen, onClose, serv
                 </form>
             </div>
         </div>
+
+
     );
 };
 

@@ -31,7 +31,7 @@ const PaymentSuccessPage: React.FC = () => {
                 <div className="flex justify-center mb-6">
                     <img
                         src="https://img.icons8.com/?size=100&id=108637&format=png&color=000000"
-                        alt="Success"
+                        alt="Complete"
                         className="w-24 h-24"
                     />
                 </div>

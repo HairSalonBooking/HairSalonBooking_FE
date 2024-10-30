@@ -91,7 +91,7 @@ const ViewBookingPage = () => {
                                                             'bg-red-500 text-gray-900'}`}>
                                                 {booking.statusId === 'S1' && 'Pending'}
                                                 {booking.statusId === 'S2' && 'Confirm'}
-                                                {booking.statusId === 'S3' && 'Success'}
+                                                {booking.statusId === 'S3' && 'Complete'}
                                                 {booking.statusId === 'S4' && 'Cancel'}
                                             </span>
                                         </td>

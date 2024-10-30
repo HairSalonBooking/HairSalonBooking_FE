@@ -77,7 +77,7 @@ export const createSchedule = createAsyncThunk<
             });
             // Check errCode for success
             if (response.data.errCode === 0) {
-                toast.success(`${response.data.errMsg}`); // Success toast
+                toast.success(`${response.data.errMsg}`); // Complete toast
             } else {
                 toast.error(`${response.data.errMsg}`); // Error toast
             }
@@ -128,7 +128,7 @@ export const timeBookingSlice = createSlice({
         builder.addCase(createSchedule.fulfilled, (state, action) => {
             state.loading = false;
             if (action.payload.errCode === 0) {
-                // Success message handling (e.g., showing a toast notification)
+                // Complete message handling (e.g., showing a toast notification)
                 console.log(action.payload.errMsg);
             }
         });
