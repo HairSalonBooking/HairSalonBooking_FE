@@ -66,6 +66,7 @@ const AppRouter = () => {
                     <Route path='/about' element={<AboutPage />} />
                     <Route path='/services/:id' element={<ServiceDetailPage />} /> */}
                     <Route path="*" element={<Navigate to="/not-found" replace />} />
+                    <Route path='/' element={<Home />} />
 
 
                     {isCustomer && (
@@ -77,6 +78,7 @@ const AppRouter = () => {
                             <Route path='/about' element={<AboutPage />} />
                             <Route path='/services' element={<ServicePage />} />
                             <Route path='/contact' element={<ContactPage />} />
+                            <Route path='/services' element={<ServicePage />} />
                             <Route path='/order-history' element={<ViewBookingPage />} />
                         </>
                     )}
