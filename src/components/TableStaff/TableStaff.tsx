@@ -171,6 +171,8 @@ const TableStaff = () => {
                 onConfirm={handleConfirmCancel}
                 actionCancel="No"
                 actionDelete="Yes, Cancel"
+                loading={loading} // Truyền trạng thái loading
+
             />
 
             {/* Loading state */}

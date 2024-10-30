@@ -156,9 +156,9 @@ export const completeBookingByStylist = createAsyncThunk<Object, { bookingId: nu
                 },
             });
             if (response.data.errCode === 0) {
-                toast.success(`${response.data.errMessage}`);
+                toast.success("Complete booking successfully");
             } else {
-                toast.error(`${response.data.errMessage}`);
+                toast.error(`${response.data.errMsg}`);
             }
             return response.data;
         } catch (error: any) {

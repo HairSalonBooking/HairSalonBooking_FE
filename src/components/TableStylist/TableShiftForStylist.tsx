@@ -11,6 +11,7 @@ import {
     TableRow,
 } from "../ui/table";
 import { completeBookingByStylist } from "@/services/features/stylist/stylistSlice";
+import PopupConfirmAction from "../popup/ConfirmDelete/PopupConfirmAction";
 
 const TableShiftForStylist = () => {
     // Get bookings and stylist data from the store
@@ -20,7 +21,10 @@ const TableShiftForStylist = () => {
 
     // Component state
     const [selectedDate, setSelectedDate] = useState<string>(""); // Selected date
-    const [loading, setLoading] = useState(false); // Loading state for data fetch
+    const [loading, setLoading] = useState(false); // Loading state for the popup
+    const [popupOpen, setPopupOpen] = useState(false); // State to control popup visibility
+    const [selectedBooking, setSelectedBooking] = useState<number | null>(null); // Selected booking ID
+    const [selectedEmail, setSelectedEmail] = useState<string>(""); // Selected customer email
 
     // Set today's date as default on component mount
     useEffect(() => {
@@ -42,15 +46,31 @@ const TableShiftForStylist = () => {
         }
     }, [selectedDate, dispatch, auth?.id]);
 
+    // Show confirmation popup for completing a booking
     const handleCompleteBooking = (bookingId: number, email: string) => {
-        dispatch(completeBookingByStylist({ bookingId, email })).then(() => {
-            dispatch(
-                getBookingForStylist({
-                    stylistId: Number(auth?.id),
-                    date: new Date(selectedDate).getTime().toString(),
+        setSelectedBooking(bookingId); // Store selected booking ID
+        setSelectedEmail(email); // Store selected customer email
+        setPopupOpen(true); // Open the popup
+    };
+
+    // Confirm the completion after the popup is confirmed
+    const confirmCompleteBooking = () => {
+        if (selectedBooking !== null) {
+            setLoading(true); // Set loading state in the popup
+            dispatch(completeBookingByStylist({ bookingId: selectedBooking, email: selectedEmail }))
+                .then(() => {
+                    dispatch(
+                        getBookingForStylist({
+                            stylistId: Number(auth?.id),
+                            date: new Date(selectedDate).getTime().toString(),
+                        })
+                    );
                 })
-            );
-        });
+                .finally(() => {
+                    setLoading(false); // Stop loading once completed
+                    setPopupOpen(false); // Close the popup after completion
+                });
+        }
     };
 
     return (
@@ -124,11 +144,6 @@ const TableShiftForStylist = () => {
                                                 {booking.timeTypeDataBooking.valueEn}
                                             </TableCell>
                                             <TableCell className="p-4">
-                                                {booking.statusId === "S1" && (
-                                                    <span className="text-yellow-500 font-semibold">
-                                                        Pending
-                                                    </span>
-                                                )}
                                                 {booking.statusId === "S2" && (
                                                     <span className="text-blue-500 font-semibold">
                                                         Confirm
@@ -139,16 +154,11 @@ const TableShiftForStylist = () => {
                                                         Complete
                                                     </span>
                                                 )}
-                                                {booking.statusId === "S4" && (
-                                                    <span className="text-red-500 font-semibold">
-                                                        Cancelled
-                                                    </span>
-                                                )}
                                             </TableCell>
                                             <TableCell className="p-4">
-                                                {booking.statusId === "S2" && (
+                                                {(booking.statusId === "S2") ? (
                                                     <button
-                                                        className="text-green-500"
+                                                        className="px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-md shadow-lg transition-colors duration-200"
                                                         onClick={() =>
                                                             handleCompleteBooking(
                                                                 booking.id,
@@ -158,7 +168,13 @@ const TableShiftForStylist = () => {
                                                     >
                                                         Complete
                                                     </button>
+                                                ) : (
+                                                    <span className="inline-block px-4 py-2 text-xs font-semibold rounded-full w-full text-center">
+                                                        {booking.statusId === 'S3' && '\u00A0'}
+                                                        {booking.statusId === 'S4' && '\u00A0'}
+                                                    </span>
                                                 )}
+
                                             </TableCell>
                                         </TableRow>
                                     );
@@ -177,10 +193,17 @@ const TableShiftForStylist = () => {
                 </Table>
             )}
 
-            {/* Loading state */}
-            {loading && (
-                <div className="text-center text-gray-700 mt-4">Loading bookings...</div>
-            )}
+            {/* Popup Confirmation */}
+            <PopupConfirmAction
+                isOpen={popupOpen}
+                onClose={() => setPopupOpen(false)}
+                onConfirm={confirmCompleteBooking}
+                loading={loading} // Loading spinner in popup
+                title="Complete Booking"
+                content="Are you sure you want to complete this booking?"
+                actionDelete="Complete"
+                actionCancel="Cancel"
+            />
         </>
     );
 };
