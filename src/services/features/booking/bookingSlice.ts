@@ -140,11 +140,15 @@ export const verifyBooking = createAsyncThunk<
     async (data, thunkAPI) => {
         try {
             const token = localStorage.getItem('hairSalonToken'); // Lấy token từ localStorage
+            console.log('Token:', token);
+
             const params = new URLSearchParams();
-            params.append("token", data.token); 
+            params.append("token", data.token);
             params.append("paymentId", data.paymentId);
             params.append("payerId", data.payerId);
             params.append("stylistId", data.stylistId);
+
+            console.log('Params:', params);
 
             const response = await axiosInstance.post(VERIFY_BOOKING_ENDPOINT, params, {
                 headers: {
@@ -153,8 +157,11 @@ export const verifyBooking = createAsyncThunk<
                 },
             });
 
+            console.log('API Response:', response.data);
             return response.data;
         } catch (error: any) {
+            console.error('API Error:', error);
+
             if (error.response && error.response.data) {
                 return thunkAPI.rejectWithValue({
                     errCode: error.response.data.errCode || 1,

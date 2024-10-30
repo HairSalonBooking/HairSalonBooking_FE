@@ -1,27 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { verifyBooking } from '@/services/features/booking/bookingSlice'; // Import action verifyBooking
-import { useAppDispatch } from '@/services/store/store';
+import { useAppDispatch } from '@/services/store/store';  // Import store
+import { verifyBooking } from '@/services/features/booking/bookingSlice';  // Import verifyBooking
 
 const PaymentSuccessPage: React.FC = () => {
     const location = useLocation();
     const dispatch = useAppDispatch();
-    const [loading, setLoading] = useState(true); // Trạng thái loading khi gọi API
+    const [loading, setLoading] = useState(true);  // Trạng thái loading
     const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
+
+    console.log('PaymentSuccessPage rendered');
 
     // Xử lý các tham số từ URL
     useEffect(() => {
+        console.log('useEffect triggered');
         const searchParams = new URLSearchParams(location.search);
         const token = searchParams.get('token') || '';
         const stylistId = searchParams.get('stylistId') || '';
         const paymentId = searchParams.get('paymentId') || '';
         const payerId = searchParams.get('PayerID') || '';
 
-        // Kiểm tra các tham số cần thiết
+        console.log('Params:', { token, stylistId, paymentId, payerId });
+
         if (!token || !paymentId || !payerId || !stylistId) {
             setVerificationStatus('Missing required parameters.');
-            setLoading(false); // Dừng loading nếu thiếu tham số
+            setLoading(false);
             return;
         }
 
@@ -29,15 +33,17 @@ const PaymentSuccessPage: React.FC = () => {
         dispatch(verifyBooking({ token, paymentId, payerId, stylistId }))
             .then(unwrapResult)
             .then(() => {
-                setLoading(false); // Đặt loading về false khi thành công
+                console.log('API call successful');
+                setLoading(false);
             })
             .catch((error) => {
+                console.error('API call failed:', error);
                 setVerificationStatus(`Verification failed: ${error.errMsg || 'Unknown error'}`);
-                setLoading(false); // Dừng loading khi gặp lỗi
+                setLoading(false);
             });
     }, [location.search, dispatch]);
 
-    // Hiển thị loading trong khi gọi API
+    // Hiển thị trạng thái loading
     if (loading) {
         return (
             <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-100 to-blue-300">
@@ -46,6 +52,7 @@ const PaymentSuccessPage: React.FC = () => {
         );
     }
 
+    // Hiển thị kết quả xác minh
     return (
         <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-100 to-blue-300">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full text-center">
@@ -64,7 +71,6 @@ const PaymentSuccessPage: React.FC = () => {
                     Please check your email for the booking confirmation and details. If you have any questions, feel free to contact us.
                 </p>
 
-                {/* Hiển thị trạng thái xác minh nếu có lỗi */}
                 {verificationStatus && (
                     <div className="text-sm text-red-600 mb-4">
                         {verificationStatus}
