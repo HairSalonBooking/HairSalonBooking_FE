@@ -1,46 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useAppDispatch } from '@/services/store/store';
+import { verifyBooking } from '@/services/features/booking/bookingSlice';
 
 const PaymentSuccessPage: React.FC = () => {
     const location = useLocation();
-    const [loading, setLoading] = useState(true);  // Trạng thái loading
+    const dispatch = useAppDispatch();
     const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
 
-    console.log('PaymentSuccessPage rendered');
-
-    // Xử lý các tham số từ URL
+    // Extract query params from URL
     useEffect(() => {
-        console.log('useEffect triggered');
         const searchParams = new URLSearchParams(location.search);
         const token = searchParams.get('token') || '';
         const stylistId = searchParams.get('stylistId') || '';
         const paymentId = searchParams.get('paymentId') || '';
         const payerId = searchParams.get('PayerID') || '';
 
-        console.log('Params:', { token, stylistId, paymentId, payerId });
+        // Call verify booking API
+        dispatch(verifyBooking({ token, paymentId, payerId, stylistId }))
+            .then(unwrapResult)
+            .catch((error) => {
+                setVerificationStatus(`Verification failed: ${error.errMsg || 'Unknown error'}`);
+            });
+    }, [location.search, dispatch]);
 
-        // Kiểm tra nếu có thiếu tham số
-        if (!token || !paymentId || !payerId || !stylistId) {
-            setVerificationStatus('Missing required parameters.');
-            setLoading(false);
-            return;
-        }
-
-        // Nếu tất cả tham số hợp lệ, hiển thị thông báo thanh toán thành công
-        setVerificationStatus('Payment successful and appointment verified.');
-        setLoading(false);
-    }, [location.search]);
-
-    // Hiển thị trạng thái loading
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-100 to-blue-300">
-                <div className="text-xl font-bold">Processing your payment, please wait...</div>
-            </div>
-        );
-    }
-
-    // Hiển thị kết quả xác minh nếu đã xong
     return (
         <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-100 to-blue-300">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full text-center">
@@ -58,13 +42,11 @@ const PaymentSuccessPage: React.FC = () => {
                 <p className="text-gray-500 mb-8">
                     Please check your email for the booking confirmation and details. If you have any questions, feel free to contact us.
                 </p>
-
                 {verificationStatus && (
                     <div className="text-sm text-red-600 mb-4">
                         {verificationStatus}
                     </div>
                 )}
-
                 <button
                     className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg transition duration-300"
                     onClick={() => window.location.href = '/'}
