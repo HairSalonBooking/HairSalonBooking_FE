@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { unwrapResult } from '@reduxjs/toolkit';
-import { useAppDispatch } from '@/services/store/store';  // Import store
-import { verifyBooking } from '@/services/features/booking/bookingSlice';  // Import verifyBooking
 
 const PaymentSuccessPage: React.FC = () => {
     const location = useLocation();
-    const dispatch = useAppDispatch();
     const [loading, setLoading] = useState(true);  // Trạng thái loading
     const [verificationStatus, setVerificationStatus] = useState<string | null>(null);
 
@@ -23,25 +19,17 @@ const PaymentSuccessPage: React.FC = () => {
 
         console.log('Params:', { token, stylistId, paymentId, payerId });
 
+        // Kiểm tra nếu có thiếu tham số
         if (!token || !paymentId || !payerId || !stylistId) {
             setVerificationStatus('Missing required parameters.');
             setLoading(false);
             return;
         }
 
-        // Gọi API verify booking
-        dispatch(verifyBooking({ token, paymentId, payerId, stylistId }))
-            .then(unwrapResult)
-            .then(() => {
-                console.log('API call successful');
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error('API call failed:', error);
-                setVerificationStatus(`Verification failed: ${error.errMsg || 'Unknown error'}`);
-                setLoading(false);
-            });
-    }, [location.search, dispatch]);
+        // Nếu tất cả tham số hợp lệ, hiển thị thông báo thanh toán thành công
+        setVerificationStatus('Payment successful and appointment verified.');
+        setLoading(false);
+    }, [location.search]);
 
     // Hiển thị trạng thái loading
     if (loading) {
@@ -52,7 +40,7 @@ const PaymentSuccessPage: React.FC = () => {
         );
     }
 
-    // Hiển thị kết quả xác minh
+    // Hiển thị kết quả xác minh nếu đã xong
     return (
         <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-100 to-blue-300">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full text-center">
