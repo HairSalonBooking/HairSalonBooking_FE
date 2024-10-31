@@ -23,7 +23,7 @@ const Profile = () => {
     });
 
     // State to manage avatar URL
-    const [avatar, setAvatar] = useState(user?.image || "https://example.com/default-avatar.png");
+    const [avatar, setAvatar] = useState(user?.image || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png");
 
     // Fetch user information when component mounts
     useEffect(() => {
@@ -142,7 +142,7 @@ const Profile = () => {
     return (
         <div className="relative min-h-screen bg-gray-900 text-gray-200">
             <div className="relative z-10">
-                <Header />
+                {auth?.roleId !== 'R3' && <Header />}
                 <div className="container mx-auto pt-36 pb-20 px-10">
                     <div className="md:flex md:space-x-16 justify-center">
                         <div className="w-full md:w-2/5 bg-gray-900 p-10 rounded-lg shadow-md text-center relative bg-opacity-95">
@@ -182,6 +182,29 @@ const Profile = () => {
                         <div className="w-full md:w-3/5 bg-gray-900 p-10 rounded-lg shadow-md bg-opacity-95">
                             <h2 className="text-2xl font-semibold mb-6 text-white">Profile Information</h2>
 
+                            {/* Render Points only if roleId is not R3 */}
+                            {auth?.roleId !== 'R3' && (
+                                <div className="mb-6 text-yellow-500 font-semibold">
+                                    Points: {user?.points || 0}
+                                </div>
+                            )}
+                            <a className="absolute top-4 left-4 text-white" href="/shift-stylist">
+                                <div className="flex items-center">
+                                    <svg
+                                        stroke="currentColor"
+                                        fill="currentColor"
+                                        strokeWidth="0"
+                                        viewBox="0 0 320 512"
+                                        className="mr-3 h-[13px] w-[8px] text-white"
+                                        height="1em"
+                                        width="1em"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"></path>
+                                    </svg>
+                                    <p className="ml-0 text-sm text-white">Back to Shift Stylist</p>
+                                </div>
+                            </a>
                             {isEditing ? (
                                 <div className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -234,7 +257,6 @@ const Profile = () => {
                                         </div>
                                         <div>
                                             <label className="block font-medium">Gender</label>
-
                                             <select
                                                 name="gender"
                                                 value={formData.gender}
