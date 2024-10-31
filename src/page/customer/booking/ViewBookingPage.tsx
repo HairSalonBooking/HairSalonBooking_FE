@@ -79,6 +79,8 @@ const ViewBookingPage = () => {
                                     <th className="px-6 py-3 text-left uppercase font-medium text-gray-300">Application Day</th>
                                     <th className="px-6 py-3 text-center uppercase font-medium text-gray-300">Status</th>
                                     <th className="px-6 py-3 text-center uppercase font-medium text-gray-300">Action</th>
+                                    <th className="px-6 py-3 text-center uppercase font-medium text-gray-300">Feedback</th>
+
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-700">

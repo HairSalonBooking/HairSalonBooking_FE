@@ -42,7 +42,7 @@ const ViewFeedBack: FC<ViewFeedBackProps> = ({ serviceId }) => {
                         >
                             <div className="flex items-center mb-2">
                                 <h3 className="text-lg font-semibold text-white mr-4">
-                                    {feedback.userFirstName} {feedback.userLastName}
+                                    {feedback.firstName} {feedback.lastName}
                                 </h3>
                                 <span className="text-gray-400 text-sm">
                                     {new Date(feedback.createdAt).toLocaleDateString()}
