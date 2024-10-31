@@ -4,7 +4,7 @@ import { getCustomerBooking, cancelBookingByCustomer } from '@/services/features
 import { useAppDispatch, useAppSelector } from '@/services/store/store';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import CreateFeedback from './feedback/CreateFeedback';
+import CreateFeedback from '../../../components/service/CreateFeedback';
 
 const ViewBookingPage = () => {
     const dispatch = useAppDispatch();
