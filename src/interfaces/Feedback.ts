@@ -14,6 +14,6 @@ export interface IFeedback {
     serviceId: number;
     createdAt: string;
     updatedAt: string;
-    userFirstName: string;
-    userLastName: string;
+    firstName: string;
+    lastName: string;
 }
