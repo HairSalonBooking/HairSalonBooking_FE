@@ -4,6 +4,7 @@ import { getCustomerBooking, cancelBookingByCustomer } from '@/services/features
 import { useAppDispatch, useAppSelector } from '@/services/store/store';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import CreateFeedback from './feedback/CreateFeedback';
 
 const ViewBookingPage = () => {
     const dispatch = useAppDispatch();
@@ -12,6 +13,9 @@ const ViewBookingPage = () => {
     const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    // feedback state
+    const [isFeedbackPopupOpen, setIsFeedbackPopupOpen] = useState(false);
+    const [feedbackData, setFeedbackData] = useState<{ bookingId: number; serviceId: number; customerId: number } | null>(null);
 
     useEffect(() => {
         if (auth?.id !== undefined) {
@@ -43,7 +47,16 @@ const ViewBookingPage = () => {
             toast.error("User is not authenticated.");
         }
     };
+    // feedback
+    const handleFeedbackClick = (bookingId: number, serviceId: number) => {
+        setFeedbackData({ bookingId, serviceId, customerId: auth?.id || 0 });
+        setIsFeedbackPopupOpen(true);
+    };
 
+    const closeFeedbackPopup = () => {
+        setIsFeedbackPopupOpen(false);
+        setFeedbackData(null); // Clear feedback data when popup is closed
+    };
     // Sort the bookings based on the date in descending order
     const sortedBookings = customerBooking?.slice().sort((a, b) => {
         const dateA = new Date(parseInt(a.date));
@@ -110,6 +123,17 @@ const ViewBookingPage = () => {
                                                 </span>
                                             )}
                                         </td>
+                                        <td className="px-6 py-4 text-center">
+                                            {booking.statusId === 'S3' && booking.services.map((service) => (
+                                                <button
+                                                    key={service.id}
+                                                    className="px-4 py-2 mt-1 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-md shadow-lg transition-colors duration-200"
+                                                    onClick={() => handleFeedbackClick(booking.id, service.id)}
+                                                >
+                                                    Feedback
+                                                </button>
+                                            ))}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -125,6 +149,15 @@ const ViewBookingPage = () => {
                     actionCancel="No"
                     actionDelete="Yes, Cancel"
                 />
+                {feedbackData && (
+                    <CreateFeedback
+                        isOpen={isFeedbackPopupOpen}
+                        onClose={closeFeedbackPopup}
+                        bookingId={feedbackData.bookingId}
+                        serviceId={feedbackData.serviceId}
+                        customerId={feedbackData.customerId}
+                    />
+                )}
             </div>
         </div>
     );

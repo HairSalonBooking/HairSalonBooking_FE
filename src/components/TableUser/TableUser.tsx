@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import { getAllUser, disableUserByAdmin } from "@/services/features/user/userSlice";
 import { IUser } from "@/interfaces/User";
 import PopupConfirmAction from "../popup/ConfirmDelete/PopupConfirmAction";
+import CreateStaffPopup from "../popup/CreateStaff/CreateStaffPopup";
 import { SearchBar } from "../layout/Search/Search";
 import {
     Pagination,
@@ -21,27 +22,27 @@ import {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
-} from "@/components/ui/pagination"; // Import Pagination từ Shadcn
+} from "@/components/ui/pagination";
 
-const ITEMS_PER_PAGE = 10; // Số lượng người dùng hiển thị mỗi trang
+const ITEMS_PER_PAGE = 10;
 
 const TableUser = () => {
     const dispatch = useAppDispatch();
     const { users } = useAppSelector(state => state.users);
-    const [selectedUser, setSelectedUser] = useState<IUser | null>(null); // Để lưu user được chọn
-    const [isPopupOpen, setIsPopupOpen] = useState(false); // State để điều khiển popup
-    const [searchText, setSearchText] = useState<string>(""); // State cho thanh tìm kiếm
-    const [filteredUsers, setFilteredUsers] = useState<IUser[]>([]); // State cho danh sách user đã lọc
-    const [currentPage, setCurrentPage] = useState(1); // State cho trang hiện tại
+    const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isCreateStaffPopupOpen, setIsCreateStaffPopupOpen] = useState(false); // State cho popup tạo Staff
+    const [searchText, setSearchText] = useState<string>("");
+    const [filteredUsers, setFilteredUsers] = useState<IUser[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         dispatch(getAllUser());
     }, [dispatch]);
 
-    // Cập nhật danh sách user dựa trên tìm kiếm và loại bỏ Admin
     useEffect(() => {
         const filtered = users
-            ?.filter((user: IUser) => user.roleId !== "R2") // Ẩn người dùng có roleId là R2 (Admin)
+            ?.filter((user: IUser) => user.roleId !== "R2")
             ?.filter((user: IUser) => {
                 const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
                 return fullName.includes(searchText.toLowerCase());
@@ -49,15 +50,11 @@ const TableUser = () => {
         setFilteredUsers(filtered);
     }, [searchText, users]);
 
-    // Chỉ hiển thị người dùng dựa trên trang hiện tại
     const indexOfLastUser = currentPage * ITEMS_PER_PAGE;
     const indexOfFirstUser = indexOfLastUser - ITEMS_PER_PAGE;
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
-    // Tính tổng số trang
     const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
 
-    // Hàm ánh xạ roleId thành vai trò tương ứng
     const getRoleLabel = (roleId: string) => {
         switch (roleId) {
             case "R1":
@@ -73,20 +70,18 @@ const TableUser = () => {
         }
     };
 
-    // Hàm mở popup xác nhận
     const handleToggleStatus = (user: IUser) => {
         setSelectedUser(user);
         setIsPopupOpen(true);
     };
 
-    // Hàm xử lý sau khi xác nhận
     const handleConfirmToggle = () => {
         if (selectedUser) {
             dispatch(disableUserByAdmin({ id: selectedUser.id }))
                 .unwrap()
                 .then(() => {
-                    setIsPopupOpen(false); // Đóng popup
-                    dispatch(getAllUser()); // Gọi lại API để cập nhật danh sách user sau khi trạng thái thay đổi
+                    setIsPopupOpen(false);
+                    dispatch(getAllUser());
                 })
                 .catch((error) => {
                     console.error(error);
@@ -94,13 +89,26 @@ const TableUser = () => {
         }
     };
 
+    const openCreateStaffPopup = () => {
+        setIsCreateStaffPopupOpen(true);
+    };
+
+    const closeCreateStaffPopup = () => {
+        setIsCreateStaffPopupOpen(false);
+    };
+
     return (
         <>
             <div className="my-6 flex flex-row justify-between items-center">
                 <h2 className="font-bold text-xl">List User Management</h2>
+                <button
+                    className="border border-slate-600 p-2 rounded-lg text-white bg-green-600 font-bold"
+                    onClick={openCreateStaffPopup}
+                >
+                    Create Staff
+                </button>
             </div>
 
-            {/* Tìm kiếm người dùng */}
             <SearchBar
                 text={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
@@ -151,7 +159,6 @@ const TableUser = () => {
                 </TableBody>
             </Table>
 
-            {/* Phân trang sử dụng Shadcn */}
             <Pagination>
                 <PaginationContent>
                     <PaginationItem>
@@ -183,7 +190,6 @@ const TableUser = () => {
                 </PaginationContent>
             </Pagination>
 
-            {/* Popup xác nhận */}
             <PopupConfirmAction
                 isOpen={isPopupOpen}
                 onClose={() => setIsPopupOpen(false)}
@@ -192,6 +198,11 @@ const TableUser = () => {
                 content="This action cannot be undone."
                 actionDelete="Confirm"
                 actionCancel="Cancel"
+            />
+
+            <CreateStaffPopup
+                isOpen={isCreateStaffPopupOpen}
+                onClose={closeCreateStaffPopup}
             />
         </>
     );

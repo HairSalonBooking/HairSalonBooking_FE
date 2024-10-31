@@ -51,3 +51,7 @@ export const TOTAL_USERS_ENDPOINT = `${BASE_URL}/total-users`;
 export const TOTAL_REVENUE_ENDPOINT = `${BASE_URL}/revenue`;
 export const TOTAL_BOOKINGS_ENDPOINT = `${BASE_URL}/total-bookings`;
 export const TOTAL_FEEDBACK_ENDPOINT = `${BASE_URL}/total-feedback`;
+
+//feedback
+export const GET_FEEDBACK_SERVICE_ENDPOINT = `${BASE_URL}/get-feedback-by-serviceId`;
+export const CREATE_FEEDBACK_ENDPOINT = `${BASE_URL}/create-feedback`;
