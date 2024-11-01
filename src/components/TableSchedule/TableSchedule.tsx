@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ITimeBooking } from "@/interfaces/Time";
 import { getAllTimeByStylist } from "@/services/features/timeBooking/timeBookingSlice";
-import { getAllBooking } from "@/services/features/booking/bookingSlice";
 import { useAppDispatch, useAppSelector } from "@/services/store/store";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useForm } from "react-hook-form";
@@ -15,7 +14,6 @@ interface FormData {
 const TableSchedule = () => {
     const dispatch = useAppDispatch();
     const { stylists } = useAppSelector((state) => state.stylists);
-    const { bookings } = useAppSelector((state) => state.bookings);
     const [availableTimes, setAvailableTimes] = useState<ITimeBooking[]>([]);
     const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
 
@@ -35,24 +33,13 @@ const TableSchedule = () => {
                     console.error("Error fetching available times:", error);
                     setAvailableTimes([]);
                 });
-
-            dispatch(getAllBooking({ date: timestamp.toString() }));
         }
     }, [stylistId, date, dispatch]);
 
-    const getTimeSlotStatus = (timeType: string) => {
-        const booking = bookings && bookings.find(
-            (b) => b.stylistId === Number(stylistId) && b.timeType === timeType
-        );
-
-        if (booking) {
-            if (booking.statusId === 'S1' || booking.statusId === 'S2') {
-                return { text: "Booked", color: "text-red-500" }; // Trạng thái đã đặt, màu đỏ
-            } else if (booking.statusId === 'S3' || booking.statusId === 'S4') {
-                return { text: "Available", color: "text-green-500" }; // Trạng thái trống, màu xanh
-            }
-        }
-        return { text: "Available", color: "text-green-500" }; // Mặc định là trạng thái trống
+    const getTimeSlotStatus = (statusTime: string) => {
+        return statusTime === "enable" ?
+            { text: "Available", color: "text-green-500" } :
+            { text: "Booked", color: "text-red-500" };
     };
 
     return (
@@ -115,7 +102,7 @@ const TableSchedule = () => {
                         <TableBody>
                             {availableTimes.length > 0 ? (
                                 availableTimes.map((time) => {
-                                    const status = getTimeSlotStatus(time.timeType);
+                                    const status = getTimeSlotStatus(time.statusTime);
                                     return (
                                         <TableRow key={time.id} className="hover:bg-gray-50 transition-colors">
                                             <TableCell className="p-4">{time.timeTypeData?.valueEn}</TableCell>

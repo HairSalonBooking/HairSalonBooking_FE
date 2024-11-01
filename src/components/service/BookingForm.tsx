@@ -349,14 +349,17 @@ const BookingForm = () => {
                             <button
                                 key={index}
                                 type="button"
-                                className={`p-3 rounded border ${timeType.isPast ? "bg-gray-300 text-gray-500 cursor-not-allowed" : watch("timeType") === timeType.timeType
-                                    ? "bg-yellow-500 text-black"
-                                    : "bg-white text-black"
+                                className={`p-3 rounded border ${timeType.isPast || timeType.statusTime === "disable"
+                                    ? "bg-gray-400 text-gray-500 cursor-not-allowed"
+                                    : watch("timeType") === timeType.timeType
+                                        ? "bg-yellow-500 text-black"
+                                        : "bg-white text-black"
                                     } focus:outline-none hover:bg-yellow-400`}
-                                onClick={() => !timeType.isPast && setValue("timeType", timeType.timeType)}
-                                disabled={timeType.isPast}
+                                onClick={() => !timeType.isPast && timeType.statusTime !== "disable" && setValue("timeType", timeType.timeType)}
+                                disabled={timeType.isPast || timeType.statusTime === "disable"}
                             >
                                 {timeType.timeTypeData.valueVi}
+                                {timeType.statusTime === "disable"}
                             </button>
                         ))
                     ) : (

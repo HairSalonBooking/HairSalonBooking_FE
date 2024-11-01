@@ -16,6 +16,7 @@ export interface ITimeBooking {
     timeType: string;
     stylistId: number;
     stylistData: IStylistData;
+    statusTime: string;
     createdAt: string;
     updatedAt: string;
     timeTypeData: ITimeTypeData;
