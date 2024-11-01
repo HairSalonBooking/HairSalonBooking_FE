@@ -11,7 +11,6 @@ const Profile = () => {
     const { auth } = useAppSelector((state) => state.auth);
     const { user } = useAppSelector((state) => state.users);
 
-    // State to manage form data
     const [formData, setFormData] = useState({
         firstName: user?.firstName || "",
         lastName: user?.lastName || "",
@@ -19,10 +18,9 @@ const Profile = () => {
         address: user?.address || "",
         phoneNumber: user?.phoneNumber || "",
         email: user?.email || "",
-        imageFile: null as File | null,  // Image file state
+        imageFile: null as File | null,
     });
 
-    // State to manage avatar URL
     const [avatar, setAvatar] = useState(user?.image || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png");
 
     // Fetch user information when component mounts
@@ -55,6 +53,7 @@ const Profile = () => {
             [e.target.name]: e.target.value,
         });
     };
+
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setFormData({
             ...formData,
@@ -80,7 +79,6 @@ const Profile = () => {
             fileReader.readAsDataURL(file);
         }
     };
-
     // Handle saving changes
     const handleSaveChanges = async () => {
         if (!auth?.id) {
@@ -88,7 +86,6 @@ const Profile = () => {
             return;
         }
 
-        // Validate phone number and email
         const phoneNumber = formData.phoneNumber || user?.phoneNumber || "";
         const email = formData.email || user?.email || "";
 
@@ -101,6 +98,7 @@ const Profile = () => {
             }
             return;
         }
+
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
             toast.error("Invalid email format");
@@ -108,22 +106,21 @@ const Profile = () => {
         }
 
         const data = new FormData();
-        data.append("id", auth.id.toString());  // Ensure ID is added to form data
+        data.append("id", auth.id.toString());
         data.append("firstName", formData.firstName);
         data.append("lastName", formData.lastName);
         data.append("gender", formData.gender);
         data.append("address", formData.address);
-        data.append("phoneNumber", phoneNumber);  // Use updated or existing phone number
-        data.append("email", email);  // Use updated or existing email
+        data.append("phoneNumber", phoneNumber);
+        data.append("email", email);
 
         if (formData.imageFile) {
-            data.append("imageFile", formData.imageFile);  // Append image file to form data
+            data.append("imageFile", formData.imageFile);
         }
-
 
         const result = await dispatch(editUserbyID({ data }));
         if (editUserbyID.fulfilled.match(result)) {
-            setIsEditing(false);  // Disable editing mode
+            setIsEditing(false);
             if (auth?.id) {
                 dispatch(getUserById({ id: auth.id }));
             }
@@ -134,16 +131,38 @@ const Profile = () => {
     const handleEditToggle = () => {
         if (isEditing) {
             if (auth?.id) {
-                dispatch(getUserById({ id: auth.id }));  // Refresh user data when canceling
+                dispatch(getUserById({ id: auth.id }));
             }
         }
         setIsEditing(!isEditing);
     };
+
     return (
         <div className="relative min-h-screen bg-gray-900 text-gray-200">
             <div className="relative z-10">
+                {/* Show Header if roleId is not "R3" */}
                 {auth?.roleId !== 'R3' && <Header />}
                 <div className="container mx-auto pt-36 pb-20 px-10">
+                    {/* Show "Back to Shift Stylist" if roleId is "R3" */}
+                    {auth?.roleId === 'R3' && (
+                        <a className="absolute top-4 left-4 text-white" href="/shift-stylist">
+                            <div className="flex items-center">
+                                <svg
+                                    stroke="currentColor"
+                                    fill="currentColor"
+                                    strokeWidth="0"
+                                    viewBox="0 0 320 512"
+                                    className="mr-3 h-[13px] w-[8px] text-white"
+                                    height="1em"
+                                    width="1em"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c-12.5-12.5-12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"></path>
+                                </svg>
+                                <p className="ml-0 text-sm text-white">Back to Shift Stylist</p>
+                            </div>
+                        </a>
+                    )}
                     <div className="md:flex md:space-x-16 justify-center">
                         <div className="w-full md:w-2/5 bg-gray-900 p-10 rounded-lg shadow-md text-center relative bg-opacity-95">
                             <div className="relative w-60 h-60 mx-auto mb-6">
@@ -181,30 +200,12 @@ const Profile = () => {
 
                         <div className="w-full md:w-3/5 bg-gray-900 p-10 rounded-lg shadow-md bg-opacity-95">
                             <h2 className="text-2xl font-semibold mb-6 text-white">Profile Information</h2>
-
                             {/* Render Points only if roleId is not R3 */}
                             {auth?.roleId !== 'R3' && (
                                 <div className="mb-6 text-yellow-500 font-semibold">
                                     Points: {user?.points || 0}
                                 </div>
                             )}
-                            <a className="absolute top-4 left-4 text-white" href="/shift-stylist">
-                                <div className="flex items-center">
-                                    <svg
-                                        stroke="currentColor"
-                                        fill="currentColor"
-                                        strokeWidth="0"
-                                        viewBox="0 0 320 512"
-                                        className="mr-3 h-[13px] w-[8px] text-white"
-                                        height="1em"
-                                        width="1em"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"></path>
-                                    </svg>
-                                    <p className="ml-0 text-sm text-white">Back to Shift Stylist</p>
-                                </div>
-                            </a>
                             {isEditing ? (
                                 <div className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -241,7 +242,6 @@ const Profile = () => {
                                                     placeholder="Enter your phone number"
                                                     value={formData.phoneNumber}
                                                     onChange={(e) => {
-                                                        // Ensure only 9 digits are entered after +84
                                                         const phoneNumber = e.target.value.replace(/\D/g, '');  // Remove non-numeric characters
                                                         if (phoneNumber.length <= 9) {
                                                             setFormData({
@@ -250,7 +250,7 @@ const Profile = () => {
                                                             });
                                                         }
                                                     }}
-                                                    maxLength={9} // Limit input to 9 digits
+                                                    maxLength={9}
                                                     className="w-full px-4 py-3 border rounded-r-lg bg-gray-800 text-white border-gray-600"
                                                 />
                                             </div>
@@ -260,7 +260,7 @@ const Profile = () => {
                                             <select
                                                 name="gender"
                                                 value={formData.gender}
-                                                onChange={handleSelectChange}  // Select uses handleSelectChange
+                                                onChange={handleSelectChange}
                                                 className="w-full px-4 py-3 border rounded-lg bg-gray-800 text-white"
                                             >
                                                 <option value="Male">Male</option>

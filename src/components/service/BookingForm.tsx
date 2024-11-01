@@ -89,20 +89,26 @@ const BookingForm = () => {
                     const currentDate = new Date();
                     const selectedDate = new Date(date);
 
+                    let sortedTimes = times.map((time) => {
+                        const [hours, minutes] = time.timeTypeData.valueVi.split(":").map(Number);
+                        return {
+                            ...time,
+                            timeInMinutes: hours * 60 + minutes,
+                        };
+                    });
+
                     if (selectedDate.toDateString() === currentDate.toDateString()) {
                         const currentTime = currentDate.getHours() * 60 + currentDate.getMinutes();
-                        const filteredTimes = times.map((time) => {
-                            const [hours, minutes] = time.timeTypeData.valueVi.split(":").map(Number);
-                            const timeInMinutes = hours * 60 + minutes;
-                            return {
-                                ...time,
-                                isPast: timeInMinutes <= currentTime,
-                            };
-                        });
-                        setAvailableTimes(filteredTimes);
-                    } else {
-                        setAvailableTimes(times.map((time) => ({ ...time, isPast: false })));
+                        sortedTimes = sortedTimes.map((time) => ({
+                            ...time,
+                            isPast: time.timeInMinutes <= currentTime,
+                        }));
                     }
+
+                    // Sort times in ascending order based on timeInMinutes
+                    sortedTimes.sort((a, b) => a.timeInMinutes - b.timeInMinutes);
+
+                    setAvailableTimes(sortedTimes);
                 })
                 .catch((error) => {
                     console.error("Error fetching available times:", error);
@@ -110,7 +116,6 @@ const BookingForm = () => {
                 });
         }
     }, [stylistId, date, dispatch]);
-
     const calculateTotalAmount = (selectedServices: { id: string, price: number }[]) => {
         const amount = selectedServices.reduce((acc, service) => acc + service.price, 0);
         setTotalAmount(amount);
