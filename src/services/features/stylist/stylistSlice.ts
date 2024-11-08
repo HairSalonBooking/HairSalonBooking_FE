@@ -144,13 +144,23 @@ export const paidSalary = createAsyncThunk<Object, { id: number }>(
     }
 );
 
-export const completeBookingByStylist = createAsyncThunk<Object, { bookingId: number, email: string }>(
+export const completeBookingByStylist = createAsyncThunk<Object, {
+    bookingId: number,
+    email: string,
+    customerName: string,
+    stylistName: string,
+    serviceDate: string,
+    serviceTime: string,
+}>(
     "stylists/completeBookingByStylist",
-    async ({ bookingId, email }, thunkAPI) => {
+    async ({ bookingId, email, customerName, stylistName, serviceDate, serviceTime }, thunkAPI) => {
         try {
             const token = localStorage.getItem('hairSalonToken');
             const response = await axiosInstance.post(`${COMPLETE_BOOKING_BY_STYLIST_ENDPOINT}`,
-                { bookingId, email }, {
+                {
+                    bookingId, email, customerName, stylistName, serviceDate, serviceTime
+
+                }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
