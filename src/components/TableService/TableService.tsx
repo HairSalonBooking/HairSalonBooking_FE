@@ -143,10 +143,10 @@ const TableService = () => {
 
             {/* Popup xác nhận xóa */}
             <PopupConfirmAction
-                title={"Xác nhận xóa"}
-                content={"Bạn có chắc chắn muốn xóa mục này không?"}
-                actionDelete={"Xóa"}
-                actionCancel={"Hủy"}
+                title={"Are you confirm delete?"}
+                content={"Are you sure you want to delete?"}
+                actionDelete={"Delete"}
+                actionCancel={"Cancel"}
                 isOpen={isPopupOpen}
                 onClose={closeDeletePopup}
                 onConfirm={handleConfirmDelete}
