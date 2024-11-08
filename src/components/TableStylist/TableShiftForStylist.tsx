@@ -25,6 +25,10 @@ const TableShiftForStylist = () => {
     const [popupOpen, setPopupOpen] = useState(false); // State to control popup visibility
     const [selectedBooking, setSelectedBooking] = useState<number | null>(null); // Selected booking ID
     const [selectedEmail, setSelectedEmail] = useState<string>(""); // Selected customer email
+    const [selectedCustomerName, setSelectedCustomerName] = useState<string>(""); // Selected customer name
+    const [selectedStylistName, setSelectedStylistName] = useState<string>(""); // Selected stylist name
+    const [selectedServiceDate, setSelectedServiceDate] = useState<string>(""); // Selected service date
+    const [selectedServiceTime, setSelectedServiceTime] = useState<string>(""); // Selected service time
 
     // Set today's date as default on component mount
     useEffect(() => {
@@ -50,6 +54,10 @@ const TableShiftForStylist = () => {
     const handleCompleteBooking = (bookingId: number, email: string) => {
         setSelectedBooking(bookingId); // Store selected booking ID
         setSelectedEmail(email); // Store selected customer email
+        setSelectedCustomerName(bookings?.find((booking) => booking.id === bookingId)?.customerData.firstName || ""); // Store selected customer name
+        setSelectedStylistName(auth?.firstName || ""); // Store stylist name
+        setSelectedServiceDate(new Date(parseInt(bookings?.find((booking) => booking.id === bookingId)?.date || "")).toLocaleDateString()); // Store service date
+        setSelectedServiceTime(bookings?.find((booking) => booking.id === bookingId)?.timeTypeDataBooking.valueEn || ""); // Store service time
         setPopupOpen(true); // Open the popup
     };
 
@@ -57,7 +65,14 @@ const TableShiftForStylist = () => {
     const confirmCompleteBooking = () => {
         if (selectedBooking !== null) {
             setLoading(true); // Set loading state in the popup
-            dispatch(completeBookingByStylist({ bookingId: selectedBooking, email: selectedEmail }))
+            dispatch(completeBookingByStylist({
+                bookingId: selectedBooking,
+                email: selectedEmail,
+                customerName: selectedCustomerName,
+                stylistName: selectedStylistName,
+                serviceDate: selectedServiceDate,
+                serviceTime: selectedServiceTime,
+            }))
                 .then(() => {
                     dispatch(
                         getBookingForStylist({
