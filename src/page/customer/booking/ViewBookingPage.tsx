@@ -93,7 +93,7 @@ const ViewBookingPage = () => {
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 <span className={`px-3 py-1 rounded-full text-xs font-semibold inline-block 
-                        ${booking.statusId === 'S1' ? 'bg-yellow-400 text-gray-900' :
+                                                    ${booking.statusId === 'S1' ? 'bg-yellow-400 text-gray-900' :
                                                         booking.statusId === 'S2' ? 'bg-blue-400 text-gray-900' :
                                                             booking.statusId === 'S3' ? 'bg-green-500 text-white' :
                                                                 'bg-red-400 text-gray-900'}`}>
