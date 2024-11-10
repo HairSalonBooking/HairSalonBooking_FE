@@ -80,66 +80,61 @@ const ViewBookingPage = () => {
                                     <th className="px-6 py-3 text-center uppercase font-medium text-gray-300">Status</th>
                                     <th className="px-6 py-3 text-center uppercase font-medium text-gray-300">Action</th>
                                     <th className="px-6 py-3 text-center uppercase font-medium text-gray-300">Feedback</th>
-
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-700">
-                                {sortedBookings && sortedBookings.map((booking, index) => (
-                                    <tr key={booking.id} className={`${index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-700'} hover:bg-gray-600 transition duration-200`}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-gray-300">
-                                            {booking.services.map((service, i) => (
-                                                <span key={i}>
-                                                    {service.name}
-                                                    {i < booking.services.length - 1 ? ", " : ""}
+                                {sortedBookings && sortedBookings.map((booking) => (
+                                    booking.services.map((service, i) => (
+                                        <tr key={`${booking.id}-${service.id}`} className={` hover:bg-gray-600 transition duration-200`}>
+                                            <td className="px-6 py-4 whitespace-nowrap text-gray-300">{service.name}</td>
+                                            <td className="px-6 py-4 text-gray-300">{booking.stylistDataBooking?.firstName || 'N/A'}</td>
+                                            <td className="px-6 py-4 text-gray-300">
+                                                {booking.timeTypeDataBooking.valueEn} {new Date(parseInt(booking.date)).toLocaleDateString()}
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <span className={`px-3 py-1 rounded-full text-xs font-semibold inline-block 
+                        ${booking.statusId === 'S1' ? 'bg-yellow-400 text-gray-900' :
+                                                        booking.statusId === 'S2' ? 'bg-blue-400 text-gray-900' :
+                                                            booking.statusId === 'S3' ? 'bg-green-500 text-white' :
+                                                                'bg-red-400 text-gray-900'}`}>
+                                                    {booking.statusId === 'S1' && 'Pending'}
+                                                    {booking.statusId === 'S2' && 'Confirm'}
+                                                    {booking.statusId === 'S3' && 'Complete'}
+                                                    {booking.statusId === 'S4' && 'Cancel'}
                                                 </span>
-                                            ))}
-                                        </td>
-                                        <td className="px-6 py-4 text-gray-300">{booking.stylistDataBooking?.firstName || 'N/A'}</td>
-                                        <td className="px-6 py-4 text-gray-300">
-                                            {booking.timeTypeDataBooking.valueEn} {new Date(parseInt(booking.date)).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-semibold inline-block 
-                                                ${booking.statusId === 'S1' ? 'bg-yellow-500 text-gray-900' :
-                                                    booking.statusId === 'S2' ? 'bg-blue-500 text-gray-900' :
-                                                        booking.statusId === 'S3' ? 'bg-green-500 text-gray-900' :
-                                                            'bg-red-500 text-gray-900'}`}>
-                                                {booking.statusId === 'S1' && 'Pending'}
-                                                {booking.statusId === 'S2' && 'Confirm'}
-                                                {booking.statusId === 'S3' && 'Complete'}
-                                                {booking.statusId === 'S4' && 'Cancel'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            {booking.statusId === 'S1' ? (
-                                                <button
-                                                    className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md shadow-lg transition-colors duration-200"
-                                                    onClick={() => handleCancelClick(booking.id)}
-                                                >
-                                                    Cancel
-                                                </button>
-                                            ) : (
-                                                <span className="inline-block px-4 py-2 text-xs font-semibold rounded-full w-full text-center">
-                                                    {booking.statusId === 'S2' && '\u00A0'}
-                                                    {booking.statusId === 'S3' && '\u00A0'}
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            {booking.statusId === 'S3' && booking.services.map((service) => (
-                                                <button
-                                                    key={service.id}
-                                                    className="px-4 py-2 mt-1 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-md shadow-lg transition-colors duration-200"
-                                                    onClick={() => handleFeedbackClick(booking.id, service.id)}
-                                                >
-                                                    Feedback
-                                                </button>
-                                            ))}
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                {i === 0 && booking.statusId === 'S1' ? (
+                                                    <button
+                                                        className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md shadow-lg transition-colors duration-200"
+                                                        onClick={() => handleCancelClick(booking.id)}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                ) : (
+                                                    <span className="inline-block px-4 py-2 text-xs font-semibold rounded-full w-full text-center">
+                                                        {booking.statusId === 'S2' && '\u00A0'}
+                                                        {booking.statusId === 'S3' && '\u00A0'}
+                                                    </span>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                {booking.statusId === 'S3' && (
+                                                    <button
+                                                        key={service.id}
+                                                        className="px-4 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-md shadow-lg transition-colors duration-200"
+                                                        onClick={() => handleFeedbackClick(booking.id, service.id)}
+                                                    >
+                                                        Feedback
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))
                                 ))}
                             </tbody>
                         </table>
+
                     </div>
                 </div>
                 <PopupConfirmAction
