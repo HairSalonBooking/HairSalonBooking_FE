@@ -2,6 +2,7 @@ import { ICreateFeedback, IFeedback } from "@/interfaces/Feedback";
 import { CREATE_FEEDBACK_ENDPOINT, GET_FEEDBACK_SERVICE_ENDPOINT } from "@/services/constant/apiConfig";
 import axiosInstance from "@/services/constant/axiosInstance";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 type FeedbacState = {
     loading: boolean;
@@ -45,6 +46,13 @@ export const createFeedback = createAsyncThunk<IFeedback, ICreateFeedback>(
                     Authorization: `Bearer ${token}`,
                 },
             });
+            if (response.data.success === false) {
+                toast.error(response.data.errMessage);
+            }
+            if (response.data.success === true) {
+                toast.success("Register Successfully");
+            }
+
             return response.data;
         } catch (error: any) {
             return thunkAPI.rejectWithValue(error.response?.data || "Unknown error");
