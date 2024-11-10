@@ -50,7 +50,7 @@ export const createFeedback = createAsyncThunk<IFeedback, ICreateFeedback>(
                 toast.error(response.data.errMessage);
             }
             if (response.data.success === true) {
-                toast.success("Register Successfully");
+                toast.success(response.data.message);
             }
 
             return response.data;

@@ -29,6 +29,7 @@ const TableSalaryOfStylist = () => {
                         <TableHead>Month</TableHead>
                         <TableHead>Year</TableHead>
                         <TableHead>TotalSalary</TableHead>
+                        <TableHead>Status</TableHead>
                         <TableHead>Update At</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -55,6 +56,9 @@ const TableSalaryOfStylist = () => {
                                     </TableCell>
                                     <TableCell>
                                         {sal.TotalSalary}
+                                    </TableCell>
+                                    <TableCell className="px-3 py-1 rounded-full text-xs font-semibold inline-block bg-green-500 text-white">
+                                        Paid
                                     </TableCell>
 
                                     <TableCell>
