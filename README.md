@@ -674,10 +674,68 @@ Content-Type: application/json
 }
 ```
 
+Responses
+
+- 201 Created
+
+```json
+{
+  "status": "success",
+  "message": "Competition created successfully",
+  "data": { "id": "c1", "title": "Big Hack", "organizer_id": "o_456" }
+}
+```
+
+- 403 Organizer required
+
+```json
+{
+  "status": "error",
+  "message": "Only registered organizers can create competitions"
+}
+```
+
+- 400 Bad request (e.g. plan not found / not active)
+
+```json
+{ "status": "error", "message": "Plan with ID '...' not found" }
+```
+
+- 500 Server error
+
+```json
+{ "status": "error", "message": "Failed to create competition" }
+```
+
 ### 59. Get All Competitions
 
 ```http
 GET /api/competitions?page=1&limit=10&category=hackathon&status=published&featured=true
+```
+
+Responses
+
+- 200 OK
+
+```json
+{
+  "status": "success",
+  "data": [{ "id": "c1", "title": "Big Hack" }],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+- 500 Server error
+
+```json
+{ "status": "error", "message": "Failed to get competitions" }
 ```
 
 ### 60. Get Featured Competitions
@@ -686,10 +744,60 @@ GET /api/competitions?page=1&limit=10&category=hackathon&status=published&featur
 GET /api/competitions/featured?page=1&limit=10
 ```
 
+Responses
+
+- 200 OK
+
+```json
+{
+  "status": "success",
+  "data": [{ "id": "c1", "title": "Big Hack" }],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+- 500 Server error
+
+```json
+{ "status": "error", "message": "Failed to get featured competitions" }
+```
+
 ### 61. Get Competitions by Category
 
 ```http
 GET /api/competitions/category/:category?page=1&limit=10
+```
+
+Responses
+
+- 200 OK
+
+```json
+{
+  "status": "success",
+  "data": [{ "id": "c1", "title": "Big Hack" }],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+- 500 Server error
+
+```json
+{ "status": "error", "message": "Failed to get competitions by category" }
 ```
 
 ### 62. Get Competitions by Status
@@ -698,16 +806,106 @@ GET /api/competitions/category/:category?page=1&limit=10
 GET /api/competitions/status/:status?page=1&limit=10
 ```
 
+Responses
+
+- 200 OK
+
+```json
+{
+  "status": "success",
+  "data": [{ "id": "c1", "title": "Big Hack" }],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+- 500 Server error
+
+```json
+{ "status": "error", "message": "Failed to get competitions by status" }
+```
+
 ### 63. Get Competition by ID
 
 ```http
 GET /api/competitions/:competitionId
 ```
 
+Responses
+
+- 200 OK
+
+```json
+{
+  "status": "success",
+  "data": {
+    "id": "c1",
+    "title": "Big Hack",
+    "competitionTags": ["ai"],
+    "competitionRequiredSkills": [{ "name": "python", "category": "technical" }]
+  }
+}
+```
+
+- 404 Not found
+
+```json
+{ "status": "error", "message": "Competition not found" }
+```
+
+- 500 Server error
+
+```json
+{ "status": "error", "message": "Failed to get competition" }
+```
+
 ### 64. Get Competition Participants
 
 ```http
 GET /api/competitions/:competitionId/participants?page=1&limit=10
+```
+
+Responses
+
+- 200 OK
+
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "user_id": "u_456",
+      "status": "registered",
+      "user": { "id": "u_456", "email": "x@y.com", "full_name": "Bob" }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+- 404 Not found
+
+```json
+{ "status": "error", "message": "Competition not found" }
+```
+
+- 500 Server error
+
+```json
+{ "status": "error", "message": "Failed to get competition participants" }
 ```
 
 ### 65. Update Competition
@@ -744,11 +942,67 @@ Content-Type: application/json
 }
 ```
 
+Responses
+
+- 200 OK
+
+```json
+{
+  "status": "success",
+  "message": "Competition updated successfully",
+  "data": { "id": "c1", "title": "Big Hack" }
+}
+```
+
+- 403 Forbidden
+
+```json
+{ "status": "error", "message": "Not authorized to update this competition" }
+```
+
+- 400 Bad request (e.g. plan invalid/not active)
+
+```json
+{ "status": "error", "message": "Plan with ID '...' is not active" }
+```
+
+- 404 Not found
+
+```json
+{ "status": "error", "message": "Competition not found" }
+```
+
+- 500 Server error
+
+```json
+{ "status": "error", "message": "Failed to update competition" }
+```
+
 ### 66. Delete Competition
 
 ```http
 DELETE /api/competitions/:competitionId
 Authorization: Bearer <organizer_token>
+```
+
+Responses
+
+- 200 OK
+
+```json
+{ "status": "success", "message": "Competition deleted successfully" }
+```
+
+- 404 Not found
+
+```json
+{ "status": "error", "message": "Competition not found" }
+```
+
+- 500 Server error
+
+```json
+{ "status": "error", "message": "Failed to delete competition" }
 ```
 
 ---
