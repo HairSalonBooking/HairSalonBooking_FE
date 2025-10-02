@@ -981,3 +981,678 @@ Nhiều API hỗ trợ filtering và search:
 - Competitions: 9
 - Skills Management: 7
 - Plans Management: 8
+
+---
+
+## 📦 Response examples (per group)
+
+Lưu ý: Đây là ví dụ điển hình dựa trên controllers/services; field thực tế phụ thuộc dữ liệu.
+
+### 🏥 Health
+
+GET /api/health
+
+```json
+{ "status": "success", "message": "API is healthy" }
+```
+
+### 🔐 Auth
+
+POST /api/auth/register
+
+```json
+{
+  "success": true,
+  "message": "User registered successfully",
+  "emailSent": true,
+  "userId": "u_123"
+}
+```
+
+POST /api/auth/register/organizer
+
+```json
+{
+  "success": true,
+  "message": "Organizer registered successfully",
+  "userId": "u_123",
+  "organizerId": "o_456",
+  "accessToken": "...",
+  "refreshToken": "...",
+  "needsVerification": true,
+  "emailSent": true,
+  "avatar_url": "https://..."
+}
+```
+
+POST /api/auth/login
+
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "user": {
+    "id": "u_123",
+    "username": "alice",
+    "email": "a@x.com",
+    "full_name": "Alice",
+    "roles": ["customer"]
+  },
+  "accessToken": "...",
+  "refreshToken": "..."
+}
+```
+
+POST /api/auth/verify-token
+
+```json
+{ "success": true, "userId": "u_123" }
+```
+
+POST /api/auth/verify-email
+
+```json
+{ "success": true, "message": "Email verified successfully" }
+```
+
+POST /api/auth/resend-verification
+
+```json
+{ "success": true, "message": "Verification email sent", "emailSent": true }
+```
+
+POST /api/auth/forgot-password
+
+```json
+{ "success": true, "message": "Password reset email sent", "emailSent": true }
+```
+
+POST /api/auth/reset-password
+
+```json
+{ "success": true, "message": "Password reset successfully" }
+```
+
+POST /api/auth/refresh-token
+
+```json
+{ "success": true, "accessToken": "..." }
+```
+
+POST /api/auth/change-password
+
+```json
+{ "success": true, "message": "Password changed successfully" }
+```
+
+### 👥 Roles (Admin)
+
+GET /api/roles
+
+```json
+{
+  "success": true,
+  "roles": [
+    { "id": 1, "name": "admin" },
+    { "id": 2, "name": "organizer" }
+  ]
+}
+```
+
+GET /api/roles/user/:userId
+
+```json
+{ "success": true, "roles": [{ "id": 2, "name": "organizer" }] }
+```
+
+POST /api/roles/assign | /remove
+
+```json
+{ "success": true, "message": "Role assigned successfully" }
+```
+
+### 🏢 Organizer profile
+
+GET /api/organizer/profile
+
+```json
+{
+  "success": true,
+  "profile": {
+    "userId": "u_123",
+    "username": "alice",
+    "email": "a@x.com",
+    "full_name": "Alice",
+    "organizerId": "o_456",
+    "organizerName": "ACME",
+    "organizerEmail": "org@x.com",
+    "avatar_url": "https://...",
+    "description": "...",
+    "address": "...",
+    "phone": "...",
+    "website": "..."
+  }
+}
+```
+
+PUT /api/organizer/profile
+
+```json
+{
+  "success": true,
+  "message": "Organizer profile updated successfully",
+  "organizerId": "o_456"
+}
+```
+
+POST /api/organizer/avatar
+
+```json
+{
+  "success": true,
+  "message": "Avatar updated successfully",
+  "avatar_url": "https://..."
+}
+```
+
+GET /api/organizer/:organizerId
+
+```json
+{
+  "success": true,
+  "profile": {
+    "organizerId": "o_456",
+    "name": "ACME",
+    "email": "org@x.com",
+    "avatar_url": "https://...",
+    "description": "...",
+    "address": "...",
+    "phone": "...",
+    "website": "..."
+  }
+}
+```
+
+### 👤 Customer profile
+
+GET /api/customer/profile
+
+```json
+{
+  "success": true,
+  "profile": {
+    "userId": "u_123",
+    "username": "alice",
+    "email": "a@x.com",
+    "full_name": "Alice",
+    "avatar_url": "https://...",
+    "bio": "...",
+    "school": "...",
+    "city": "...",
+    "region": "...",
+    "country": "...",
+    "study_field": "...",
+    "join_date": "2024-01-01T00:00:00.000Z",
+    "rating": 0,
+    "social_links": { "github": "", "linkedin": "", "personal": "" }
+  }
+}
+```
+
+PUT /api/customer/profile
+
+```json
+{ "success": true, "message": "Customer profile updated successfully" }
+```
+
+POST /api/customer/avatar
+
+```json
+{
+  "success": true,
+  "message": "Avatar updated successfully",
+  "avatar_url": "https://..."
+}
+```
+
+GET /api/customer/:userId
+
+```json
+{
+  "success": true,
+  "profile": {
+    "userId": "u_123",
+    "username": "alice",
+    "full_name": "Alice",
+    "avatar_url": "https://...",
+    "bio": "...",
+    "school": "...",
+    "city": "...",
+    "region": "...",
+    "country": "...",
+    "study_field": "...",
+    "join_date": "...",
+    "rating": 0,
+    "social_links": { "github": "", "linkedin": "", "personal": "" }
+  }
+}
+```
+
+### 🛠️ User skills
+
+GET /api/skills
+
+```json
+{
+  "success": true,
+  "skills": [{ "_id": "s1", "name": "JavaScript", "category": "technical" }]
+}
+```
+
+GET /api/user/skills | /api/user/:userId/skills
+
+```json
+{
+  "success": true,
+  "skills": [
+    {
+      "_id": "us1",
+      "user_id": "u_123",
+      "skill_name": "JavaScript",
+      "category": "technical",
+      "level": "advanced",
+      "experience_years": 3
+    }
+  ]
+}
+```
+
+POST /api/user/skills
+
+```json
+{
+  "success": true,
+  "message": "Skill added successfully",
+  "skill": {
+    "_id": "us1",
+    "user_id": "u_123",
+    "skill_name": "JavaScript",
+    "category": "technical",
+    "level": "beginner",
+    "experience_years": 0
+  }
+}
+```
+
+PUT /api/user/skills/:skillId
+
+```json
+{
+  "success": true,
+  "message": "Skill updated successfully",
+  "skill": {
+    "_id": "us1",
+    "skill_name": "JavaScript",
+    "category": "technical",
+    "level": "advanced",
+    "experience_years": 2
+  }
+}
+```
+
+DELETE /api/user/skills/:skillId
+
+```json
+{ "success": true, "message": "Skill deleted successfully" }
+```
+
+### 🏆 Achievements
+
+GET /api/user/achievements | /api/user/:userId/achievements
+
+```json
+{
+  "success": true,
+  "achievements": [
+    {
+      "id": "a1",
+      "user_id": "u_123",
+      "competition_name": "Hackathon",
+      "position": 1,
+      "award": "Gold",
+      "achieved_at": "2024-01-01T00:00:00.000Z",
+      "category": "tech",
+      "description": ""
+    }
+  ]
+}
+```
+
+GET /api/achievements/:achievementId
+
+```json
+{
+  "success": true,
+  "achievement": { "id": "a1", "competition_name": "Hackathon" }
+}
+```
+
+POST /api/user/achievements
+
+```json
+{
+  "success": true,
+  "message": "Achievement added successfully",
+  "achievement": {
+    "id": "a1",
+    "user_id": "u_123",
+    "competition_name": "Hackathon"
+  }
+}
+```
+
+PUT /api/user/achievements/:achievementId
+
+```json
+{
+  "success": true,
+  "message": "Achievement updated successfully",
+  "achievement": { "id": "a1", "competition_name": "Hackathon" }
+}
+```
+
+DELETE /api/user/achievements/:achievementId
+
+```json
+{ "success": true, "message": "Achievement deleted successfully" }
+```
+
+### 📁 Projects
+
+GET /api/user/projects | /api/user/:userId/projects
+
+```json
+{
+  "success": true,
+  "projects": [
+    {
+      "id": "p1",
+      "user_id": "u_123",
+      "title": "Portfolio",
+      "description": "...",
+      "category": "web",
+      "tags": ["react"],
+      "image_url": "https://...",
+      "project_url": "https://...",
+      "github_url": "https://...",
+      "created_at": "..."
+    }
+  ]
+}
+```
+
+GET /api/projects/:projectId
+
+```json
+{ "success": true, "project": { "id": "p1", "title": "Portfolio" } }
+```
+
+POST /api/user/projects
+
+```json
+{
+  "success": true,
+  "message": "Project added successfully",
+  "project": { "id": "p1", "title": "Portfolio" }
+}
+```
+
+PUT /api/user/projects/:projectId
+
+```json
+{
+  "success": true,
+  "message": "Project updated successfully",
+  "project": { "id": "p1", "title": "Portfolio" }
+}
+```
+
+DELETE /api/user/projects/:projectId
+
+```json
+{ "success": true, "message": "Project deleted successfully" }
+```
+
+### 👥 Teams
+
+POST /api/teams
+
+```json
+{
+  "success": true,
+  "message": "Team created successfully",
+  "data": {
+    "id": "t1",
+    "name": "Winners",
+    "leader_id": "u_123",
+    "max_members": 5,
+    "status": "active"
+  }
+}
+```
+
+GET /api/teams/:teamId
+
+```json
+{ "success": true, "data": { "id": "t1", "name": "Winners" } }
+```
+
+PUT /api/teams/:teamId
+
+```json
+{
+  "success": true,
+  "message": "Team updated successfully",
+  "data": { "id": "t1", "name": "Winners" }
+}
+```
+
+DELETE /api/teams/:teamId
+
+```json
+{ "success": true, "message": "Team deleted successfully" }
+```
+
+GET /api/teams/:teamId/members
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "team_id": "t1",
+      "user_id": "u_123",
+      "role": "leader",
+      "status": "active"
+    }
+  ]
+}
+```
+
+DELETE /api/teams/:teamId/members/:memberId
+
+```json
+{ "success": true, "message": "Team member removed successfully" }
+```
+
+PUT /api/teams/:teamId/members/:memberId/role
+
+```json
+{
+  "success": true,
+  "message": "Team member role updated successfully",
+  "data": { "team_id": "t1", "user_id": "u_456", "role": "leader" }
+}
+```
+
+GET /api/user/teams | /api/user/:userId/teams
+
+```json
+{ "success": true, "data": [{ "id": "t1", "name": "Winners" }] }
+```
+
+### 📨 Team invitations
+
+POST /api/team-invitations
+
+```json
+{
+  "success": true,
+  "message": "Invitation sent successfully",
+  "data": {
+    "id": "inv1",
+    "team_id": "t1",
+    "inviter_id": "u_123",
+    "invitee_id": "u_456",
+    "status": "pending"
+  }
+}
+```
+
+GET /api/team-invitations/:invitationId
+
+```json
+{ "success": true, "data": { "id": "inv1", "status": "pending" } }
+```
+
+GET /api/teams/:teamId/invitations
+
+```json
+{ "success": true, "data": [{ "id": "inv1", "status": "pending" }] }
+```
+
+GET /api/user/invitations
+
+```json
+{
+  "success": true,
+  "data": [{ "id": "inv1", "team_id": "t1", "status": "pending" }]
+}
+```
+
+POST /api/team-invitations/:invitationId/accept
+
+```json
+{
+  "success": true,
+  "message": "Invitation accepted successfully",
+  "data": {
+    "team_id": "t1",
+    "user_id": "u_456",
+    "role": "member",
+    "status": "active"
+  }
+}
+```
+
+POST /api/team-invitations/:invitationId/reject
+
+```json
+{
+  "success": true,
+  "message": "Invitation rejected successfully",
+  "data": { "id": "inv1", "status": "rejected" }
+}
+```
+
+POST /api/team-invitations/:invitationId/cancel
+
+```json
+{
+  "success": true,
+  "message": "Invitation cancelled successfully",
+  "data": { "id": "inv1", "status": "cancelled" }
+}
+```
+
+### 🏆 Competitions
+
+POST /api/competitions
+
+```json
+{
+  "status": "success",
+  "message": "Competition created successfully",
+  "data": { "id": "c1", "title": "Big Hack", "organizer_id": "o_456" }
+}
+```
+
+GET /api/competitions
+
+```json
+{
+  "status": "success",
+  "data": [{ "id": "c1", "title": "Big Hack" }],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+GET /api/competitions/:competitionId
+
+```json
+{
+  "status": "success",
+  "data": {
+    "id": "c1",
+    "title": "Big Hack",
+    "competitionTags": ["ai"],
+    "competitionRequiredSkills": [{ "name": "python", "category": "technical" }]
+  }
+}
+```
+
+GET /api/competitions/:competitionId/participants
+
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "user_id": "u_456",
+      "status": "registered",
+      "user": { "id": "u_456", "email": "x@y.com", "full_name": "Bob" }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 1,
+    "totalPages": 1,
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}
+```
+
+PUT /api/competitions/:competitionId
+
+```json
+{
+  "status": "success",
+  "message": "Competition updated successfully",
+  "data": { "id": "c1", "title": "Big Hack" }
+}
+```
+
+DELETE /api/competitions/:competitionId
+
+```json
+{ "status": "success", "message": "Competition deleted successfully" }
+```
