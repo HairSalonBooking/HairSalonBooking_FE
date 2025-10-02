@@ -16,9 +16,19 @@ Authorization: Bearer <your_jwt_token>
 
 ---
 
+## 🏥 Health Check
+
+### 1. Health Check
+
+```http
+GET /api/health
+```
+
+---
+
 ## 🔐 Authentication APIs
 
-### 1. User Registration
+### 2. User Registration
 
 ```http
 POST /api/auth/register
@@ -37,7 +47,7 @@ Content-Type: application/json
 }
 ```
 
-### 2. Organizer Registration
+### 3. Organizer Registration
 
 ```http
 POST /api/auth/register/organizer
@@ -61,7 +71,7 @@ organizer: {
 avatar: file (optional)
 ```
 
-### 3. User Login
+### 4. User Login
 
 ```http
 POST /api/auth/login
@@ -73,7 +83,7 @@ Content-Type: application/json
 }
 ```
 
-### 4. Verify JWT Token
+### 5. Verify JWT Token
 
 ```http
 POST /api/auth/verify-token
@@ -84,7 +94,7 @@ Content-Type: application/json
 }
 ```
 
-### 5. Verify Email
+### 6. Verify Email
 
 ```http
 POST /api/auth/verify-email
@@ -95,7 +105,7 @@ Content-Type: application/json
 }
 ```
 
-### 6. Resend Verification Email
+### 7. Resend Verification Email
 
 ```http
 POST /api/auth/resend-verification
@@ -106,7 +116,7 @@ Content-Type: application/json
 }
 ```
 
-### 7. Forgot Password
+### 8. Forgot Password
 
 ```http
 POST /api/auth/forgot-password
@@ -117,7 +127,7 @@ Content-Type: application/json
 }
 ```
 
-### 8. Reset Password
+### 9. Reset Password
 
 ```http
 POST /api/auth/reset-password
@@ -129,7 +139,7 @@ Content-Type: application/json
 }
 ```
 
-### 9. Refresh Token
+### 10. Refresh Token
 
 ```http
 POST /api/auth/refresh-token
@@ -140,7 +150,7 @@ Content-Type: application/json
 }
 ```
 
-### 10. Change Password (Protected)
+### 11. Change Password (Protected)
 
 ```http
 POST /api/auth/change-password
@@ -157,21 +167,21 @@ Content-Type: application/json
 
 ## 👥 Role Management APIs (Admin Only)
 
-### 11. Get All Roles
+### 12. Get All Roles
 
 ```http
 GET /api/roles
 Authorization: Bearer <admin_token>
 ```
 
-### 12. Get User Roles
+### 13. Get User Roles
 
 ```http
 GET /api/roles/user/:userId
 Authorization: Bearer <admin_or_organizer_token>
 ```
 
-### 13. Assign Role
+### 14. Assign Role
 
 ```http
 POST /api/roles/assign
@@ -184,7 +194,7 @@ Content-Type: application/json
 }
 ```
 
-### 14. Remove Role
+### 15. Remove Role
 
 ```http
 POST /api/roles/remove
@@ -201,14 +211,14 @@ Content-Type: application/json
 
 ## 🏢 Organizer Profile APIs
 
-### 15. Get Organizer Profile
+### 16. Get Organizer Profile
 
 ```http
 GET /api/organizer/profile
 Authorization: Bearer <organizer_token>
 ```
 
-### 16. Update Organizer Profile
+### 17. Update Organizer Profile
 
 ```http
 PUT /api/organizer/profile
@@ -226,7 +236,7 @@ Content-Type: application/json
 }
 ```
 
-### 17. Update Organizer Avatar
+### 18. Update Organizer Avatar
 
 ```http
 POST /api/organizer/avatar
@@ -236,7 +246,7 @@ Content-Type: multipart/form-data
 avatar: file
 ```
 
-### 18. Get Organizer Profile by ID (Public)
+### 19. Get Organizer Profile by ID (Public)
 
 ```http
 GET /api/organizer/:organizerId
@@ -246,14 +256,14 @@ GET /api/organizer/:organizerId
 
 ## 👤 Customer Profile APIs
 
-### 19. Get Customer Profile
+### 20. Get Customer Profile
 
 ```http
 GET /api/customer/profile
 Authorization: Bearer <token>
 ```
 
-### 20. Update Customer Profile
+### 21. Update Customer Profile
 
 ```http
 PUT /api/customer/profile
@@ -277,7 +287,7 @@ Content-Type: application/json
 }
 ```
 
-### 21. Update Customer Avatar
+### 22. Update Customer Avatar
 
 ```http
 POST /api/customer/avatar
@@ -287,7 +297,7 @@ Content-Type: multipart/form-data
 avatar: file
 ```
 
-### 22. Get Customer Profile by ID (Public)
+### 23. Get Customer Profile by ID (Public)
 
 ```http
 GET /api/customer/:userId
@@ -295,28 +305,28 @@ GET /api/customer/:userId
 
 ---
 
-## 🛠️ Skills APIs
+## 🛠️ User Skills APIs
 
-### 23. Get All Skills
+### 24. Get All Skills (Legacy)
 
 ```http
 GET /api/skills
 ```
 
-### 24. Get User Skills
+### 25. Get User Skills
 
 ```http
 GET /api/user/skills
 Authorization: Bearer <token>
 ```
 
-### 25. Get User Skills by ID
+### 26. Get User Skills by ID
 
 ```http
 GET /api/user/:userId/skills
 ```
 
-### 26. Add User Skill
+### 27. Add User Skill
 
 ```http
 POST /api/user/skills
@@ -331,7 +341,7 @@ Content-Type: application/json
 }
 ```
 
-### 27. Update User Skill
+### 28. Update User Skill
 
 ```http
 PUT /api/user/skills/:skillId
@@ -346,7 +356,7 @@ Content-Type: application/json
 }
 ```
 
-### 28. Delete User Skill
+### 29. Delete User Skill
 
 ```http
 DELETE /api/user/skills/:skillId
@@ -357,26 +367,26 @@ Authorization: Bearer <token>
 
 ## 🏆 Achievements APIs
 
-### 29. Get User Achievements
+### 30. Get User Achievements
 
 ```http
 GET /api/user/achievements
 Authorization: Bearer <token>
 ```
 
-### 30. Get User Achievements by ID
+### 31. Get User Achievements by ID
 
 ```http
 GET /api/user/:userId/achievements
 ```
 
-### 31. Get Achievement by ID
+### 32. Get Achievement by ID
 
 ```http
 GET /api/achievements/:achievementId
 ```
 
-### 32. Add User Achievement
+### 33. Add User Achievement
 
 ```http
 POST /api/user/achievements
@@ -393,7 +403,7 @@ Content-Type: application/json
 }
 ```
 
-### 33. Update User Achievement
+### 34. Update User Achievement
 
 ```http
 PUT /api/user/achievements/:achievementId
@@ -410,7 +420,7 @@ Content-Type: application/json
 }
 ```
 
-### 34. Delete User Achievement
+### 35. Delete User Achievement
 
 ```http
 DELETE /api/user/achievements/:achievementId
@@ -421,26 +431,26 @@ Authorization: Bearer <token>
 
 ## 📁 Projects APIs
 
-### 35. Get User Projects
+### 36. Get User Projects
 
 ```http
 GET /api/user/projects
 Authorization: Bearer <token>
 ```
 
-### 36. Get User Projects by ID
+### 37. Get User Projects by ID
 
 ```http
 GET /api/user/:userId/projects
 ```
 
-### 37. Get Project by ID
+### 38. Get Project by ID
 
 ```http
 GET /api/projects/:projectId
 ```
 
-### 38. Add User Project
+### 39. Add User Project
 
 ```http
 POST /api/user/projects
@@ -458,7 +468,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-### 39. Update User Project
+### 40. Update User Project
 
 ```http
 PUT /api/user/projects/:projectId
@@ -476,7 +486,7 @@ Content-Type: multipart/form-data
 }
 ```
 
-### 40. Delete User Project
+### 41. Delete User Project
 
 ```http
 DELETE /api/user/projects/:projectId
@@ -487,7 +497,7 @@ Authorization: Bearer <token>
 
 ## 👥 Team APIs
 
-### 41. Create Team
+### 42. Create Team
 
 ```http
 POST /api/teams
@@ -502,13 +512,13 @@ Content-Type: application/json
 }
 ```
 
-### 42. Get Team by ID
+### 43. Get Team by ID
 
 ```http
 GET /api/teams/:teamId
 ```
 
-### 43. Update Team
+### 44. Update Team
 
 ```http
 PUT /api/teams/:teamId
@@ -522,27 +532,27 @@ Content-Type: application/json
 }
 ```
 
-### 44. Delete Team
+### 45. Delete Team
 
 ```http
 DELETE /api/teams/:teamId
 Authorization: Bearer <token>
 ```
 
-### 45. Get Team Members
+### 46. Get Team Members
 
 ```http
 GET /api/teams/:teamId/members
 ```
 
-### 46. Remove Team Member
+### 47. Remove Team Member
 
 ```http
 DELETE /api/teams/:teamId/members/:memberId
 Authorization: Bearer <token>
 ```
 
-### 47. Change Team Member Role
+### 48. Change Team Member Role
 
 ```http
 PUT /api/teams/:teamId/members/:memberId/role
@@ -554,14 +564,14 @@ Content-Type: application/json
 }
 ```
 
-### 48. Get User Teams
+### 49. Get User Teams
 
 ```http
 GET /api/user/teams
 Authorization: Bearer <token>
 ```
 
-### 49. Get User Teams by ID
+### 50. Get User Teams by ID
 
 ```http
 GET /api/user/:userId/teams
@@ -571,7 +581,7 @@ GET /api/user/:userId/teams
 
 ## 📨 Team Invitation APIs
 
-### 50. Create Invitation
+### 51. Create Invitation
 
 ```http
 POST /api/team-invitations
@@ -585,45 +595,300 @@ Content-Type: application/json
 }
 ```
 
-### 51. Get Invitation by ID
+### 52. Get Invitation by ID
 
 ```http
 GET /api/team-invitations/:invitationId
 ```
 
-### 52. Get Team Invitations
+### 53. Get Team Invitations
 
 ```http
 GET /api/teams/:teamId/invitations
 Authorization: Bearer <token>
 ```
 
-### 53. Get User Invitations
+### 54. Get User Invitations
 
 ```http
 GET /api/user/invitations
 Authorization: Bearer <token>
 ```
 
-### 54. Accept Invitation
+### 55. Accept Invitation
 
 ```http
 POST /api/team-invitations/:invitationId/accept
 Authorization: Bearer <token>
 ```
 
-### 55. Reject Invitation
+### 56. Reject Invitation
 
 ```http
 POST /api/team-invitations/:invitationId/reject
 Authorization: Bearer <token>
 ```
 
-### 56. Cancel Invitation
+### 57. Cancel Invitation
 
 ```http
 POST /api/team-invitations/:invitationId/cancel
 Authorization: Bearer <token>
+```
+
+---
+
+## 🏆 Competition APIs
+
+### 58. Create Competition
+
+```http
+POST /api/competitions
+Authorization: Bearer <organizer_token>
+Content-Type: application/json
+
+{
+  "title": "string",
+  "description": "string",
+  "category": "hackathon|datathon|designathon|business_case|coding_contest|other",
+  "plan_id": "string",
+  "start_date": "date",
+  "end_date": "date",
+  "registration_deadline": "date",
+  "location": "string",
+  "prize_pool_text": "string",
+  "max_participants": number,
+  "level": "beginner|intermediate|advanced|all_levels",
+  "image_url": "string",
+  "website": "string",
+  "rules": "string",
+  "featured": boolean,
+  "status": "draft|published|registration_open|registration_closed|in_progress|completed|cancelled",
+  "competitionTags": ["string"],
+  "competitionRequiredSkills": [
+    {
+      "name": "string",
+      "category": "technical|design|soft|language|other"
+    }
+  ]
+}
+```
+
+### 59. Get All Competitions
+
+```http
+GET /api/competitions?page=1&limit=10&category=hackathon&status=published&featured=true
+```
+
+### 60. Get Featured Competitions
+
+```http
+GET /api/competitions/featured?page=1&limit=10
+```
+
+### 61. Get Competitions by Category
+
+```http
+GET /api/competitions/category/:category?page=1&limit=10
+```
+
+### 62. Get Competitions by Status
+
+```http
+GET /api/competitions/status/:status?page=1&limit=10
+```
+
+### 63. Get Competition by ID
+
+```http
+GET /api/competitions/:competitionId
+```
+
+### 64. Get Competition Participants
+
+```http
+GET /api/competitions/:competitionId/participants?page=1&limit=10
+```
+
+### 65. Update Competition
+
+```http
+PUT /api/competitions/:competitionId
+Authorization: Bearer <organizer_token>
+Content-Type: application/json
+
+{
+  "title": "string",
+  "description": "string",
+  "category": "string",
+  "plan_id": "string",
+  "start_date": "date",
+  "end_date": "date",
+  "registration_deadline": "date",
+  "location": "string",
+  "prize_pool_text": "string",
+  "max_participants": number,
+  "level": "string",
+  "image_url": "string",
+  "website": "string",
+  "rules": "string",
+  "featured": boolean,
+  "status": "string",
+  "competitionTags": ["string"],
+  "competitionRequiredSkills": [
+    {
+      "name": "string",
+      "category": "string"
+    }
+  ]
+}
+```
+
+### 66. Delete Competition
+
+```http
+DELETE /api/competitions/:competitionId
+Authorization: Bearer <organizer_token>
+```
+
+---
+
+## 🛠️ Skills Management APIs (Admin Only)
+
+### 67. Create Skill
+
+```http
+POST /api/skills/create
+Authorization: Bearer <admin_token>
+Content-Type: application/json
+
+{
+  "name": "string",
+  "category": "technical|design|soft|language|other"
+}
+```
+
+### 68. Get All Skills (New)
+
+```http
+GET /api/skills/all?page=1&limit=50&category=technical&search=javascript
+```
+
+### 69. Search Skills
+
+```http
+GET /api/skills/search?q=javascript&page=1&limit=50
+```
+
+### 70. Get Skills by Category
+
+```http
+GET /api/skills/category/:category?page=1&limit=50
+```
+
+### 71. Get Skill by ID
+
+```http
+GET /api/skills/:skillId
+```
+
+### 72. Update Skill
+
+```http
+PUT /api/skills/:skillId
+Authorization: Bearer <admin_token>
+Content-Type: application/json
+
+{
+  "name": "string",
+  "category": "technical|design|soft|language|other"
+}
+```
+
+### 73. Delete Skill
+
+```http
+DELETE /api/skills/:skillId
+Authorization: Bearer <admin_token>
+```
+
+---
+
+## 💰 Plans Management APIs
+
+### 74. Create Plan (Admin Only)
+
+```http
+POST /api/plans
+Authorization: Bearer <admin_token>
+Content-Type: application/json
+
+{
+  "name": "string",
+  "description": "string",
+  "price_amount": number,
+  "currency": "VND",
+  "status": "active|inactive|archived"
+}
+```
+
+### 75. Get All Plans
+
+```http
+GET /api/plans?page=1&limit=10&status=active&search=premium&sortBy=price_amount&sortOrder=asc&minPrice=0&maxPrice=1000000&currency=VND
+```
+
+### 76. Get Plan by ID
+
+```http
+GET /api/plans/:id
+```
+
+### 77. Get Plan with Features
+
+```http
+GET /api/plans/:id/features
+```
+
+### 78. Get Plans by Status
+
+```http
+GET /api/plans/status/:status
+```
+
+### 79. Update Plan (Admin Only)
+
+```http
+PUT /api/plans/:id
+Authorization: Bearer <admin_token>
+Content-Type: application/json
+
+{
+  "name": "string",
+  "description": "string",
+  "price_amount": number,
+  "currency": "VND",
+  "status": "active|inactive|archived"
+}
+```
+
+### 80. Update Plan Status (Admin Only)
+
+```http
+PATCH /api/plans/:id/status
+Authorization: Bearer <admin_token>
+Content-Type: application/json
+
+{
+  "status": "active|inactive|archived"
+}
+```
+
+### 81. Delete Plan (Admin Only)
+
+```http
+DELETE /api/plans/:id
+Authorization: Bearer <admin_token>
 ```
 
 ---
@@ -677,3 +942,42 @@ Các API có upload file sử dụng `multipart/form-data`:
 ## 🌐 CORS
 
 API hỗ trợ CORS cho frontend URL được cấu hình trong biến môi trường `FRONTEND_URL` (mặc định: `http://localhost:5173`).
+
+---
+
+## 📊 Pagination
+
+Hầu hết các API list đều hỗ trợ pagination:
+
+- `page`: Số trang (mặc định: 1)
+- `limit`: Số items per page (mặc định: 10-50 tùy API)
+- Response bao gồm `pagination` object với thông tin về total, totalPages, hasNextPage, etc.
+
+---
+
+## 🔍 Filtering & Search
+
+Nhiều API hỗ trợ filtering và search:
+
+- **Competitions**: filter by category, status, featured
+- **Skills**: filter by category, search by name
+- **Plans**: filter by status, search by name/description, filter by price range
+- **User data**: có thể lấy theo userId cụ thể
+
+---
+
+## 📈 Total APIs: 81 endpoints
+
+- Health Check: 1
+- Authentication: 10
+- Role Management: 4
+- Organizer Profile: 4
+- Customer Profile: 4
+- User Skills: 6
+- Achievements: 6
+- Projects: 6
+- Teams: 9
+- Team Invitations: 7
+- Competitions: 9
+- Skills Management: 7
+- Plans Management: 8
