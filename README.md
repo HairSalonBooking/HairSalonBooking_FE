@@ -1,55 +1,49 @@
 # Contest Buddy Backend API Documentation
 
+## Tổng quan
+Contest Buddy là một nền tảng quản lý cuộc thi lập trình với các tính năng:
+- Quản lý người dùng và xác thực
+- Quản lý cuộc thi và đăng ký
+- Quản lý team và mời thành viên
+- Chat trực tiếp
+- Quản lý kỹ năng và thành tích
+- Quản lý gói dịch vụ
+
 ## Base URL
 ```
-http://localhost:8080
+http://localhost:3000/api
 ```
 
 ## Authentication
-API sử dụng JWT Bearer Token authentication. Thêm header sau vào request:
+Hầu hết API yêu cầu JWT token trong header:
 ```
-Authorization: Bearer <your_token>
+Authorization: Bearer <token>
 ```
 
 ## Roles
-- **ADMIN**: Quyền quản trị viên cao nhất
-- **ORGANIZER**: Quyền tổ chức cuộc thi
-- **CUSTOMER**: Quyền người dùng thông thường
+- **ADMIN**: Quản trị viên hệ thống
+- **ORGANIZER**: Người tổ chức cuộc thi
+- **CUSTOMER**: Người dùng thông thường
 
 ---
 
-## 1. Health Check
+## 1. Authentication APIs
 
-### GET /api/health
-Kiểm tra trạng thái API
-
-**Response:**
-```json
-{
-  "status": "success",
-  "message": "API is healthy"
-}
-```
-
----
-
-## 2. Authentication APIs
-
-### POST /api/auth/register
-Đăng ký tài khoản người dùng mới
+### 1.1 Đăng ký người dùng
+**POST** `/api/auth/register`
 
 **Request Body:**
 ```json
 {
-  "username": "string",
-  "password": "string",
-  "full_name": "string",
-  "email": "string",
-  "school": "string",
-  "city": "string",
-  "region": "string",
-  "country": "string",
-  "study_field": "string"
+  "username": "john_doe",
+  "password": "password123",
+  "full_name": "John Doe",
+  "email": "john@example.com",
+  "school": "University ABC",
+  "city": "Ho Chi Minh",
+  "region": "South",
+  "country": "Vietnam",
+  "study_field": "Computer Science"
 }
 ```
 
@@ -58,42 +52,47 @@ Kiểm tra trạng thái API
 {
   "success": true,
   "message": "User registered successfully",
-  "userId": "string",
+  "userId": "user123",
   "needsVerification": true,
   "emailSent": true
 }
 ```
 
-### POST /api/auth/register/organizer
-Đăng ký tài khoản tổ chức
+**Role:** Public
 
-**Request:** `multipart/form-data`
-- `user`: JSON string chứa thông tin user
-- `organizer`: JSON string chứa thông tin organizer
-- `avatar`: File ảnh (optional)
+### 1.2 Đăng ký organizer
+**POST** `/api/auth/register/organizer`
+
+**Request Body (multipart/form-data):**
+```
+user: {"username": "org_user", "password": "pass123", "full_name": "Org User", "email": "org@example.com"}
+organizer: {"name": "Tech Company", "email": "contact@tech.com", "description": "Leading tech company"}
+avatar: [file]
+```
 
 **Response:**
 ```json
 {
   "success": true,
   "message": "Organizer registered successfully",
-  "userId": "string",
-  "organizerId": "string",
-  "accessToken": "string",
+  "userId": "user123",
+  "organizerId": "org123",
+  "accessToken": "jwt_token",
   "needsVerification": true,
-  "emailSent": true,
-  "avatar_url": "string"
+  "emailSent": true
 }
 ```
 
-### POST /api/auth/login
-Đăng nhập
+**Role:** Public
+
+### 1.3 Đăng nhập
+**POST** `/api/auth/login`
 
 **Request Body:**
 ```json
 {
-  "email": "string",
-  "password": "string"
+  "email": "john@example.com",
+  "password": "password123"
 }
 ```
 
@@ -103,722 +102,654 @@ Kiểm tra trạng thái API
   "success": true,
   "message": "Login successful",
   "user": {
-    "id": "string",
-    "username": "string",
-    "email": "string",
-    "is_verified": boolean
+    "id": "user123",
+    "username": "john_doe",
+    "email": "john@example.com"
   },
-  "accessToken": "string",
-  "refreshToken": "string"
+  "accessToken": "jwt_token",
+  "refreshToken": "refresh_token"
 }
 ```
 
-### POST /api/auth/verify-token
-Xác thực token
+**Role:** Public
+
+### 1.4 Xác thực email
+**POST** `/api/auth/verify-email`
 
 **Request Body:**
 ```json
 {
-  "token": "string"
+  "token": "verification_token"
 }
 ```
-
-### POST /api/auth/verify-email
-Xác thực email
-
-**Request Body:**
-```json
-{
-  "token": "string"
-}
-```
-
-### POST /api/auth/resend-verification
-Gửi lại email xác thực
-
-**Request Body:**
-```json
-{
-  "email": "string"
-}
-```
-
-### POST /api/auth/forgot-password
-Quên mật khẩu
-
-**Request Body:**
-```json
-{
-  "email": "string"
-}
-```
-
-### POST /api/auth/reset-password
-Đặt lại mật khẩu
-
-**Request Body:**
-```json
-{
-  "token": "string",
-  "newPassword": "string"
-}
-```
-
-### POST /api/auth/refresh-token
-Làm mới token
-
-**Request Body:**
-```json
-{
-  "refreshToken": "string"
-}
-```
-
-### POST /api/auth/change-password
-Đổi mật khẩu (Yêu cầu: Authenticated)
-
-**Request Body:**
-```json
-{
-  "currentPassword": "string",
-  "newPassword": "string"
-}
-```
-
----
-
-## 3. Role Management APIs
-
-### GET /api/roles
-Lấy danh sách tất cả roles (Yêu cầu: Admin)
 
 **Response:**
 ```json
 {
   "success": true,
-  "roles": [
-    {
-      "id": "string",
-      "name": "string",
-      "description": "string"
-    }
-  ]
+  "message": "Email verified successfully"
 }
 ```
 
-### GET /api/roles/user/:userId
-Lấy roles của user (Yêu cầu: Admin/Organizer)
+**Role:** Public
+
+### 1.5 Quên mật khẩu
+**POST** `/api/auth/forgot-password`
+
+**Request Body:**
+```json
+{
+  "email": "john@example.com"
+}
+```
 
 **Response:**
 ```json
 {
   "success": true,
-  "roles": [
-    {
-      "id": "string",
-      "name": "string"
-    }
-  ]
+  "message": "Password reset email sent"
 }
 ```
 
-### POST /api/roles/assign
-Gán role cho user (Yêu cầu: Admin)
+**Role:** Public
+
+### 1.6 Đổi mật khẩu
+**POST** `/api/auth/change-password`
+
+**Headers:** `Authorization: Bearer <token>`
 
 **Request Body:**
 ```json
 {
-  "userId": "string",
-  "roleName": "string"
+  "currentPassword": "old_password",
+  "newPassword": "new_password"
 }
 ```
 
-### POST /api/roles/remove
-Xóa role khỏi user (Yêu cầu: Admin)
-
-**Request Body:**
+**Response:**
 ```json
 {
-  "userId": "string",
-  "roleName": "string"
+  "success": true,
+  "message": "Password changed successfully"
 }
 ```
+
+**Role:** Authenticated users
 
 ---
 
-## 4. Organizer Profile APIs
+## 2. Profile Management APIs
 
-### GET /api/organizer/profile
-Lấy profile organizer hiện tại (Yêu cầu: Admin/Organizer, Verified)
+### 2.1 Lấy thông tin customer profile
+**GET** `/api/customer/profile`
+
+**Headers:** `Authorization: Bearer <token>`
 
 **Response:**
 ```json
 {
   "success": true,
   "profile": {
-    "organizerId": "string",
-    "name": "string",
-    "email": "string",
-    "avatar_url": "string",
-    "description": "string",
-    "address": "string",
-    "phone": "string",
-    "website": "string"
+    "id": "profile123",
+    "user_id": "user123",
+    "bio": "Software developer",
+    "avatar_url": "https://example.com/avatar.jpg",
+    "social_links": [],
+    "user": {
+      "username": "john_doe",
+      "full_name": "John Doe",
+      "email": "john@example.com"
+    }
   }
 }
 ```
 
-### PUT /api/organizer/profile
-Cập nhật profile organizer (Yêu cầu: Admin/Organizer, Verified)
+**Role:** Authenticated users
+
+### 2.2 Cập nhật customer profile
+**PUT** `/api/customer/profile`
+
+**Headers:** `Authorization: Bearer <token>`
 
 **Request Body:**
 ```json
 {
-  "name": "string",
-  "description": "string",
-  "address": "string",
-  "phone": "string",
-  "website": "string"
+  "bio": "Updated bio",
+  "social_links": [
+    {
+      "platform": "github",
+      "url": "https://github.com/johndoe"
+    }
+  ]
 }
 ```
 
-### POST /api/organizer/avatar
-Cập nhật avatar organizer (Yêu cầu: Admin/Organizer, Verified)
-
-**Request:** `multipart/form-data`
-- `avatar`: File ảnh
-
-### GET /api/organizer/:organizerId
-Lấy profile organizer theo ID (Public)
-
----
-
-## 5. Customer Profile APIs
-
-### GET /api/customer/profile
-Lấy profile customer hiện tại (Yêu cầu: Authenticated, Verified)
-
-### PUT /api/customer/profile
-Cập nhật profile customer (Yêu cầu: Authenticated, Verified)
-
-### POST /api/customer/avatar
-Cập nhật avatar customer (Yêu cầu: Authenticated, Verified)
-
-### GET /api/customer/:userId
-Lấy profile customer theo ID (Public)
-
-### GET /api/customers
-Lấy danh sách customer profiles với filter
-
-**Query Parameters:**
-- `page`: Số trang
-- `limit`: Số lượng mỗi trang
-- `search`: Tìm kiếm
-- `city`, `region`, `country`: Lọc theo địa điểm
-- `school`, `study_field`: Lọc theo học vấn
-- `min_rating`, `max_rating`: Lọc theo rating
-- `is_verified`: Lọc theo trạng thái xác thực
-- `join_date_from`, `join_date_to`: Lọc theo ngày tham gia
-- `skill_name`, `skill_level`: Lọc theo kỹ năng
-
----
-
-## 6. User Skills APIs
-
-### GET /api/skills
-Lấy danh sách tất cả skills (Public)
-
-### GET /api/user/skills
-Lấy skills của user hiện tại (Yêu cầu: Authenticated)
-
-### GET /api/user/:userId/skills
-Lấy skills của user theo ID (Public)
-
-### POST /api/user/skills
-Thêm skill cho user (Yêu cầu: Authenticated, Verified)
-
-**Request Body:**
-```json
-{
-  "skill_id": "string",
-  "level": "string",
-  "experience_years": number
-}
-```
-
-### PUT /api/user/skills/:skillId
-Cập nhật skill của user (Yêu cầu: Authenticated, Verified)
-
-### DELETE /api/user/skills/:skillId
-Xóa skill của user (Yêu cầu: Authenticated, Verified)
-
----
-
-## 7. User Achievements APIs
-
-### GET /api/user/achievements
-Lấy achievements của user hiện tại (Yêu cầu: Authenticated)
-
-### GET /api/user/:userId/achievements
-Lấy achievements của user theo ID (Public)
-
-### GET /api/achievements/:achievementId
-Lấy achievement theo ID (Public)
-
-### POST /api/user/achievements
-Thêm achievement cho user (Yêu cầu: Authenticated, Verified)
-
-**Request Body:**
-```json
-{
-  "competition_name": "string",
-  "position": number,
-  "award": "string",
-  "achieved_at": "date",
-  "category": "string",
-  "description": "string"
-}
-```
-
-### PUT /api/user/achievements/:achievementId
-Cập nhật achievement (Yêu cầu: Authenticated, Verified)
-
-### DELETE /api/user/achievements/:achievementId
-Xóa achievement (Yêu cầu: Authenticated, Verified)
-
----
-
-## 8. User Projects APIs
-
-### GET /api/user/projects
-Lấy projects của user hiện tại (Yêu cầu: Authenticated)
-
-### GET /api/user/:userId/projects
-Lấy projects của user theo ID (Public)
-
-### GET /api/projects/:projectId
-Lấy project theo ID (Public)
-
-### POST /api/user/projects
-Thêm project cho user (Yêu cầu: Authenticated, Verified)
-
-**Request:** `multipart/form-data`
-- `title`: Tên project
-- `description`: Mô tả
-- `technologies`: Công nghệ sử dụng
-- `github_url`: Link GitHub
-- `demo_url`: Link demo
-- `image`: File ảnh project
-
-### PUT /api/user/projects/:projectId
-Cập nhật project (Yêu cầu: Authenticated, Verified)
-
-### DELETE /api/user/projects/:projectId
-Xóa project (Yêu cầu: Authenticated, Verified)
-
----
-
-## 9. Chat APIs
-
-### POST /api/chat/conversations/direct
-Tạo hoặc lấy conversation trực tiếp (Yêu cầu: Authenticated, Verified)
-
-**Request Body:**
-```json
-{
-  "peerId": "string"
-}
-```
-
-### GET /api/chat/conversations
-Lấy danh sách conversations của user (Yêu cầu: Authenticated, Verified)
-
-### GET /api/chat/conversations/:conversationId
-Lấy thông tin conversation (Yêu cầu: Authenticated, Verified)
-
-### GET /api/chat/conversations/:conversationId/messages
-Lấy messages trong conversation (Yêu cầu: Authenticated, Verified)
-
-**Query Parameters:**
-- `limit`: Số lượng messages
-- `before`: Message ID để lấy messages trước đó
-
-### POST /api/chat/conversations/:conversationId/messages
-Gửi message (Yêu cầu: Authenticated, Verified)
-
-**Request Body:**
-```json
-{
-  "content": "string",
-  "messageType": "text|image|file|system"
-}
-```
-
-### POST /api/chat/conversations/:conversationId/read
-Đánh dấu conversation đã đọc (Yêu cầu: Authenticated, Verified)
-
-**Request Body:**
-```json
-{
-  "messageId": "string"
-}
-```
-
----
-
-## 10. Team APIs
-
-### POST /api/teams
-Tạo team mới (Yêu cầu: Authenticated, Verified)
-
-**Request Body:**
-```json
-{
-  "name": "string",
-  "description": "string"
-}
-```
-
-### GET /api/teams/:teamId
-Lấy thông tin team (Public)
-
-### PUT /api/teams/:teamId
-Cập nhật team (Yêu cầu: Authenticated, Verified)
-
-### DELETE /api/teams/:teamId
-Xóa team (Yêu cầu: Authenticated, Verified)
-
-### GET /api/teams/:teamId/members
-Lấy danh sách thành viên team (Public)
-
-### DELETE /api/teams/:teamId/members/:memberId
-Xóa thành viên khỏi team (Yêu cầu: Authenticated, Verified)
-
-### PUT /api/teams/:teamId/members/:memberId/role
-Thay đổi role thành viên (Yêu cầu: Authenticated, Verified)
-
-**Request Body:**
-```json
-{
-  "role": "leader|member"
-}
-```
-
-### GET /api/user/teams
-Lấy teams của user hiện tại (Yêu cầu: Authenticated)
-
-### GET /api/user/:userId/teams
-Lấy teams của user theo ID (Public)
-
----
-
-## 11. Team Invitation APIs
-
-### POST /api/team-invitations
-Tạo lời mời tham gia team (Yêu cầu: Authenticated, Verified)
-
-**Request Body:**
-```json
-{
-  "teamId": "string",
-  "inviteeId": "string",
-  "message": "string"
-}
-```
-
-### GET /api/team-invitations/:invitationId
-Lấy thông tin invitation (Public)
-
-### GET /api/teams/:teamId/invitations
-Lấy invitations của team (Yêu cầu: Authenticated, Verified)
-
-### GET /api/user/invitations
-Lấy invitations của user (Yêu cầu: Authenticated)
-
-### POST /api/team-invitations/:invitationId/accept
-Chấp nhận invitation (Yêu cầu: Authenticated, Verified)
-
-### POST /api/team-invitations/:invitationId/reject
-Từ chối invitation (Yêu cầu: Authenticated, Verified)
-
-### POST /api/team-invitations/:invitationId/cancel
-Hủy invitation (Yêu cầu: Authenticated, Verified)
-
----
-
-## 12. Competition APIs
-
-### POST /api/competitions
-Tạo cuộc thi mới (Yêu cầu: Admin/Organizer, Verified)
-
-**Request Body:**
-```json
-{
-  "title": "string",
-  "description": "string",
-  "category": "string",
-  "start_date": "date",
-  "end_date": "date",
-  "registration_deadline": "date",
-  "max_participants": number,
-  "prize": "string",
-  "requirements": "string",
-  "rules": "string"
-}
-```
-
-### GET /api/competitions/constants
-Lấy constants của competitions (Public)
-
-### GET /api/competitions
-Lấy danh sách competitions (Public)
-
-**Query Parameters:**
-- `page`: Số trang
-- `limit`: Số lượng mỗi trang
-- `category`: Lọc theo category
-- `status`: Lọc theo status
-- `featured`: Lọc featured competitions
-
-### GET /api/competitions/featured
-Lấy featured competitions (Public)
-
-### GET /api/competitions/category/:category
-Lấy competitions theo category (Public)
-
-### GET /api/competitions/status/:status
-Lấy competitions theo status (Public)
-
-### GET /api/competitions/:competitionId
-Lấy thông tin competition (Public)
-
-### GET /api/competitions/:competitionId/participants
-Lấy danh sách participants (Public)
-
-### POST /api/competitions/:competitionId/register
-Đăng ký tham gia competition (Yêu cầu: Authenticated, Verified)
-
-**Request Body:**
-```json
-{
-  "teamId": "string" // optional
-}
-```
-
-### HEAD/GET /api/competitions/:competitionId/participants/check
-Kiểm tra đăng ký tham gia (Yêu cầu: Authenticated)
-
-### GET /api/user/participated-competitions
-Lấy competitions đã tham gia (Yêu cầu: Authenticated, Verified)
-
-### PUT /api/competitions/:competitionId
-Cập nhật competition (Yêu cầu: Admin/Organizer, Verified)
-
-### DELETE /api/competitions/:competitionId
-Xóa competition (Yêu cầu: Admin/Organizer, Verified)
-
----
-
-## 13. Skills Management APIs
-
-### POST /api/skills/create
-Tạo skill mới (Yêu cầu: Admin, Verified)
-
-**Request Body:**
-```json
-{
-  "name": "string",
-  "category": "string",
-  "description": "string"
-}
-```
-
-### GET /api/skills/all
-Lấy tất cả skills (Public)
-
-**Query Parameters:**
-- `page`: Số trang
-- `limit`: Số lượng mỗi trang
-- `category`: Lọc theo category
-- `search`: Tìm kiếm
-
-### GET /api/skills/search
-Tìm kiếm skills (Public)
-
-**Query Parameters:**
-- `q`: Từ khóa tìm kiếm
-- `page`: Số trang
-- `limit`: Số lượng mỗi trang
-
-### GET /api/skills/category/:category
-Lấy skills theo category (Public)
-
-### GET /api/skills/:skillId
-Lấy skill theo ID (Public)
-
-### PUT /api/skills/:skillId
-Cập nhật skill (Yêu cầu: Admin, Verified)
-
-### DELETE /api/skills/:skillId
-Xóa skill (Yêu cầu: Admin, Verified)
-
----
-
-## 14. Plans APIs
-
-### POST /api/plans
-Tạo plan mới (Yêu cầu: Admin, Verified)
-
-**Request Body:**
-```json
-{
-  "name": "string",
-  "description": "string",
-  "price_amount": number,
-  "currency": "string",
-  "status": "active|inactive"
-}
-```
-
-### GET /api/plans
-Lấy danh sách plans (Public)
-
-**Query Parameters:**
-- `page`: Số trang
-- `limit`: Số lượng mỗi trang
-- `status`: Lọc theo status
-- `search`: Tìm kiếm
-- `sortBy`: Sắp xếp theo
-- `sortOrder`: Thứ tự sắp xếp
-- `minPrice`, `maxPrice`: Lọc theo giá
-- `currency`: Lọc theo tiền tệ
-
-### GET /api/plans/:id
-Lấy plan theo ID (Public)
-
-### GET /api/plans/:id/features
-Lấy features của plan (Public)
-
-### GET /api/plans/status/:status
-Lấy plans theo status (Public)
-
-### PUT /api/plans/:id
-Cập nhật plan (Yêu cầu: Admin, Verified)
-
-### PATCH /api/plans/:id/status
-Cập nhật status plan (Yêu cầu: Admin, Verified)
-
-**Request Body:**
-```json
-{
-  "status": "active|inactive"
-}
-```
-
-### DELETE /api/plans/:id
-Xóa plan (Yêu cầu: Admin, Verified)
-
----
-
-## Error Responses
-
-### 400 Bad Request
-```json
-{
-  "success": false,
-  "message": "Error message"
-}
-```
-
-### 401 Unauthorized
-```json
-{
-  "success": false,
-  "message": "Authentication required"
-}
-```
-
-### 403 Forbidden
-```json
-{
-  "success": false,
-  "message": "Access denied"
-}
-```
-
-### 404 Not Found
-```json
-{
-  "success": false,
-  "message": "Resource not found"
-}
-```
-
-### 500 Internal Server Error
-```json
-{
-  "success": false,
-  "message": "Internal server error"
-}
-```
-
----
-
-## Authentication Middleware
-
-### verifyToken
-Xác thực JWT token từ Authorization header
-
-### isVerified
-Kiểm tra user đã verify email chưa
-
-### isAdmin
-Kiểm tra user có role Admin
-
-### isAdminOrOrganizer
-Kiểm tra user có role Admin hoặc Organizer
-
----
-
-## File Upload
-
-API hỗ trợ upload file với `multipart/form-data`:
-- **Avatar**: Ảnh đại diện (jpeg, jpg, png, gif, webp)
-- **Project Image**: Ảnh dự án
-- **File Size Limit**: 5MB
-
----
-
-## Pagination
-
-Các API list hỗ trợ pagination:
-- `page`: Số trang (default: 1)
-- `limit`: Số lượng mỗi trang (default: 10-50)
-
-**Response Format:**
+**Response:**
 ```json
 {
   "success": true,
-  "data": [...],
+  "message": "Profile updated successfully",
+  "profile": { ... }
+}
+```
+
+**Role:** Authenticated users
+
+### 2.3 Cập nhật avatar
+**POST** `/api/customer/avatar`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Request Body:** `multipart/form-data` với file avatar
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Avatar updated successfully",
+  "avatar_url": "https://example.com/new_avatar.jpg"
+}
+```
+
+**Role:** Authenticated users
+
+---
+
+## 3. Competition Management APIs
+
+### 3.1 Tạo cuộc thi
+**POST** `/api/competitions`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Request Body:**
+```json
+{
+  "title": "Hackathon 2024",
+  "description": "Annual coding competition",
+  "category": "hackathon",
+  "plan_id": "plan123",
+  "start_date": "2024-06-01T00:00:00Z",
+  "end_date": "2024-06-03T23:59:59Z",
+  "registration_deadline": "2024-05-25T23:59:59Z",
+  "location": "Ho Chi Minh City",
+  "prize_pool_text": "Total prize: $10,000",
+  "max_participants": 100,
+  "isRegisteredAsTeam": true,
+  "maxParticipantsPerTeam": 4,
+  "level": "intermediate",
+  "website": "https://hackathon2024.com",
+  "rules": "Competition rules...",
+  "featured": true
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Competition created successfully",
+  "data": {
+    "id": "comp123",
+    "title": "Hackathon 2024",
+    "organizer_id": "org123",
+    "status": "draft"
+  }
+}
+```
+
+**Role:** Admin, Organizer
+
+### 3.2 Lấy danh sách cuộc thi
+**GET** `/api/competitions`
+
+**Query Parameters:**
+- `page`: Số trang (default: 1)
+- `limit`: Số item per page (default: 10)
+- `category`: Lọc theo category
+- `status`: Lọc theo status
+- `featured`: Lọc cuộc thi nổi bật (true/false)
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "id": "comp123",
+      "title": "Hackathon 2024",
+      "description": "Annual coding competition",
+      "category": "hackathon",
+      "status": "published",
+      "start_date": "2024-06-01T00:00:00Z",
+      "end_date": "2024-06-03T23:59:59Z",
+      "location": "Ho Chi Minh City",
+      "featured": true
+    }
+  ],
   "pagination": {
     "currentPage": 1,
-    "totalPages": 10,
-    "totalItems": 100,
+    "totalPages": 5,
+    "totalItems": 50,
     "itemsPerPage": 10
   }
 }
 ```
 
+**Role:** Public
+
+### 3.3 Lấy chi tiết cuộc thi
+**GET** `/api/competitions/:competitionId`
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "id": "comp123",
+    "title": "Hackathon 2024",
+    "description": "Annual coding competition",
+    "category": "hackathon",
+    "status": "published",
+    "start_date": "2024-06-01T00:00:00Z",
+    "end_date": "2024-06-03T23:59:59Z",
+    "registration_deadline": "2024-05-25T23:59:59Z",
+    "location": "Ho Chi Minh City",
+    "prize_pool_text": "Total prize: $10,000",
+    "max_participants": 100,
+    "participants_count": 25,
+    "organizer": {
+      "id": "org123",
+      "name": "Tech Company"
+    }
+  }
+}
+```
+
+**Role:** Public
+
+### 3.4 Đăng ký tham gia cuộc thi
+**POST** `/api/competitions/:competitionId/register`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Successfully registered for competition",
+  "registration": {
+    "id": "reg123",
+    "competition_id": "comp123",
+    "user_id": "user123",
+    "registration_date": "2024-05-20T10:00:00Z"
+  }
+}
+```
+
+**Role:** Authenticated users
+
 ---
 
-## WebSocket Support
+## 4. Team Management APIs
 
-### Chat Socket
-- **Endpoint**: `/socket.io/`
-- **Authentication**: JWT token trong query hoặc header
-- **Events**:
-  - `join_conversation`: Tham gia conversation
-  - `leave_conversation`: Rời conversation
-  - `send_message`: Gửi message
-  - `typing_start`: Bắt đầu typing
-  - `typing_stop`: Dừng typing
+### 4.1 Tạo team
+**POST** `/api/teams`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Request Body:**
+```json
+{
+  "name": "Team Alpha",
+  "description": "Best coding team",
+  "max_members": 4,
+  "competition_id": "comp123"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Team created successfully",
+  "data": {
+    "id": "team123",
+    "name": "Team Alpha",
+    "description": "Best coding team",
+    "leader_id": "user123",
+    "max_members": 4,
+    "status": "active"
+  }
+}
+```
+
+**Role:** Authenticated users
+
+### 4.2 Lấy thông tin team
+**GET** `/api/teams/:teamId`
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "team123",
+    "name": "Team Alpha",
+    "description": "Best coding team",
+    "leader_id": "user123",
+    "max_members": 4,
+    "status": "active",
+    "members": [
+      {
+        "id": "member123",
+        "user_id": "user123",
+        "role": "leader",
+        "user": {
+          "username": "john_doe",
+          "full_name": "John Doe"
+        }
+      }
+    ]
+  }
+}
+```
+
+**Role:** Public
+
+### 4.3 Lấy danh sách team của user
+**GET** `/api/user/teams`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "team123",
+      "name": "Team Alpha",
+      "role": "leader",
+      "status": "active"
+    }
+  ]
+}
+```
+
+**Role:** Authenticated users
+
+---
+
+## 5. Chat APIs
+
+### 5.1 Tạo cuộc trò chuyện trực tiếp
+**POST** `/api/chat/conversations/direct`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Request Body:**
+```json
+{
+  "peerId": "user456"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "conv123",
+    "type": "direct",
+    "participants": [
+      {
+        "user_id": "user123",
+        "username": "john_doe"
+      },
+      {
+        "user_id": "user456",
+        "username": "jane_doe"
+      }
+    ]
+  }
+}
+```
+
+**Role:** Authenticated users
+
+### 5.2 Lấy danh sách cuộc trò chuyện
+**GET** `/api/chat/conversations`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "conv123",
+      "type": "direct",
+      "last_message": {
+        "content": "Hello!",
+        "created_at": "2024-05-20T10:00:00Z"
+      },
+      "unread_count": 2
+    }
+  ]
+}
+```
+
+**Role:** Authenticated users
+
+### 5.3 Gửi tin nhắn
+**POST** `/api/chat/conversations/:conversationId/messages`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Request Body:**
+```json
+{
+  "content": "Hello, how are you?",
+  "messageType": "text"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "msg123",
+    "conversation_id": "conv123",
+    "sender_id": "user123",
+    "content": "Hello, how are you?",
+    "message_type": "text",
+    "created_at": "2024-05-20T10:00:00Z"
+  }
+}
+```
+
+**Role:** Authenticated users
+
+---
+
+## 6. Skills Management APIs
+
+### 6.1 Lấy danh sách kỹ năng
+**GET** `/api/skills/all`
+
+**Query Parameters:**
+- `page`: Số trang (default: 1)
+- `limit`: Số item per page (default: 50)
+- `category`: Lọc theo category
+- `search`: Tìm kiếm
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "id": "skill123",
+      "name": "JavaScript",
+      "category": "programming",
+      "description": "Programming language"
+    }
+  ],
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 10,
+    "totalItems": 500,
+    "itemsPerPage": 50
+  }
+}
+```
+
+**Role:** Public
+
+### 6.2 Tạo kỹ năng mới
+**POST** `/api/skills/create`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Request Body:**
+```json
+{
+  "name": "React",
+  "category": "programming",
+  "description": "JavaScript library for building user interfaces"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Skill created successfully",
+  "data": {
+    "id": "skill456",
+    "name": "React",
+    "category": "programming",
+    "description": "JavaScript library for building user interfaces"
+  }
+}
+```
+
+**Role:** Admin
+
+---
+
+## 7. Plans Management APIs
+
+### 7.1 Lấy danh sách gói dịch vụ
+**GET** `/api/plans`
+
+**Query Parameters:**
+- `page`: Số trang
+- `limit`: Số item per page
+- `status`: Lọc theo status
+- `search`: Tìm kiếm
+- `minPrice`, `maxPrice`: Lọc theo giá
+- `currency`: Lọc theo tiền tệ
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "plan123",
+      "name": "Basic Plan",
+      "description": "Basic features",
+      "price_amount": 0,
+      "currency": "USD",
+      "status": "active"
+    }
+  ],
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 5,
+    "totalItems": 50,
+    "itemsPerPage": 10
+  }
+}
+```
+
+**Role:** Public
+
+### 7.2 Tạo gói dịch vụ mới
+**POST** `/api/plans`
+
+**Headers:** `Authorization: Bearer <token>`
+
+**Request Body:**
+```json
+{
+  "name": "Premium Plan",
+  "description": "Premium features",
+  "price_amount": 99.99,
+  "currency": "USD",
+  "status": "active"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Plan created successfully",
+  "data": {
+    "id": "plan456",
+    "name": "Premium Plan",
+    "price_amount": 99.99,
+    "currency": "USD",
+    "status": "active"
+  }
+}
+```
+
+**Role:** Admin
+
+---
+
+## Error Responses
+
+### Common Error Format
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "error": "Detailed error message"
+}
+```
+
+### HTTP Status Codes
+- `200`: Success
+- `201`: Created
+- `400`: Bad Request
+- `401`: Unauthorized
+- `403`: Forbidden
+- `404`: Not Found
+- `500`: Internal Server Error
+
+### Common Error Messages
+- `"Authentication required"`: Cần đăng nhập
+- `"Access denied. Admin role required"`: Cần quyền admin
+- `"Email not verified"`: Email chưa được xác thực
+- `"Competition not found"`: Không tìm thấy cuộc thi
+- `"Team not found"`: Không tìm thấy team
+- `"Invalid token"`: Token không hợp lệ
+
+---
+
+## Rate Limiting
+- Authentication endpoints: 5 requests/minute
+- Other endpoints: 100 requests/minute
+
+## CORS
+API hỗ trợ CORS cho các domain được cấu hình.
+
+## WebSocket
+Chat real-time sử dụng WebSocket tại endpoint: `ws://localhost:3000`
